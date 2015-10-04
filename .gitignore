@@ -1,0 +1,3 @@
+**/*.bin
+./v8runner/v8runner
+./v8init/v8init
