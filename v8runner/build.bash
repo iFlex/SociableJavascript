@@ -1,0 +1,1 @@
+g++ -I../../v8/ v8wrapper.cpp -o v8wrapper.bin -Wl,--start-group ../../v8/out/native/obj.target/{tools/gyp/libv8_{base,libbase,external_snapshot,libplatform},third_party/icu/libicu{uc,i18n,data}}.a -Wl,--end-group -lrt -ldl -pthread -std=c++0x
