@@ -1,5 +1,27 @@
 import os
 import sys
+import threading
+
+keepMonitoring = True
+def monitor(program):
+	global keepMonitoring;
+	os.system("rm /tmp/mem.log");
+	while keepMonitoring:
+		os.system("ps -C "+str(program)+" -o pid=,rsz=,vsz= >> /tmp/mem.log");
+		os.system("gnuplot ./plot.gnuplot");
+		#os.system("sleep 1");
+	
+def run_program(program,params):
+	global keepMonitoring;
+	monThread = threading.Thread(target=monitor,args=(program,));
+	monThread.start();
+	result = os.system("time "+program+" "+" ".join(params));
+	keepMonitoring = False;
+	monThread.join();	
+	print "Process has finished running"	
+	print result;
+
+print sys.argv[0];
 
 program = "firefox"
 output  = program+"_memuse.png"
@@ -16,6 +38,6 @@ else:
 
 print "Monitoring "+str(program)+" with output at:"+str(outPath)+str(output)
 #run command, run plot, measure time and decide if new plot page is required, if process died, stop measuring
-os.system("ps -C "+str(program)+" -o pid=,rsz=,vsz= >> /tmp/mem.log");
-
+run_program(program,["../v8runner/test/benchmark.js"]);
 print "Monitoring complete complete";
+
