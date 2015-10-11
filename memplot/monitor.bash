@@ -1,5 +1,6 @@
+rm /tmp/mem.log
 while true; do
-ps -C firefox -o pid=,%mem=,vsz= >> /tmp/mem.log
-gnuplot /home/mlf/level4/memplot/plot.gnuplot
+ps -C v8wrapper.bin -o pid=,%mem=,vsz= >> /tmp/mem.log
+gnuplot ~/level4/SociableJavascript/memplot/plot.gnuplot
 sleep 1
 done
