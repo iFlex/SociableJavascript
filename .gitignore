@@ -1,5 +1,5 @@
 *.pyc
 *.bin
 *~
-./memplot/out
-./memplot/measurements
+/memplot/out
+/memplot/measurements
