@@ -1,3 +1,4 @@
 *.bin
 *~
-
+./memplot/out
+./memplot/measurements
