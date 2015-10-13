@@ -2,7 +2,7 @@ import os
 import sys
 import threading
 import time;
-
+#matplotlib
 def collect_results(path,duration,alias):
 	os.system("mv ./out/mem-graph.png "+path+"/"+alias+".png");
 

@@ -27,7 +27,7 @@ def runTest(test,path):
 		resolution = test['resolution'];
 
 	print("RUNNING TEST:"+test['alias']);
-	monitor.monitor_program("v8wrapper.bin",test['script'],test['alias'],resolution,path);
+	monitor.monitor_program("./v8wrapper.bin",test['script'],test['alias'],resolution,path);
 	print("DONE");
 
 if len(sys.argv) > 1:
