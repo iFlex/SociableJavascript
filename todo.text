@@ -1,8 +1,11 @@
 1) figure out how to restrict heap size of context (for whole v8 instance)
 2) find the minimum heap size required for each benchmark ( binary search )
 3) graph - max heap size to mean execution time
-4) matplotlib
+DONE>> 4) matplotlib
 5) rerun same benchmark to ensure heap size is correct - js wrappers
-6) Update Readme
+DONE>> 6) Update Readme
+7) Make js wrappers for tests, so that only one benchmark is loaded
+
+DONE >> 8) Pithon live plotting class - need to make class instance it own the plot window
 
 Papers:

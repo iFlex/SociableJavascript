@@ -1,4 +1,4 @@
-// Copyright 2011 the V8 project authors. All rights reserved.
+// Copyright 2009 the V8 project authors. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -24,6 +24,101 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// This benchmark is based on a JavaScript log processing module used
+// by the V8 profiler to generate execution time profiles for runs of
+// JavaScript applications, and it effectively measures how fast the
+// JavaScript engine is at allocating nodes and reclaiming the memory
+// used for old nodes. Because of the way splay trees work, the engine
+// also has to deal with a lot of changes to the large tree object
+// graph.
+
+var Splay = new BenchmarkSuite('Splay', 81491, [
+  new Benchmark("Splay", SplayRun, SplaySetup, SplayTearDown)
+]);
+
+
+// Configuration.
+var kSplayTreeSize = 8000;
+var kSplayTreeModifications = 80;
+var kSplayTreePayloadDepth = 5;
+
+var splayTree = null;
+
+
+function GeneratePayloadTree(depth, tag) {
+  if (depth == 0) {
+    return {
+      array  : [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+      string : 'String for key ' + tag + ' in leaf node'
+    };
+  } else {
+    return {
+      left:  GeneratePayloadTree(depth - 1, tag),
+      right: GeneratePayloadTree(depth - 1, tag)
+    };
+  }
+}
+
+
+function GenerateKey() {
+  // The benchmark framework guarantees that Math.random is
+  // deterministic; see base.js.
+  return Math.random();
+}
+
+
+function InsertNewNode() {
+  // Insert new node with a unique key.
+  var key;
+  do {
+    key = GenerateKey();
+  } while (splayTree.find(key) != null);
+  var payload = GeneratePayloadTree(kSplayTreePayloadDepth, String(key));
+  splayTree.insert(key, payload);
+  return key;
+}
+
+
+
+function SplaySetup() {
+  splayTree = new SplayTree();
+  for (var i = 0; i < kSplayTreeSize; i++) InsertNewNode();
+}
+
+
+function SplayTearDown() {
+  // Allow the garbage collector to reclaim the memory
+  // used by the splay tree no matter how we exit the
+  // tear down function.
+  var keys = splayTree.exportKeys();
+  splayTree = null;
+
+  // Verify that the splay tree has the right size.
+  var length = keys.length;
+  if (length != kSplayTreeSize) {
+    throw new Error("Splay tree has wrong size");
+  }
+
+  // Verify that the splay tree has sorted, unique keys.
+  for (var i = 0; i < length - 1; i++) {
+    if (keys[i] >= keys[i + 1]) {
+      throw new Error("Splay tree not sorted");
+    }
+  }
+}
+
+
+function SplayRun() {
+  // Replace a few nodes in the splay tree.
+  for (var i = 0; i < kSplayTreeModifications; i++) {
+    var key = InsertNewNode();
+    var greatest = splayTree.findGreatestLessThan(key);
+    if (greatest == null) splayTree.remove(key);
+    else splayTree.remove(greatest.key);
+  }
+}
+
 
 /**
  * Constructs a Splay tree.  A splay tree is a self-balancing binary
@@ -295,32 +390,5 @@ SplayTree.Node.prototype.traverse_ = function(f) {
     if (left) left.traverse_(f);
     f(current);
     current = current.right;
-  }
-};
-
-SplayTree.prototype.traverseBreadthFirst = function (f) {
-  if (f(this.root_.value)) return;
-
-  var stack = [this.root_];
-  var length = 1;
-
-  while (length > 0) {
-    var new_stack = new Array(stack.length * 2);
-    var new_length = 0;
-    for (var i = 0; i < length; i++) {
-      var n = stack[i];
-      var l = n.left;
-      var r = n.right;
-      if (l) {
-        if (f(l.value)) return;
-        new_stack[new_length++] = l;
-      }
-      if (r) {
-        if (f(r.value)) return;
-        new_stack[new_length++] = r;
-      }
-    }
-    stack = new_stack;
-    length = new_length;
   }
 };

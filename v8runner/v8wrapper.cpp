@@ -21,6 +21,9 @@ bool ExecuteString(v8::Isolate* isolate,
                    v8::Handle<v8::Value> name,
                    bool print_result,
                    bool report_exceptions);
+
+v8::Handle<v8::String> ReadFile(v8::Isolate*, const char*);
+void _load(char *, v8::Isolate*);
 void Load(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
@@ -34,7 +37,7 @@ class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
 };
 
 char * readSourceScript(char * file){
-        char * source = 0;
+  char * source = 0;
 	long long index = 0;
 	struct stat fileInfo;
         if(!lstat(file,&fileInfo)){
@@ -51,12 +54,6 @@ char * readSourceScript(char * file){
 }
 
 int main(int argc, char* argv[]) {
-  char * sourceScript = 0;
-  if(argc > 1)
-	sourceScript = readSourceScript(argv[1]);
-
-  if(!sourceScript)
-	return 0;
 
   // Initialize V8.
   V8::InitializeICU();
@@ -65,6 +62,7 @@ int main(int argc, char* argv[]) {
   V8::InitializePlatform(platform);
   V8::Initialize();
 
+  int status = 1;//success
   // Create a new Isolate and make it the current one.
   ArrayBufferAllocator allocator;
   Isolate::CreateParams create_params;
@@ -82,24 +80,24 @@ int main(int argc, char* argv[]) {
 
     // Create a new context.
     Local<Context> context = v8::Context::New(isolate, NULL, global);
-
     // Enter the context for compiling and running the hello world script.
     Context::Scope context_scope(context);
 
-    // Create a string containing the JavaScript source code.
-    Local<String> source =
-        String::NewFromUtf8(isolate, sourceScript,
-                            NewStringType::kNormal).ToLocalChecked();
-
-    // Compile the source code.
-    Local<Script> script = Script::Compile(context, source).ToLocalChecked();
-
-    // Run the script to get the result.
-    Local<Value> result = script->Run(context).ToLocalChecked();
-
-    // Convert the result to an UTF8 string and print it.
-    String::Utf8Value utf8(result);
-    //printf("%s\n", *utf8);
+    for( int i=1; i < argc; ++i ){
+      char before[10] = "load('";
+      char command[255];
+      char after[5] = "');";
+      sprintf(command,"%s%s%s",before,argv[i],after);
+      printf("commands:%s\n",command);
+      // Create a string containing the JavaScript source code.
+      Local<String> source =
+          String::NewFromUtf8(isolate, command,
+                              NewStringType::kNormal).ToLocalChecked();
+      // Compile the source code.
+      Local<Script> script = Script::Compile(context, source).ToLocalChecked();
+      // Run the script to get the result.
+      Local<Value> result = script->Run(context).ToLocalChecked();
+    }
   }
 
   // Dispose the isolate and tear down V8.
@@ -107,9 +105,8 @@ int main(int argc, char* argv[]) {
   V8::Dispose();
   V8::ShutdownPlatform();
   delete platform;
-  delete sourceScript;
   printf("\nDone\n");
-  return 0;
+  return status;
 }
 
 // Extracts a C string from a V8 Utf8Value.

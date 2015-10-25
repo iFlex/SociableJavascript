@@ -13,14 +13,6 @@ def makeCollectionFolder():
 	os.system("mkdir measurements/"+out_dir);
 	return "./measurements/"+out_dir;
 
-def populateQueueFromFolder(path):
-	global toRun;
-	lst = os.listdir(path);
-	print lst;
-	for item in lst:
-		if item.find(".js",0,len(item)) > -1:
-			toRun.append([item,item]);
-
 def runTest(test,path):
 	resolution = 1
 	if 'resolution' in test:
