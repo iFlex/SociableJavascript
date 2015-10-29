@@ -16,21 +16,24 @@ def strip(s):
 
 	return s;
 
+plt = 0
 keepMonitoring = True
 def memwatch(program,resolution):
 	program = strip(program);
-	global keepMonitoring;
-	os.system("rm /tmp/mem.log");
+	global keepMonitoring,plt;
+	#os.system("rm /tmp/mem.log");
 
-	plt = plotter.Plotter(1);
+	if plt == 0:
+		plt = plotter.Plotter(1);
+
 	while keepMonitoring:
 		result = subprocess.check_output("ps -C "+str(program)+" -o pid=,rsz=,vsz=", shell=True)
 		result = result.split(" ");
-		result = result[1:2]
-		result = " ".join(result);
-		plt.plot(result);
-		print result;
+		#print result
+		plt.plot(str(result[1]));
 		os.system("sleep "+str(resolution));
+	plt.save("out.png");
+
 
 def monitor_program(program,script,alias,resolution,collection_path):
 	global keepMonitoring;

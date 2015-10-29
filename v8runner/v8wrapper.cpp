@@ -12,6 +12,7 @@
 
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
+#include "src/api.h"
 
 using namespace v8;
 
@@ -53,8 +54,14 @@ char * readSourceScript(char * file){
 	return source;
 }
 
+//ARGUMENTS structure
+// first argument is heap size in MB
+// next arguments are scripts to be loaded
 int main(int argc, char* argv[]) {
-
+  if(argc < 2){
+    printf("#NOT ENOUGH ARGUMENTS: Usage v8wrapper.bin <heap_size> <scrpit1> <script2> ...\nMandatory paramenters <heap_size> and at least one script to load!");
+    return 0;
+  }
   // Initialize V8.
   V8::InitializeICU();
   V8::InitializeExternalStartupData(argv[0]);
@@ -62,13 +69,19 @@ int main(int argc, char* argv[]) {
   V8::InitializePlatform(platform);
   V8::Initialize();
 
-  int status = 1;//success
+  int heapSize = atoi(argv[1]);
+  printf("Running with heap size:%d\n",heapSize);
   // Create a new Isolate and make it the current one.
   ArrayBufferAllocator allocator;
   Isolate::CreateParams create_params;
   create_params.array_buffer_allocator = &allocator;
+  //configure head size to a total of 2M
+  create_params.constraints.set_max_old_space_size(heapSize);
+  create_params.constraints.set_max_semi_space_size(1);
+
   Isolate* isolate = Isolate::New(create_params);
   {
+    //////////////////////////////////////////////
     Isolate::Scope isolate_scope(isolate);
 
     // Create a stack-allocated handle scope.
@@ -83,7 +96,7 @@ int main(int argc, char* argv[]) {
     // Enter the context for compiling and running the hello world script.
     Context::Scope context_scope(context);
 
-    for( int i=1; i < argc; ++i ){
+    for( int i=2; i < argc; ++i ){
       char before[10] = "load('";
       char command[255];
       char after[5] = "');";
@@ -105,8 +118,8 @@ int main(int argc, char* argv[]) {
   V8::Dispose();
   V8::ShutdownPlatform();
   delete platform;
-  printf("\nDone\n");
-  return status;
+  printf("\n#<:>#Done#<:>#\n");
+  return 0;
 }
 
 // Extracts a C string from a V8 Utf8Value.

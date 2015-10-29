@@ -1,11 +1,25 @@
-1) figure out how to restrict heap size of context (for whole v8 instance)
-2) find the minimum heap size required for each benchmark ( binary search )
-3) graph - max heap size to mean execution time
-DONE>> 4) matplotlib
-5) rerun same benchmark to ensure heap size is correct - js wrappers
-DONE>> 6) Update Readme
-7) Make js wrappers for tests, so that only one benchmark is loaded
+DONE >> 1) figure out how to restrict heap size of context (for whole v8 instance)
+* restricts the old_space_size, I wonder if semi_space_size is relevant to this
 
-DONE >> 8) Pithon live plotting class - need to make class instance it own the plot window
+DONE >> 1.1) figure out how to tell when program completes successfully - proposed solution > program outputs unique message to STDOUT
+* Used return value
+
+DONE >> 2) find the minimum heap size required for each benchmark ( binary search )
+DONE >> 3) graph - max heap size to mean execution time
+DONE >> 4) matplotlib
+DONE >> 5) rerun same benchmark to ensure heap size is correct - js wrappers
+
+DONE >> 6) Update Readme
+DONE >> 7) v8wrapper.js takes in list of required scripts
+DONE >> 8) Pithon live plotting class - need to make class instance it own the plot window or plot, allow clearing data and restarting plot
+
+
+1) Binary Tree Benchmark test
+2) Make benchmark that allocates a lot of memory and moves it
+3) Look at Gregor R. BenchmarkSuite
+4) Regenerate graphs with tiny semi-space
+5) 1-6 min heap size graph granularity 1/3
+6) Can the max heap size be resized dynamically
+7) Check if Isolate objects can be suspended/resume
 
 Papers:

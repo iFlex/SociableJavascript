@@ -56,7 +56,7 @@ function PrintScore(score) {
   }
 }
 
-
-BenchmarkSuite.RunSuites({ NotifyResult: PrintResult,
-                           NotifyError: PrintError,
-                           NotifyScore: PrintScore });
+//for(var i=0; i<10; ++i)
+  BenchmarkSuite.RunSuites({ NotifyResult: PrintResult,
+                            NotifyError: PrintError,
+                            NotifyScore: PrintScore });

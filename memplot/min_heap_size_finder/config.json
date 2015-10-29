@@ -1,0 +1,52 @@
+{
+  "binary":"v8wrapper.bin",
+  "location":"../../v8runner/",
+  "tests":
+[
+  {
+    "alias":"splay",
+    "script":["test/base.js","test/splay.js","test/run.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"crypto",
+    "script":["test/base.js","test/crypto.js","test/run.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"benchmark",
+    "script":["test/benchmark.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"deltablue",
+    "script":["test/base.js","test/deltablue.js","test/run.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"earley-boyer",
+    "script":["test/base.js","test/earley-boyer.js","test/run.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"navier-stokes",
+    "script":["test/base.js","test/navier-stokes.js","test/run.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"raytrace",
+    "script":["test/base.js","test/raytrace.js","test/run.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"regexp",
+    "script":["test/base.js","test/regexp.js","test/run.js"],
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":["test/base.js","test/richards.js","test/run.js"],
+    "resolution":"0"
+  }
+]
+}

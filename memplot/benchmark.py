@@ -27,8 +27,6 @@ if len(sys.argv) > 1:
 	with open(sys.argv[1], 'r') as content_file:
 		content = content_file.read()
 	toRun = json.loads(content);
-else:
-	populateQueueFromFolder(raw_input("where are your scripts:"));
 
 print "Running tests"
 print toRun;

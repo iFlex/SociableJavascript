@@ -3,5 +3,45 @@
     "alias":"benchmark",
     "script":"../v8runner/test/benchmark.js",
     "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/crypto.js ../v8runner/test/run.js",
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/deltablue.js ../v8runner/test/run.js",
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/earley-boyer.js ../v8runner/test/run.js",
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/navier-stokes.js ../v8runner/test/run.js",
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/raytrace.js ../v8runner/test/run.js",
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/regexp.js ../v8runner/test/run.js",
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/richards.js ../v8runner/test/run.js",
+    "resolution":"0"
+  },
+  {
+    "alias":"richards",
+    "script":"../v8runner/test/base.js ../v8runner/test/splay.js ../v8runner/test/run.js",
+    "resolution":"0"
   }
 ]
