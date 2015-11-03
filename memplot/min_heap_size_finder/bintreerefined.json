@@ -1,0 +1,1 @@
+{"binary": "v8wrapper.bin", "tests": [{"alias": "splay", "resolution": "0", "heapSize": 204.0, "script": ["test/binarytree.js"]}], "refineSteps": 25, "location": "../../v8runner/"}

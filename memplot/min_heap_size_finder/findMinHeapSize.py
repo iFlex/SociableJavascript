@@ -4,6 +4,8 @@ import subprocess
 import staticPlot
 from datetime import datetime
 
+MAX_HEAP = 1024
+
 def run(heapSize,program,scripts):
     start_time = datetime.now()
 
@@ -17,6 +19,21 @@ def run(heapSize,program,scripts):
     end_time = datetime.now()
     duration = end_time - start_time
     return (True,duration.total_seconds());
+
+def findHeapCurve(program,script,minheap,increment):
+    global MAX_HEAP
+
+    increment = (MAX_HEAP - minheap) / increment;
+    report = [];
+
+    while minheap < MAX_HEAP:
+        r = run(minheap,program,script);
+
+        report.append([minheap,r[1]]);
+
+        minheap = math.floor(minheap+increment)
+
+    return report;
 
 def findMinimumHeapBinSrc(program,scripts):
     maxFailing = 0;
@@ -36,11 +53,15 @@ def findMinimumHeapBinSrc(program,scripts):
                 maxFailing = size;
             size = size + math.ceil(( lastWorkingUpperLimit - size ) / 2.0)
 
-    return report;
+    return (lastWorkingUpperLimit,report);
 
 #read config file and start measuring
+cfgfile = raw_input("cfg file:");
+if len(cfgfile) == 0:
+    cfgfile = "config.json"
+
 content = "";
-with open("config.json", 'r') as content_file:
+with open(cfgfile, 'r') as content_file:
 	content = content_file.read()
 cfg = json.loads(content);
 
@@ -48,25 +69,29 @@ results = []
 for test in cfg["tests"]:
     try:
         #add in the abs location of the scripts
+        scripts = ""
         for i in range(0,len(test["script"])):
-            test["script"][i] = cfg["location"] + test["script"][i];
-        #execute test pack
-        mhs = findMinimumHeapBinSrc(cfg["location"]+cfg["binary"],(" ").join(test["script"]));
-        results.append([mhs,test["alias"]]);
+            scripts += " " + cfg["location"] + test["script"][i];
 
-        #staticPlot.plot(mhs);
-        staticPlot.save(mhs,"measurements/"+test["alias"]+".png");
+        #execute test pack
+        if test.has_key('heapSize'):
+            mhs = findHeapCurve(cfg["location"]+cfg["binary"],scripts,test["heapSize"], 10);
+            staticPlot.save(mhs,"measurements/refined/"+test["alias"]+".png");
+        else:
+            mhs = findMinimumHeapBinSrc(cfg["location"]+cfg["binary"],scripts);
+            test["heapSize"] = mhs[0]
+            #staticPlot.plot(mhs[1]);
+            staticPlot.save(mhs[1],"measurements/"+test["alias"]+".png");
 
     except Exception as e:
         print "### Failed to process test"
         print test
         print "###:"+str(e)
 
-print "Generating final report"
-
+print "Save Report"
 #save the report
-f = file("measurements/report.json","w");
-f.write(json.dumps(results));
+f = file(cfgfile,"w");
+f.write(json.dumps(cfg));
 f.close();
 
 print "Done"

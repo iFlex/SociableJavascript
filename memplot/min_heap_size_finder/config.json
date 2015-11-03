@@ -4,6 +4,11 @@
   "tests":
 [
   {
+    "alias":"bintree",
+    "script":["test/binarytree.js"],
+    "resolution":"0"
+  },
+  {
     "alias":"splay",
     "script":["test/base.js","test/splay.js","test/run.js"],
     "resolution":"0"

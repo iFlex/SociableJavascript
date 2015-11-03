@@ -1,0 +1,12 @@
+{
+  "binary":"v8wrapper.bin",
+  "location":"../../v8runner/",
+  "tests":
+[
+  {
+    "alias":"bintree",
+    "script":["test/binarytree.js"],
+    "resolution":"0"
+  }
+]
+}

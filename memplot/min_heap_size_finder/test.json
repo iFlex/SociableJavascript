@@ -1,0 +1,1 @@
+{"binary": "v8wrapper.bin", "tests": [{"alias": "binary", "resolution": "0", "heapSize": 53.0, "script": ["test/base.js", "test/splay.js", "test/run.js"]}], "location": "../../v8runner/"}

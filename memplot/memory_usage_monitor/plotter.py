@@ -61,7 +61,7 @@ class Plotter:
 
     def save(self,fname):
         plt.savefig(fname);
-        #plt.close();
+        plt.show();
 
         self.time = 0;
         self.ymin = 0;

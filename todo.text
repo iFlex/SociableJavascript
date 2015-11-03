@@ -14,12 +14,23 @@ DONE >> 7) v8wrapper.js takes in list of required scripts
 DONE >> 8) Pithon live plotting class - need to make class instance it own the plot window or plot, allow clearing data and restarting plot
 
 
-1) Binary Tree Benchmark test
+DONE >> 1) Binary Tree Benchmark test
 2) Make benchmark that allocates a lot of memory and moves it
 3) Look at Gregor R. BenchmarkSuite
-4) Regenerate graphs with tiny semi-space
-5) 1-6 min heap size graph granularity 1/3
-6) Can the max heap size be resized dynamically
+DONE >> 4) Regenerate graphs with tiny semi-space
+DONE >> 5) 1-6 min heap size graph granularity 1/3
+DONE >> 6) Can the max heap size be resized dynamically
+* Apparent answer is yes - the heap grows on demand and stops when it reaches the hard limits,
+by changing the hard limits at runtime, the heap space should adapt
+
+both expand and shrink are supported
+- did not observe cohesion between max_old_space_ from Heap and PagedSpace's max_capacity
+so caution when expanding and shrinking -> all stat values need to be updated
+
+# Prediction: the ExpandSpace() and Shrink need to be called from a thread safe context.
+Explore the thread model ( Isolates are contexts that the threads enter and execute.
+If a thread exits an Isolate it's not guaranteed it will resume it, another may step in and continue the work )
+
 7) Check if Isolate objects can be suspended/resume
 
 Papers:
