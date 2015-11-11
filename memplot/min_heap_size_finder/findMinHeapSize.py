@@ -25,13 +25,14 @@ def findHeapCurve(program,script,minheap,increment):
 
     increment = (MAX_HEAP - minheap) / increment;
     report = [];
+    heap = minheap
 
-    while minheap < MAX_HEAP:
-        r = run(minheap,program,script);
+    while heap < MAX_HEAP:
+        r = run(heap,program,script);
 
-        report.append([minheap,r[1]]);
+        report.append([heap/minheap,r[1]]);
 
-        minheap = math.floor(minheap+increment)
+        heap = math.floor(heap+increment)
 
     return report;
 
@@ -48,9 +49,13 @@ def findMinimumHeapBinSrc(program,scripts):
         if rt[0] == True:
             lastWorkingUpperLimit = size;
             size = math.floor(size / 2)
+            
+            if size < maxFailing:
+                size = maxFailing + math.ceil((lastWorkingUpperLimit - maxFailing ) / 2.0)    
         else:
             if maxFailing < size:
                 maxFailing = size;
+
             size = size + math.ceil(( lastWorkingUpperLimit - size ) / 2.0)
 
     return (lastWorkingUpperLimit,report);
@@ -91,7 +96,7 @@ for test in cfg["tests"]:
 print "Save Report"
 #save the report
 f = file(cfgfile,"w");
-f.write(json.dumps(cfg));
+f.write(json.dumps(cfg,indent=4, sort_keys=True));
 f.close();
 
 print "Done"

@@ -35,7 +35,7 @@ def memwatch(program,resolution,alias):
 
     plt.save("measurements/"+alias+".png");
 
-def monitor_program(program,script,alias,resolution):
+def monitor_program(program,script,alias,resolution,heapSize):
     global keepMonitoring,plt;
     keepMonitoring = True
 
@@ -44,7 +44,7 @@ def monitor_program(program,script,alias,resolution):
     monThread.start();
 
 	#start_time = time.clock();
-    result = os.system(program+" 1024 "+script);
+    result = os.system(program+" "+str(heapSize)+" "+script);
 	#end_time = time.clock();
 
     keepMonitoring = False;
@@ -69,7 +69,12 @@ for test in cfg["tests"]:
         for i in range(0,len(test["script"])):
             test["script"][i] = cfg["location"] + test["script"][i];
         #execute test pack
-        monitor_program(cfg["location"]+cfg["binary"],(" ").join(test["script"]),test["alias"],test["resolution"]);
+        
+        heapSize = 1024;
+        if "heapSize" in test:
+            heapSize = test["heapSize"];
+        
+        monitor_program(cfg["location"]+cfg["binary"],(" ").join(test["script"]),test["alias"],test["resolution"],heapSize);
 
     except Exception as e:
         print "### Failed to process test"

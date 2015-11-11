@@ -16,6 +16,7 @@
 
 using namespace v8;
 
+void Print(const v8::FunctionCallbackInfo<v8::Value>& args);
 void ReportException(v8::Isolate* isolate, v8::TryCatch* handler);
 bool ExecuteString(v8::Isolate* isolate,
                    v8::Handle<v8::String> source,
@@ -26,6 +27,11 @@ bool ExecuteString(v8::Isolate* isolate,
 v8::Handle<v8::String> ReadFile(v8::Isolate*, const char*);
 void _load(char *, v8::Isolate*);
 void Load(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+// functions to expose to JS environment for testing
+void GetHeapAvailable(const v8::FunctionCallbackInfo<v8::Value>& args);
+void GetHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args);
+void SetMaxHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
  public:
@@ -90,6 +96,22 @@ int main(int argc, char* argv[]) {
     v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
     global->Set(v8::String::NewFromUtf8(isolate, "load"),
                 v8::FunctionTemplate::New(isolate, Load));
+                
+    // Bind the global 'print' function to the C++ Print callback.
+    global->Set(v8::String::NewFromUtf8(isolate, "print"),
+                v8::FunctionTemplate::New(isolate, Print));
+
+    // Bind a global '_getHeapSize' function to the C++ GetHeapSize callback.
+    global->Set(v8::String::NewFromUtf8(isolate, "_getHeapSize"),
+                v8::FunctionTemplate::New(isolate, GetHeapSize));
+
+    // Bind a global '_setMaxHeapSize' function to the C++ SetMaxHeapSize callback.
+    global->Set(v8::String::NewFromUtf8(isolate, "_setMaxHeapSize"),
+                v8::FunctionTemplate::New(isolate, SetMaxHeapSize));
+
+    // Bind a global '_setMaxHeapSize' function to the C++ SetMaxHeapSize callback.
+    global->Set(v8::String::NewFromUtf8(isolate, "_getHeapAvailable"),
+                v8::FunctionTemplate::New(isolate, GetHeapAvailable));
 
     // Create a new context.
     Local<Context> context = v8::Context::New(isolate, NULL, global);
@@ -112,13 +134,15 @@ int main(int argc, char* argv[]) {
       Local<Value> result = script->Run(context).ToLocalChecked();
     }
   }
-
+  //printf("HEAP SIZE:%lld\n",);
+  HeapStatistics hs;
+  isolate-> GetHeapStatistics(&hs);
   // Dispose the isolate and tear down V8.
   isolate->Dispose();
   V8::Dispose();
   V8::ShutdownPlatform();
   delete platform;
-  printf("\n#<:>#Done#<:>#\n");
+  printf("\n :) Done (: \n");
   return 0;
 }
 
@@ -251,4 +275,65 @@ void ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
       fprintf(stderr, "%s\n", stack_trace_string);
     }
   }
+}
+
+// The callback that is invoked by v8 whenever the JavaScript 'print'
+// function is called.  Prints its arguments on stdout separated by
+// spaces and ending with a newline.
+void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  bool first = true;
+  for (int i = 0; i < args.Length(); i++) {
+    v8::HandleScope handle_scope(args.GetIsolate());
+    if (first) {
+      first = false;
+    } else {
+      printf(" ");
+    }
+    v8::String::Utf8Value str(args[i]);
+    const char* cstr = ToCString(str);
+    printf("%s", cstr);
+  }
+  printf("\n");
+  fflush(stdout);
+}
+
+///TESTER FUNCTIONS
+//TODO: Expose the old_space_ expansion function and test how it works
+void GetHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args){
+  
+  Local<ObjectTemplate> result = ObjectTemplate::New(args.GetIsolate());
+  
+  /*HeapStatistics hs;
+  args.GetIsolate()->GetHeapStatistics(&hs);
+  unsigned sz = hs.total_heap_size();
+  */
+  v8::internal::Heap * heap = reinterpret_cast<v8::internal::Isolate*>(args.GetIsolate())->heap();
+  unsigned u = heap->old_space()->Capacity();
+
+  args.GetReturnValue().Set(v8::Integer::NewFromUnsigned(args.GetIsolate(), u));
+}
+
+void SetMaxHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args){
+  int size = 0;
+  if( args.Length() == 1 ){
+    //TODO: figure out how to pass integer
+  
+    v8::HandleScope handle_scope(args.GetIsolate());
+    v8::String::Utf8Value str(args[0]);
+    const char* cstr = ToCString(str);
+    
+    size = atoi(cstr);
+  }
+
+  printf("Setting heap maximum to:%d\n",size);
+  v8::internal::Heap * heap = reinterpret_cast<v8::internal::Isolate*>(args.GetIsolate())->heap();
+  //heap->old_space()->IncreaseCapacity(size); - nope
+  //heap->ConfigureHeap(1,size,0,0); - nope
+  heap->setMaxOldGenerationSize(size);
+}
+
+void GetHeapAvailable(const v8::FunctionCallbackInfo<v8::Value>& args){
+  v8::internal::Heap * heap = reinterpret_cast<v8::internal::Isolate*>(args.GetIsolate())->heap();
+  unsigned size = (heap->old_space()->Available());
+  args.GetReturnValue().Set(v8::Integer::NewFromUnsigned(args.GetIsolate(), size)); 
 }

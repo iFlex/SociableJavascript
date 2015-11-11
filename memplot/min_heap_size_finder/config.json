@@ -1,57 +1,94 @@
 {
-  "binary":"v8wrapper.bin",
-  "location":"../../v8runner/",
-  "tests":
-[
-  {
-    "alias":"bintree",
-    "script":["test/binarytree.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"splay",
-    "script":["test/base.js","test/splay.js","test/run.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"crypto",
-    "script":["test/base.js","test/crypto.js","test/run.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"benchmark",
-    "script":["test/benchmark.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"deltablue",
-    "script":["test/base.js","test/deltablue.js","test/run.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"earley-boyer",
-    "script":["test/base.js","test/earley-boyer.js","test/run.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"navier-stokes",
-    "script":["test/base.js","test/navier-stokes.js","test/run.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"raytrace",
-    "script":["test/base.js","test/raytrace.js","test/run.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"regexp",
-    "script":["test/base.js","test/regexp.js","test/run.js"],
-    "resolution":"0"
-  },
-  {
-    "alias":"richards",
-    "script":["test/base.js","test/richards.js","test/run.js"],
-    "resolution":"0"
-  }
-]
+    "binary": "v8wrapper.bin", 
+    "location": "../../v8runner/", 
+    "tests": [
+        {
+            "alias": "splay", 
+            "heapSize": 53.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/splay.js", 
+                "test/run.js"
+            ]
+        }, 
+        {
+            "alias": "crypto", 
+            "heapSize": 5.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/crypto.js", 
+                "test/run.js"
+            ]
+        }, 
+        {
+            "alias": "benchmark", 
+            "heapSize": 7.0, 
+            "resolution": "0", 
+            "script": [
+                "test/benchmark.js"
+            ]
+        }, 
+        {
+            "alias": "deltablue", 
+            "heapSize": 5.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/deltablue.js", 
+                "test/run.js"
+            ]
+        }, 
+        {
+            "alias": "earley-boyer", 
+            "heapSize": 7.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/earley-boyer.js", 
+                "test/run.js"
+            ]
+        }, 
+        {
+            "alias": "navier-stokes", 
+            "heapSize": 6.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/navier-stokes.js", 
+                "test/run.js"
+            ]
+        }, 
+        {
+            "alias": "raytrace", 
+            "heapSize": 5.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/raytrace.js", 
+                "test/run.js"
+            ]
+        }, 
+        {
+            "alias": "regexp", 
+            "heapSize": 9.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/regexp.js", 
+                "test/run.js"
+            ]
+        }, 
+        {
+            "alias": "richards", 
+            "heapSize": 5.0, 
+            "resolution": "0", 
+            "script": [
+                "test/base.js", 
+                "test/richards.js", 
+                "test/run.js"
+            ]
+        }
+    ]
 }

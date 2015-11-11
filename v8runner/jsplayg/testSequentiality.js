@@ -1,0 +1,2 @@
+_getHeapSize();
+print("exited");
