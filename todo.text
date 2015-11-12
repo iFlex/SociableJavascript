@@ -33,8 +33,9 @@ If a thread exits an Isolate it's not guaranteed it will resume it, another may 
 
 7) Check if Isolate objects can be suspended/resume
 
-WORKING ON IT >>8) Export the ExpandSpace method for the old_space_ to JS
-DONE>> 9) Export method for GetAvailableSpace of old_space_ to JS if not existing
+DONE >>8) Export the ExpandSpace method for the old_space_ to JS - Did not work
+DONE >> 8.1) Added a setMaxOldSpace in heap.h/cc that sets the max_old_generation_space hard limit
+DONE >> 9) Export method for GetAvailableSpace of old_space_ to JS if not existing
 10) Make benchmark that playes with memory and expands and shrinks
 11) try GDB with V8 to debug JS
 12) Look for debug funcitonality for JS
