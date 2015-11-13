@@ -6,6 +6,7 @@ would better suit the Google V8 JavaScript engine.
 
 Setup ( UNIX based machine required )
 
+0. sudo apt-get install python-matplotlib
 1. apt-get install git
 2. git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 3. export PATH=`pwd`/depot_tools:"$PATH"
