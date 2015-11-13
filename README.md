@@ -15,3 +15,10 @@ Setup ( UNIX based machine required )
 7. make native
 8. git clone https://github.com/iFlex/SociableJavascript.git
 9. copy snapshot_blob.bin and natives_blob.bin from ./v8/out/native/ to ./SociableJavascript/v8runner
+
+
+Programming Environment Setup:
+Sublime Text 3
+CTags + CTags plugin for Sublime
+ymcd autocompletion server
+YcmdCompletion Sublime plugin
