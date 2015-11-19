@@ -13,6 +13,8 @@
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 #include "src/api.h"
+///////
+//#include "src/libplatform/default-platform.h"
 
 using namespace v8;
 
@@ -74,6 +76,7 @@ int main(int argc, char* argv[]) {
   Platform* platform = platform::CreateDefaultPlatform();
   V8::InitializePlatform(platform);
   V8::Initialize();
+  //overlord(1500);
 
   int heapSize = atoi(argv[1]);
   printf("Running with heap size:%d\n",heapSize);
