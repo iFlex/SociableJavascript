@@ -44,10 +44,23 @@ DONE >> 13) V8 memory profiler reasearch
 14) Get the getter working properly - update in real time
 15) Get external C process comm. with V8 to change the heap size
 16) Read paper Heap Sizing
-17) Consider how DOS may occur & consider mitigation
+nonessential_17) Consider how DOS may occur & consider mitigation
+19) Take a look at build process of v8 to add new files to the build
+DONE>> 20) Devise a somple protocol for the v8 overlord server thread
+  some queries that are going to publicise the state of the v8 heap
+  some commands that are going to alter the size of the v8 heap
 
+DONE>> 21) Do a test on different machines
+HALF>> 22) Download Chrome codebase see where v8 is in the project
+PARTLY>> 23) Figure out how to get all isolates in a list to make an overall deamon
+*  
+
+
+Dissertation - >
+ * Tech overview of V8
+ * Mem management
+ * controlling heap size
 
 Questions for Google Empl:
 > What IDE and other tools they use to program V8
-> Is there a way to paralelize the make process - is it not configured to detect what was changed and only rebuild that?
-
+xCode & Eclipse
