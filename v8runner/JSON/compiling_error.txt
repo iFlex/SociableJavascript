@@ -1,0 +1,7 @@
+In file included from cli.cpp:3:
+In file included from ./protocol/command.h:4:
+In file included from ./protocol/action.h:5:
+./protocol/error.h:5:10: fatal error: 'json/json.h' file not found
+#include "json/json.h"
+         ^
+1 error generated.

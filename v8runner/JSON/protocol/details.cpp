@@ -7,11 +7,20 @@ namespace ControlProtocol {
   }
 
   void details::deserialise(Json::Value obj){
-    old_space  = obj["old_space"].asInt();
-    new_space  = obj["new_space"].asInt();
-    code_space = obj["code_space"].asInt();
-    heap       = obj["heap"].asInt();
-    path       = obj["path"].asString();
+    if(!obj["old_space"].empty())
+      old_space  = obj["old_space"].asInt();
+
+    if(!obj["new_space"].empty())
+      new_space  = obj["new_space"].asInt();
+
+    if(!obj["code_space"].empty())
+      code_space = obj["code_space"].asInt();
+
+    if(!obj["heap"].empty())
+      heap       = obj["heap"].asInt();
+
+    if(!obj["path"].empty())
+      path       = obj["path"].asString();
   }
 
   void details::serialise(Json::Value &obj){

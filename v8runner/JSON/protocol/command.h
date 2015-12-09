@@ -4,7 +4,7 @@
 #include "action.h"
 #include "details.h"
 #include "json/json.h"
-
+#include <string>
 namespace ControlProtocol {
 
   class command {
@@ -12,6 +12,7 @@ namespace ControlProtocol {
   private:
 
     int nrIsolates;
+    ControlProtocol::error overallError;
     ControlProtocol::action global;
     ControlProtocol::action * isolates;
 
@@ -19,7 +20,10 @@ namespace ControlProtocol {
   public:
     command( int );
     void setGlobalAction(ControlProtocol::action a);
+    ControlProtocol::action getGlobal();
+
     std::string serialise();
+    void deserialise(std::string info);
   };
 
 }

@@ -25,5 +25,18 @@ namespace ControlProtocol {
   bool error::exists(){
     return hasError;
   }
+  /////////////////////////////////////////////
+  void error::deserialise( Json::Value v) {
+    
+    if(!v["error"].empty()){
+      errorMessage = v["error"].asString();
+      hasError = true;
+    }
 
+  }
+
+  void error::serialise( Json::Value &v){
+    if(hasError)
+      v["error"] = errorMessage;
+  }
 }

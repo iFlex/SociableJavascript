@@ -23,8 +23,8 @@ namespace ControlProtocol{
     ControlProtocol::error getError();
     ControlProtocol::details * getDetails();
     /////////////////////
-    Json::Value toJson();
-    void fromJson(Json::Value v);
+    Json::Value serialise();
+    void deserialise(Json::Value v);
   };
 
 }

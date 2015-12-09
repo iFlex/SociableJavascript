@@ -1,5 +1,21 @@
-#include<stdio.h>
-#include<iostream>
+#include <string.h>
+#include <cstring>
+#include <unistd.h>
+#include <stdio.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <strings.h>
+#include <stdlib.h>
+#include <string>
+#include <time.h>
+#include <vector>
+
 #include "json/json.h"
 #include "protocol/command.h"
 
@@ -60,8 +76,12 @@ int main(){
   m->old_space = 123;
 
   cmd.setGlobalAction(request);
-
   std::cout<<"output:"<<cmd.serialise()<<endl;
+
+  ControlProtocol::command dcmd(5);
+  dcmd.deserialise(cmd.serialise());
+
+  std::cout<<"after deserialisation::"<<dcmd.serialise()<<endl;
   std::cout<<"Say something"<<std::endl;
   char c[100];
   scanf("%s",c);

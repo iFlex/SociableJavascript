@@ -2,7 +2,7 @@
 #define CP_ERROR
 
 #include<string>
-
+#include "json/json.h"
 namespace ControlProtocol {
 
   class error {
@@ -15,6 +15,9 @@ namespace ControlProtocol {
     std::string getMessage();
     void setMessage(std::string msg);
     bool exists();
+    //serialising
+    void serialise(Json::Value &v);
+    void deserialise(Json::Value v);
   };
 
 }

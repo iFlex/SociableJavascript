@@ -21,17 +21,26 @@ namespace ControlProtocol {
     return &detail;
   }
 
-  Json::Value action::toJson(){
+  Json::Value action::serialise(){
     Json::Value v;
     v["action"] = name;
 
-    detail.serialise(v);
+    if(error.exists())
+      error.serialise(v);
+    else
+      detail.serialise(v);
 
     return v;
   }
 
-  void action::fromJson(Json::Value v){
-    name = v["action"].asString();
-
+  void action::deserialise(Json::Value v){
+    if(v["action"].empty()){
+      error.setMessage("missing global action tag");
+    } else {
+      name = v["action"].asString();
+      error.deserialise(v);
+      if(!error.exists())
+        detail.deserialise(v);
+    }
   }
 }
