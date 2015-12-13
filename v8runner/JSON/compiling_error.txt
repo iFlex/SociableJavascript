@@ -1,7 +1,265 @@
 In file included from cli.cpp:3:
 In file included from ./protocol/command.h:4:
-In file included from ./protocol/action.h:5:
-./protocol/error.h:5:10: fatal error: 'json/json.h' file not found
-#include "json/json.h"
+In file included from protocol/action.h:5:
+In file included from protocol/error.h:5:
+In file included from include/json/json.h:9:
+In file included from include/json/autolink.h:9:
+include/json/config.h:129:9: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
+typedef long long int Int64;
+        ^
+include/json/config.h:130:18: warning: 'long long' is a C++11 extension [-Wc++11-long-long]
+typedef unsigned long long int UInt64;
+                 ^
+In file included from cli.cpp:3:
+In file included from ./protocol/command.h:4:
+In file included from protocol/action.h:5:
+In file included from protocol/error.h:5:
+In file included from include/json/json.h:10:
+include/json/value.h:43:24: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  ~Exception() throw() override;
+                       ^
+include/json/value.h:44:36: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  char const* what() const throw() override;
+                                   ^
+In file included from cli.cpp:3:
+In file included from ./protocol/command.h:4:
+In file included from protocol/action.h:5:
+In file included from protocol/error.h:5:
+In file included from include/json/json.h:11:
+include/json/reader.h:336:24: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  ~CharReaderBuilder() override;
+                       ^
+include/json/reader.h:338:37: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  CharReader* newCharReader() const override;
+                                    ^
+In file included from cli.cpp:3:
+In file included from ./protocol/command.h:4:
+In file included from protocol/action.h:5:
+In file included from protocol/error.h:5:
+In file included from include/json/json.h:12:
+include/json/writer.h:115:26: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  ~StreamWriterBuilder() override;
+                         ^
+include/json/writer.h:120:41: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  StreamWriter* newStreamWriter() const override;
+                                        ^
+include/json/writer.h:161:17: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  ~FastWriter() override {}
+                ^
+include/json/writer.h:175:40: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  std::string write(const Value& root) override;
+                                       ^
+include/json/writer.h:213:19: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  ~StyledWriter() override {}
+                  ^
+include/json/writer.h:220:40: warning: 'override' keyword is a C++11 extension [-Wc++11-extensions]
+  std::string write(const Value& root) override;
+                                       ^
+cli.cpp:13:17: error: reference to overloaded function could not be resolved; did you mean to call it?
+  cin>>address>>std::endl;
+                ^~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/ostream:1032:1: note: possible target for call
+endl(basic_ostream<_CharT, _Traits>& __os)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:216:20: note: candidate function not viable: no overload of 'endl' matching 'std::__1::basic_istream<char> &(*)(std::__1::basic_istream<char> &)' for 1st argument
+    basic_istream& operator>>(basic_istream& (*__pf)(basic_istream&));
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:217:20: note: candidate function not viable: no overload of 'endl' matching 'basic_ios<char_type, traits_type> &(*)(basic_ios<char_type, traits_type> &)' for 1st argument
+    basic_istream& operator>>(basic_ios<char_type, traits_type>&
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:219:20: note: candidate function not viable: no overload of 'endl' matching 'std::__1::ios_base &(*)(std::__1::ios_base &)' for 1st argument
+    basic_istream& operator>>(ios_base& (*__pf)(ios_base&));
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:220:20: note: candidate function not viable: no overload of 'endl' matching 'basic_streambuf<char_type, traits_type> *' for 1st argument
+    basic_istream& operator>>(basic_streambuf<char_type, traits_type>* __sb);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:221:20: note: candidate function not viable: no overload of 'endl' matching 'bool &' for 1st argument
+    basic_istream& operator>>(bool& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:222:20: note: candidate function not viable: no overload of 'endl' matching 'short &' for 1st argument
+    basic_istream& operator>>(short& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:223:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned short &' for 1st argument
+    basic_istream& operator>>(unsigned short& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:224:20: note: candidate function not viable: no overload of 'endl' matching 'int &' for 1st argument
+    basic_istream& operator>>(int& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:225:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned int &' for 1st argument
+    basic_istream& operator>>(unsigned int& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:226:20: note: candidate function not viable: no overload of 'endl' matching 'long &' for 1st argument
+    basic_istream& operator>>(long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:227:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned long &' for 1st argument
+    basic_istream& operator>>(unsigned long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:228:20: note: candidate function not viable: no overload of 'endl' matching 'long long &' for 1st argument
+    basic_istream& operator>>(long long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:229:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned long long &' for 1st argument
+    basic_istream& operator>>(unsigned long long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:230:20: note: candidate function not viable: no overload of 'endl' matching 'float &' for 1st argument
+    basic_istream& operator>>(float& __f);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:231:20: note: candidate function not viable: no overload of 'endl' matching 'double &' for 1st argument
+    basic_istream& operator>>(double& __f);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:232:20: note: candidate function not viable: no overload of 'endl' matching 'long double &' for 1st argument
+    basic_istream& operator>>(long double& __f);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:233:20: note: candidate function not viable: no overload of 'endl' matching 'void *&' for 1st argument
+    basic_istream& operator>>(void*& __p);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:756:1: note: candidate function [with _CharT = char, _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'char *' for 2nd argument
+operator>>(basic_istream<_CharT, _Traits>& __is, _CharT* __s)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:805:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'unsigned char *' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, unsigned char* __s)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:813:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'signed char *' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, signed char* __s)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:820:1: note: candidate function [with _CharT = char, _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'char &' for 2nd argument
+operator>>(basic_istream<_CharT, _Traits>& __is, _CharT& __c)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:848:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'unsigned char &' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, unsigned char& __c)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:856:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'signed char &' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, signed char& __c)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:1547:1: note: candidate template ignored: couldn't infer template argument '_Allocator'
+operator>>(basic_istream<_CharT, _Traits>& __is,
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:1679:1: note: candidate template ignored: couldn't infer template argument '_Size'
+operator>>(basic_istream<_CharT, _Traits>& __is, bitset<_Size>& __x)
+^
+cli.cpp:15:8: error: use of undeclared identifier 'port'
+  cin>>port>>std::endl;
+       ^
+cli.cpp:17:17: error: redefinition of 'portNo'
+  int listenFd, portNo;
+                ^
+cli.cpp:9:7: note: previous definition is here
+  int portNo;
+      ^
+cli.cpp:18:22: error: variable has incomplete type 'struct sockaddr_in'
+  struct sockaddr_in svrAdd;
+                     ^
+cli.cpp:18:10: note: forward declaration of 'sockaddr_in'
+  struct sockaddr_in svrAdd;
          ^
-1 error generated.
+cli.cpp:29:21: error: use of undeclared identifier 'AF_INET'
+  listenFd = socket(AF_INET, SOCK_STREAM, 0);
+                    ^
+cli.cpp:29:30: error: use of undeclared identifier 'SOCK_STREAM'
+  listenFd = socket(AF_INET, SOCK_STREAM, 0);
+                             ^
+cli.cpp:37:12: error: use of undeclared identifier 'gethostbyname'
+  server = gethostbyname(address);
+           ^
+cli.cpp:46:23: error: use of undeclared identifier 'AF_INET'
+  svrAdd.sin_family = AF_INET;
+                      ^
+cli.cpp:48:25: error: member access into incomplete type 'struct hostent'
+  bcopy((char *) server -> h_addr, (char *) &svrAdd.sin_addr.s_addr, server -> h_length);
+                        ^
+cli.cpp:19:10: note: forward declaration of 'hostent'
+  struct hostent *server;
+         ^
+cli.cpp:48:77: error: member access into incomplete type 'struct hostent'
+  bcopy((char *) server -> h_addr, (char *) &svrAdd.sin_addr.s_addr, server -> h_length);
+                                                                            ^
+cli.cpp:19:10: note: forward declaration of 'hostent'
+  struct hostent *server;
+         ^
+cli.cpp:64:17: error: reference to overloaded function could not be resolved; did you mean to call it?
+      cin>>cmd>>std::endl;
+                ^~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/ostream:1032:1: note: possible target for call
+endl(basic_ostream<_CharT, _Traits>& __os)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:216:20: note: candidate function not viable: no overload of 'endl' matching 'std::__1::basic_istream<char> &(*)(std::__1::basic_istream<char> &)' for 1st argument
+    basic_istream& operator>>(basic_istream& (*__pf)(basic_istream&));
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:217:20: note: candidate function not viable: no overload of 'endl' matching 'basic_ios<char_type, traits_type> &(*)(basic_ios<char_type, traits_type> &)' for 1st argument
+    basic_istream& operator>>(basic_ios<char_type, traits_type>&
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:219:20: note: candidate function not viable: no overload of 'endl' matching 'std::__1::ios_base &(*)(std::__1::ios_base &)' for 1st argument
+    basic_istream& operator>>(ios_base& (*__pf)(ios_base&));
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:220:20: note: candidate function not viable: no overload of 'endl' matching 'basic_streambuf<char_type, traits_type> *' for 1st argument
+    basic_istream& operator>>(basic_streambuf<char_type, traits_type>* __sb);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:221:20: note: candidate function not viable: no overload of 'endl' matching 'bool &' for 1st argument
+    basic_istream& operator>>(bool& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:222:20: note: candidate function not viable: no overload of 'endl' matching 'short &' for 1st argument
+    basic_istream& operator>>(short& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:223:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned short &' for 1st argument
+    basic_istream& operator>>(unsigned short& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:224:20: note: candidate function not viable: no overload of 'endl' matching 'int &' for 1st argument
+    basic_istream& operator>>(int& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:225:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned int &' for 1st argument
+    basic_istream& operator>>(unsigned int& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:226:20: note: candidate function not viable: no overload of 'endl' matching 'long &' for 1st argument
+    basic_istream& operator>>(long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:227:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned long &' for 1st argument
+    basic_istream& operator>>(unsigned long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:228:20: note: candidate function not viable: no overload of 'endl' matching 'long long &' for 1st argument
+    basic_istream& operator>>(long long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:229:20: note: candidate function not viable: no overload of 'endl' matching 'unsigned long long &' for 1st argument
+    basic_istream& operator>>(unsigned long long& __n);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:230:20: note: candidate function not viable: no overload of 'endl' matching 'float &' for 1st argument
+    basic_istream& operator>>(float& __f);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:231:20: note: candidate function not viable: no overload of 'endl' matching 'double &' for 1st argument
+    basic_istream& operator>>(double& __f);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:232:20: note: candidate function not viable: no overload of 'endl' matching 'long double &' for 1st argument
+    basic_istream& operator>>(long double& __f);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:233:20: note: candidate function not viable: no overload of 'endl' matching 'void *&' for 1st argument
+    basic_istream& operator>>(void*& __p);
+                   ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:756:1: note: candidate function [with _CharT = char, _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'char *' for 2nd argument
+operator>>(basic_istream<_CharT, _Traits>& __is, _CharT* __s)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:805:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'unsigned char *' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, unsigned char* __s)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:813:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'signed char *' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, signed char* __s)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:820:1: note: candidate function [with _CharT = char, _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'char &' for 2nd argument
+operator>>(basic_istream<_CharT, _Traits>& __is, _CharT& __c)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:848:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'unsigned char &' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, unsigned char& __c)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:856:1: note: candidate function [with _Traits = std::__1::char_traits<char>] not viable: no overload of 'endl' matching 'signed char &' for 2nd argument
+operator>>(basic_istream<char, _Traits>& __is, signed char& __c)
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:1547:1: note: candidate template ignored: couldn't infer template argument '_Allocator'
+operator>>(basic_istream<_CharT, _Traits>& __is,
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:1679:1: note: candidate template ignored: couldn't infer template argument '_Size'
+operator>>(basic_istream<_CharT, _Traits>& __is, bitset<_Size>& __x)
+^
+cli.cpp:66:23: error: use of undeclared identifier 's'
+      write(listenFd, s, strlen(s));
+                      ^
+cli.cpp:66:33: error: use of undeclared identifier 's'
+      write(listenFd, s, strlen(s));
+                                ^
+12 warnings and 13 errors generated.

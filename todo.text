@@ -31,19 +31,19 @@ so caution when expanding and shrinking -> all stat values need to be updated
 Explore the thread model ( Isolates are contexts that the threads enter and execute.
 If a thread exits an Isolate it's not guaranteed it will resume it, another may step in and continue the work )
 
-7) Check if Isolate objects can be suspended/resume
+7) Check if Isolate objects can be suspended/resumed
 
-DONE >>8) Export the ExpandSpace method for the old_space_ to JS - Did not work
+DONE >> 8) Export the ExpandSpace method for the old_space_ to JS - Did not work
 DONE >> 8.1) Added a setMaxOldSpace in heap.h/cc that sets the max_old_generation_space hard limit
 DONE >> 9) Export method for GetAvailableSpace of old_space_ to JS if not existing
-HALF >> 10) Make benchmark that playes with memory and expands and shrinks
-11) try GDB with V8 to debug JS
+HALF >> 10) Make benchmark that plays with memory and expands and shrinks
+NO_NEED >> 11) try GDB with V8 to debug JS
 DONE >> 12) Look for debug funcitonality for JS
 DONE >> 13) V8 memory profiler reasearch
 
 14) Get the getter working properly - update in real time
 15) Get external C process comm. with V8 to change the heap size
-16) Read paper Heap Sizing
+DONE >> 16) Read paper Heap Sizing
 nonessential_17) Consider how DOS may occur & consider mitigation
 19) Take a look at build process of v8 to add new files to the build
 DONE>> 20) Devise a somple protocol for the v8 overlord server thread
@@ -53,8 +53,16 @@ DONE>> 20) Devise a somple protocol for the v8 overlord server thread
 DONE>> 21) Do a test on different machines
 HALF>> 22) Download Chrome codebase see where v8 is in the project
 PARTLY>> 23) Figure out how to get all isolates in a list to make an overall deamon
-*  
+DONE >> 24) Figure out a way to measure Isolate throughput
+>> using GC prologue and epilogue hooks and timer
+DONE >> 25) Identify the start and end of GC process
+GCprologue hook
+27) Check what performance metrics V8 measures and get access to them
+28) Integrate JSON pretocol in Overlord + make CLI controller
+DONE>> 29) Draft progress report by next Monday
+26) Unit tests for good SE practices + dissertation talk
 
+Monday 12:30 - email the report before
 
 Dissertation - >
  * Tech overview of V8

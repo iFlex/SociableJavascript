@@ -2,15 +2,17 @@
 #include<iostream>
 #include "protocol/command.h"
 
+using namespace std;
+
 int main(){
-  str::string address;
+  std::string address;
   int portNo;
 
-  cout<<"V8 Overlor commander. CLI interface"<<endl;
-  cout<<"Input the V8's address"<<endl;
-  cin>>address>>endl;
-  cout<<"Port:"<<endl;
-  cin>>port>>endl;
+  cout<<"V8 Overlor commander. CLI interface"<<std::endl;
+  cout<<"Input the V8's address"<<std::endl;
+  cin>>address>>std::endl;
+  cout<<"Port:"<<std::endl;
+  cin>>port>>std::endl;
 
   int listenFd, portNo;
   struct sockaddr_in svrAdd;
@@ -18,17 +20,17 @@ int main(){
 
   if((portNo > 65535) || (portNo < 2000))
   {
-      cerr<<"Please enter port number between 2000 - 65535"<<endl;
+      cerr<<"Please enter port number between 2000 - 65535"<<std::endl;
       return 0;
   }
 
-  cout<<"Connecting to "<<address<<":"<<port<<endl;
+  cout<<"Connecting to "<<address<<":"<<portNo<<std::endl;
   //create client skt
   listenFd = socket(AF_INET, SOCK_STREAM, 0);
 
   if(listenFd < 0)
   {
-      cerr << "Cannot open socket" << endl;
+      cerr << "Cannot open socket" << std::endl;
       return 0;
   }
 
@@ -36,7 +38,7 @@ int main(){
 
   if(server == NULL)
   {
-      cerr << "Host does not exist" << endl;
+      cerr << "Host does not exist" << std::endl;
       return 0;
   }
 
@@ -51,7 +53,7 @@ int main(){
 
   if (checker < 0)
   {
-      cerr << "Cannot connect!" << endl;
+      cerr << "Cannot connect!" << std::endl;
       return 0;
   }
 
@@ -59,7 +61,7 @@ int main(){
   for(;;)
   {
       std::string cmd;
-      cin>>cmd>>endl;
+      cin>>cmd>>std::endl;
 
       write(listenFd, s, strlen(s));
   }
