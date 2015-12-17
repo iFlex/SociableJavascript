@@ -41,6 +41,30 @@
 #include "src/version.h"
 #include "src/vm-state-inl.h"
 
+//////////////////////temporary plotting mechanism
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+ofstream exec,gc;
+int opened = 0;
+
+void commit(int iexec, int igc){
+  if(!opened){
+    exec.open("__execution.txt");
+    gc.open("_collection.txt");
+    opened = 1;
+  }
+  exec<<iexec<<endl;
+  gc<<igc<<endl;
+}
+
+void closecommit(){
+  opened = 0;
+  exec.close();
+  gc.close();
+}
+///////////////////////////////////////////////////
 
 namespace v8 {
 namespace internal {
@@ -466,15 +490,18 @@ void Isolate::gcPrologue(GCType type, GCCallbackFlags flags){
   timePrologue = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>( timePrologue - timeEpilogue ).count();
   executionTimes[gcIndex] = (int) duration;
-  printf("<%d",executionTimes[gcIndex]);
+  
+  //printf("<%d",executionTimes[gcIndex]);
 }
 
 void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
   timeEpilogue = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>( timeEpilogue - timePrologue ).count();
   gcTimes[gcIndex] = (int) duration;
-  printf(" - %d>\n",gcTimes[gcIndex]);
-
+  
+  //printf(" - %d>\n",gcTimes[gcIndex]);
+  commit(executionTimes[gcIndex],gcTimes[gcIndex]);
+  
   gcIndex ++;
   gcIndex %= sampleLength;
 }
@@ -1868,6 +1895,9 @@ Isolate::Isolate(bool enable_serializer)
 
 void Isolate::TearDown() {
   TRACE_ISOLATE(tear_down);
+  
+  //temporary debug method added for plotting gc and exec time from file
+  closecommit();
 
   // Temporarily set this isolate as current so that various parts of
   // the isolate can access it in their destructors without having a
