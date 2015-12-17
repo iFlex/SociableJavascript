@@ -66,6 +66,13 @@ D8 - generates plottable information
 28) Integrate JSON pretocol in Overlord + make CLI controller
 DONE>> 29) Draft progress report by next Monday
 26) Unit tests for good SE practices + dissertation talk
+27) Use GC hooks to measure GC pauses and do data analysis. Pause time vs exec time, + distribution analysis with bins
+* use to decide how to supply metrics to the overlord thread
+max, median, avg
+28) 
+
+
+* Keep security in mind
 
 Monday 12:30 - email the report before
 
