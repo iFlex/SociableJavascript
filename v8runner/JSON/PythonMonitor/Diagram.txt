@@ -1,0 +1,44 @@
+Modules:
+
+Main Loop:
+
+  - Shared datastructure representing V8 Instances
+    - Command Parser
+      - Request Builder
+        - Serializer
+          - socket
+
+    - Response Parser
+      - socket
+        - Deserialiser
+          - Evaluator
+
+
+Grouping
+
+Entities:
+  Machine
+    V8 Process
+      Isolate
+
+Assumptions:
+  If a memory limit is not imposed per machine, the Main Memory Size will be used.
+  A memory hard limit can be set per Machine,V8 or Isolate.
+    Isolate: if a hard limit is set per Isolate, The algorithm will include it in the limitations imposed on the parent V8.
+    V8:      if a hard memory limit is set per Machine, algorithm will consider all isolates as part of the same V8
+    Machine: if memory limit is set per V8, an instance of the algorithm will run for that V8 without knowledge of the other V8s
+  An instance of the algorithm will run for each machine.
+
+
+Data Structures:
+
+  Machines:[{
+    max_heap:Integer
+    v8s:[{
+      max_heap:Integer
+      Isolates:[{
+        max_heap:Integer,
+        throughput:Number (percentage),
+      }, ...]
+    }, ...]
+  }, ...]
