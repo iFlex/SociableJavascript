@@ -76,7 +76,6 @@ int main(int argc, char* argv[]) {
   Platform* platform = platform::CreateDefaultPlatform();
   V8::InitializePlatform(platform);
   V8::Initialize();
-  //overlord(1500);
 
   int heapSize = atoi(argv[1]);
   printf("Running with heap size:%d\n",heapSize);
@@ -306,14 +305,14 @@ void GetHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args){
   
   Local<ObjectTemplate> result = ObjectTemplate::New(args.GetIsolate());
   
-  /*HeapStatistics hs;
+  HeapStatistics hs;
   args.GetIsolate()->GetHeapStatistics(&hs);
   unsigned sz = hs.total_heap_size();
-  */
+  /*
   v8::internal::Heap * heap = reinterpret_cast<v8::internal::Isolate*>(args.GetIsolate())->heap();
   unsigned u = heap->old_space()->Capacity();
-
-  args.GetReturnValue().Set(v8::Integer::NewFromUnsigned(args.GetIsolate(), u));
+*/
+  args.GetReturnValue().Set(v8::Integer::NewFromUnsigned(args.GetIsolate(), sz));
 }
 
 void SetMaxHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args){

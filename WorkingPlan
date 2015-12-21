@@ -15,9 +15,9 @@ DONE >> Commit measurements to file for preliminary plotting
 Generate Plots for multiple benchmarks and decide how to calculate overall
 GC & EXEC time
 -------------------------------------------------------------------------------
-getHeapSize() - gets current heap size 
-getThroughput() - gets current throughput
-setHeapSizeTarget() - sets the target heap size to which the system should try to scale
+DONE >> getHeapSize() - gets current heap size 
+DONE >> getThroughput() - gets current throughput
+HALF >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
 adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
 Integrate JSON protocol in V8 Overlord & successful build
 Build Python Monitor program

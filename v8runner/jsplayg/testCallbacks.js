@@ -15,16 +15,16 @@ try {
  var items = [];
 
  for( var i = 0; i < 1000; ++i ){
- 	print((i+1)*size+"B"+" av:"+_getHeapAvailable()+" hs:"+_getHeapSize());
+ 	//print((i+1)*size+"B"+" av:"+_getHeapAvailable()+" hs:"+_getHeapSize());
  	
  	if( i == 625 )
  		_setMaxHeapSize("800");
  	
 	//generate 1 MB
  	items.push(makeid(size));
- }
+	print(_getHeapSize()); 
+}
 
- print("Getting heap size:"+_getHeapSize());
 } catch(e){
   print(e);
 }
