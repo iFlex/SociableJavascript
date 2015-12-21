@@ -20,33 +20,26 @@
 using namespace v8;
 using namespace std;
 
-/*
-Handle<String> toJson(Handle<Value> object)
+//because Google engineers like to wrap their shit in weird ass classes with no eplanation
+char* toJson(Isolate *i, Local<Context> context, Local<Value> *object)
 {
-    HandleScope scope;
+    Handle<Object> global = (*context)->Global();
 
-    Handle<Context> context = Context::GetCurrent();
-    Handle<Object> global = context->Global();
+    Handle<Object> JSON = global->Get(String::NewFromUtf8(i,"JSON"))->ToObject();
+    Handle<Function> JSON_stringify = Handle<Function>::Cast(JSON->Get(String::NewFromUtf8(i,"stringify")));
+    Handle<Value> result = JSON_stringify->Call(JSON, 1, object);
+    
+    Local<String> r;
+    if(result->ToString(context).ToLocal(&r)){
+      char * cr = new char[r->Utf8Length()+1];
+      r->WriteUtf8 (cr);
 
-    Handle<Object> JSON = global->Get(String::New("JSON"))->ToObject();
-    Handle<Function> JSON_stringify = Handle<Function>::Cast(JSON->Get(String::New("stringify")));
+      return cr;
+    }
 
-    return scope.Close(JSON_stringify->Call(JSON, 1, object));
+    return 0;
 }
 
-Handle<Value> fromJson(Handle<Value> object)
-{
-    HandleScope scope;
-
-    Handle<Context> context = Context::GetCurrent();
-    Handle<Object> global = context->Global();
-
-    Handle<Object> JSON = global->Get(String::New("JSON"))->ToObject();
-    Handle<Function> JSON_stringify = Handle<Function>::Cast(JSON->Get(String::New("parse")));
-
-    return scope.Close(JSON_stringify->Call(JSON, 1, object));
-}
-*/
 
 class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
  public:
@@ -100,9 +93,20 @@ int main(int argc, char* argv[]) {
       printf("Is empty!\n");
     else {
       printf("Contains stuff\n");
-      //v8::Value r = (v8::Value)root;//reinterpret_cast<v8::Value>(root);
-      //root.Get(context,v8::String::New(isolate,"test"));
+      Local<v8::Object> obj;
+      bool success = root->ToObject(context).ToLocal(&obj);
+
+      v8::Local<v8::String> key = v8::String::NewFromUtf8(isolate,"test");
+      
+      Local<v8::Value> test;
+      success = obj->Get(context,key).ToLocal(&test);
+      
+      Local<v8::Number> nr;
+      success = test->ToNumber(context).ToLocal(&nr);
+
       printf("is: %d\n",root->IsObject());
+      printf("test:%f\n",nr->Value());
+      printf("OBJ2JSON:%s\n",toJson(isolate,context,&root));
     }
 
   }
