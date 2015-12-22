@@ -1,19 +1,7 @@
 #include "overlord.h"
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <netdb.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <iostream>
-#include <fstream>
-#include <strings.h>
-#include <stdlib.h>
-#include <string>
-#include <pthread.h>
 
 using namespace std;
+using namespace ControlProtocol;
 
 void * Overlord::serve(void * data){
     Overlord *overlord = (Overlord *) data;
@@ -65,6 +53,8 @@ void * Overlord::serve(void * data){
     char test[300];
     bzero(test, 301);
     bool loop = false;
+    
+    command cmd(1);
     while(!loop)
     {    
         bzero(test, 301);
@@ -73,10 +63,11 @@ void * Overlord::serve(void * data){
         read(connFd, test, 300);
         
         string tester (test);
-        cout << tester << endl;
-        
         if(tester == "exit")
             break;
+
+        cmd.deserialise(test);
+        
     }
     cout << "\nClosing thread and conn" << endl;
     close(connFd);
@@ -84,7 +75,11 @@ void * Overlord::serve(void * data){
     return 0;
 }
 
-Overlord::Overlord(int portNo) {
+Overlord::Overlord(int portNo, bool synchronous) {
     port = portNo;
-    pthread_create(&tid,NULL,Overlord::serve,(void *)this);
+
+    if(synchronous)
+        serve(NULL);
+    else
+        pthread_create(&tid,NULL,Overlord::serve,(void *)this);
 }

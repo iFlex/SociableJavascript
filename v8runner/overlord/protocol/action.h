@@ -1,15 +1,15 @@
 #ifndef CP_ACTION
 #define CP_ACTION
 
-#include<string>
 #include "error.h"
 #include "details.h"
-#include "json/json.h"
+#include "v8JSON.h"
+#include <string>
 
 namespace ControlProtocol{
 
   class action{
-    bool isGlobal;
+    v8JSON v8json;
     ControlProtocol::error  error;
     ControlProtocol::details detail;
 
@@ -23,8 +23,8 @@ namespace ControlProtocol{
     ControlProtocol::error getError();
     ControlProtocol::details * getDetails();
     /////////////////////
-    Json::Value serialise();
-    void deserialise(Json::Value v);
+    v8::Local<v8::Value> serialise();
+    void deserialise(v8::Local<v8::Value> v);
   };
 
 }

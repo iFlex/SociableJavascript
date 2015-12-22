@@ -43,7 +43,7 @@ v8::Local<v8::Value> v8JSON::decode(char *input) {
   return handle_scope.Escape(result);
 }
 
-double v8JSON::getNumber(v8::Local<v8::Value> &_root, char *_key){
+double v8JSON::getNumber(v8::Local<v8::Value> &_root, const char *_key){
 
   Isolate *isolate = Isolate::GetCurrent();
   v8::Locker locker{isolate};
@@ -73,7 +73,7 @@ double v8JSON::getNumber(v8::Local<v8::Value> &_root, char *_key){
   return result;
 }
 
-const char* v8JSON::getString(v8::Local<v8::Value> &_root, char *_key) {
+const char* v8JSON::getString(v8::Local<v8::Value> &_root, const char *_key) {
 	Isolate *isolate = Isolate::GetCurrent();
   v8::Locker locker{isolate};
   Local<Context> context = isolate->GetCurrentContext();
@@ -98,7 +98,7 @@ const char* v8JSON::getString(v8::Local<v8::Value> &_root, char *_key) {
   return cr;
 }
 
-v8::Local<v8::Value> v8JSON::getValue(v8::Local<v8::Value> &_root, char *_key) {
+v8::Local<v8::Value> v8JSON::getValue(v8::Local<v8::Value> &_root, const char *_key) {
   Isolate *isolate = Isolate::GetCurrent();
   v8::Locker locker{isolate};
   Local<Context> context = isolate->GetCurrentContext();
@@ -114,14 +114,52 @@ v8::Local<v8::Value> v8JSON::getValue(v8::Local<v8::Value> &_root, char *_key) {
   return handle_scope.Escape(inter);
 }
 //setters
-/*
-void setNumber(v8::Local<v8::Value> &root, char * key, double value) {
 
+void doSet(Local<Value> &_root, Handle<Value> &key, Handle<Value> &value, Local<Context> &context){
+  Local<Object> root;
+  if(_root->ToObject(context).ToLocal(&root))
+    root->Set(key,value);
 }
-void setString(v8::Local<v8::Value> &root, char * key, char *value) {
 
-}
-void setValue (v8::Local<v8::Value> &root, char * key, v8::Local<v8::Value> value){
+void v8JSON::setNumber(v8::Local<v8::Value> &root, const char * _key, double _value) {
+  Isolate *isolate = Isolate::GetCurrent();
+  v8::Locker locker{isolate};
+  Local<Context> context = isolate->GetCurrentContext();
 
+  Handle<String> ikey(String::NewFromUtf8(isolate,_key));
+  Handle<Value> key = v8::StringObject::New(ikey);
+
+  Handle<Value> value = v8::NumberObject::New(isolate,_value);
+
+  doSet(root,key,value,context);
 }
-*/
+
+void v8JSON::setString(v8::Local<v8::Value> &root, const char * _key, const char *_value) {
+  Isolate *isolate = Isolate::GetCurrent();
+  v8::Locker locker{isolate};
+  Local<Context> context = isolate->GetCurrentContext();
+
+  Handle<String> ikey(String::NewFromUtf8(isolate,_key));
+  Handle<Value> key = v8::StringObject::New(ikey);
+
+  Handle<String> ival(String::NewFromUtf8(isolate,_value));
+  Handle<Value> value = v8::StringObject::New(ival);
+
+  doSet(root,key,value,context);
+}
+
+void v8JSON::setValue (v8::Local<v8::Value> &root, const char *_key, v8::Local<v8::Value> value){
+  Isolate *isolate = Isolate::GetCurrent();
+  v8::Locker locker{isolate};
+  Local<Context> context = isolate->GetCurrentContext();
+
+  Handle<String> ikey(String::NewFromUtf8(isolate,_key));
+  Handle<Value> key = v8::StringObject::New(ikey);
+
+  doSet(root,key,value,context);
+}
+
+Local<Value> v8JSON::newEmptyObject(){
+  char d[3] = "{}";
+  return decode(d);
+}

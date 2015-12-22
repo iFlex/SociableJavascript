@@ -1,4 +1,6 @@
 #include "details.h"
+using namespace std;
+using namespace v8;
 
 namespace ControlProtocol {
   details::details(){
@@ -6,37 +8,21 @@ namespace ControlProtocol {
     path = "";
   }
 
-  void details::deserialise(Json::Value obj){
-    if(!obj["old_space"].empty())
-      old_space  = obj["old_space"].asInt();
-
-    if(!obj["new_space"].empty())
-      new_space  = obj["new_space"].asInt();
-
-    if(!obj["code_space"].empty())
-      code_space = obj["code_space"].asInt();
-
-    if(!obj["heap"].empty())
-      heap       = obj["heap"].asInt();
-
-    if(!obj["path"].empty())
-      path       = obj["path"].asString();
+  void details::deserialise(v8::Local<v8::Value> obj){
+    old_space  = (int) v8json.getNumber(obj,"old_space");
+    new_space  = (int) v8json.getNumber(obj,"new_space");
+    code_space = (int) v8json.getNumber(obj,"code_space");
+    heap       = (int) v8json.getNumber(obj,"heap");
+    
+    string p(v8json.getString(obj,"path"));
+    path = p;
   }
 
-  void details::serialise(Json::Value &obj){
-    if(old_space)
-      obj["old_space"] = old_space;
-
-    if(new_space)
-      obj["new_space"] = new_space;
-
-    if(code_space)
-      obj["code_space"] = code_space;
-
-    if(heap)
-      obj["heap"] = heap;
-
-    if(path.length())
-      obj["path"] = path;
+  void details::serialise(v8::Local<v8::Value> &obj){
+    v8json.setNumber(obj,"old_space",(double)old_space);
+    v8json.setNumber(obj,"new_space",(double)new_space);
+    v8json.setNumber(obj,"code_space",(double)code_space);
+    v8json.setNumber(obj,"heap",(double)heap);
+    v8json.setString(obj,"path",path.c_str());
   }
 }

@@ -11,11 +11,12 @@
 #include <stdlib.h>
 #include <string>
 #include <pthread.h>
+#include "protocol/command.h"
 
 class Overlord {
 	pthread_t tid;
 	int port;
 public:
-	Overlord(int);
+	Overlord(int,bool);
 	static void * serve(void *);
 };

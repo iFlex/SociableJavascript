@@ -11,8 +11,9 @@
 #include <assert.h>
 #include <iostream>
 
-#include "overlord/overlord.h"
+//#include "overlord/overlord.h"
 #include "overlord/protocol/v8JSON.h"
+#include "overlord/protocol/command.h"
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 #include "src/api.h"
@@ -32,11 +33,26 @@ void * concur(void * data){
   cout<<"Parsing:"<<c<<endl;
   Local<Value> root = v8j.decode(c);
   cout<<"Done"<<endl;
-  /*cout<<"test:"<<v8j.getNumber(root,"test")<<endl;
-  cout<<"str:"<<v8j.getString(root,"str")<<endl;
-  Local<Value> inner = v8j.getValue(root,"inner");
-  cout<<"inner::nr:"<<v8j.getNumber(inner,"nr")<<endl;
-  cout<<"encoding test:"<<v8j.encode(&root)<<endl;*/
+  if(root->IsNull())
+    cout<<"BAD FORMAT";
+  else {
+    cout<<"test:"<<v8j.getNumber(root,"test")<<endl;
+    cout<<"str:"<<v8j.getString(root,"str")<<endl;
+    Local<Value> inner = v8j.getValue(root,"inner");
+    cout<<"inner::nr:"<<v8j.getNumber(inner,"nr")<<endl;
+    cout<<"encoding test:"<<v8j.encode(&root)<<endl;
+  }
+
+  cout<<"Custom encoding test"<<endl;
+
+  Local<Value> r = v8j.newEmptyObject();
+  v8j.setString(r,"alice","In wonderland");
+  v8j.setNumber(r,"number",123.1);
+  Local<Value> inr = v8j.newEmptyObject();
+  v8j.setString(inr,"doctored","did doctor this");
+  v8j.setValue(r,"inner",inr);
+  cout<<"Added values to new JSON"<<endl;
+  cout<<"JSON:"<<v8j.encode(&r)<<endl;
 }
 
 class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
@@ -74,6 +90,22 @@ int main(int argc, char* argv[]) {
     // Enter the context for compiling and running the hello world script.
     Context::Scope context_scope(context);
     concur(NULL);
+
+    //Overlord overlord(14999,true);
+    
+    ControlProtocol::command cmd(1);//just one isolate
+    ControlProtocol::action request;
+    request.name = "set_old_space";
+    ControlProtocol::details * m = request.getDetails();
+    m->old_space = 123;
+    cmd.setGlobalAction(request);
+    cout<<"built request"<<endl;
+    std::cout<<"output:"<<cmd.serialise()<<endl;
+
+    //ControlProtocol::command dcmd(5);
+    //dcmd.deserialise(cmd.serialise());
+
+    //std::cout<<"after deserialisation::"<<dcmd.serialise()<<endl;
     /*cout<<"Isolate ready for concurrency"<<endl;
     pthread_t tid;
     pthread_create(&tid,NULL,concur,NULL);

@@ -1,5 +1,7 @@
 #include "command.h"
 #include "action.h"
+using namespace std;
+using namespace v8;
 
 namespace ControlProtocol {
 
@@ -16,35 +18,27 @@ namespace ControlProtocol {
       global = a;
   }
 
-  std::string command::serialise() {
-    Json::Value root;
-    Json::Value * isolates;
+  char * command::serialise() {
+    v8::Local<v8::Value> root = v8json.newEmptyObject();
+    v8json.setValue(root,"global",global.serialise());
 
-    root["global"] = global.serialise();
-
-    if(this->nrIsolates > 0) {
-      isolates = new Json::Value[this->nrIsolates];
+    /*if(this->nrIsolates > 0) {
+      isolates = new v8::Local<v8::Value>[this->nrIsolates];
       for( int i = 0; i < this->nrIsolates; ++i )
           isolates[i] = this->isolates[i].serialise();
       root["isolates"] = isolates;
-    }
+    }*/
 
-    Json::StyledWriter writer;
-    return writer.write( root );
+    return v8json.encode(&root);
   }
 
-  void command::deserialise(std::string str){
-    Json::Value root;   // will contains the root value after parsing.
-    Json::Reader reader;
+  void command::deserialise(char *info){
+    Local<Value> root = v8json.decode(info);
 
-    //bool success = reader.parse(str,str+strlen(str),root);
-    bool success = reader.parse(str,root);
-
-    if(success){
-      if(!root["global"].empty())
-        global.deserialise(root["global"]);
-    } else {
+    if(root->IsNull()){
       overallError.setMessage("Bad protocol formatting");
+    } else {
+      global.deserialise(v8json.getValue(root,"global"));
     }
   }
 }

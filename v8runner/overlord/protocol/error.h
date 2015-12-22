@@ -1,11 +1,16 @@
 #ifndef CP_ERROR
 #define CP_ERROR
 
-#include<string>
-#include "json/json.h"
-namespace ControlProtocol {
+#include "include/libplatform/libplatform.h"
+#include "include/v8.h"
+#include "src/api.h"
+#include "v8JSON.h"
 
+#include<string>
+
+namespace ControlProtocol {
   class error {
+    v8JSON v8json;
     bool hasError;
     std::string errorMessage;
     //methods
@@ -16,8 +21,8 @@ namespace ControlProtocol {
     void setMessage(std::string msg);
     bool exists();
     //serialising
-    void serialise(Json::Value &v);
-    void deserialise(Json::Value v);
+    void serialise(v8::Local<v8::Value> &v);
+    void deserialise(v8::Local<v8::Value> v);
   };
 
 }

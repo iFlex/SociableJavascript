@@ -1,4 +1,12 @@
 #include "action.h"
+#include "error.h"
+#include "details.h"
+#include "command.h"
+#include "v8JSON.h"
+#include <string>
+
+using namespace std;
+using namespace v8;
 
 namespace ControlProtocol {
   action::action() {
@@ -21,10 +29,10 @@ namespace ControlProtocol {
     return &detail;
   }
 
-  Json::Value action::serialise(){
-    Json::Value v;
-    v["action"] = name;
-
+  Local<Value> action::serialise(){
+    Local<Value> v = v8json.newEmptyObject();
+    v8json.setString(v,"action",name.c_str());
+    
     if(error.exists())
       error.serialise(v);
     else
@@ -33,11 +41,13 @@ namespace ControlProtocol {
     return v;
   }
 
-  void action::deserialise(Json::Value v){
-    if(v["action"].empty()){
+  void action::deserialise(Local<Value> v){
+    string str(v8json.getString(v,"action"));
+
+    if(str.size() == 0){
       error.setMessage("missing global action tag");
     } else {
-      name = v["action"].asString();
+      name = str;
       error.deserialise(v);
       if(!error.exists())
         detail.deserialise(v);

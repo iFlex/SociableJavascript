@@ -1,16 +1,20 @@
 #ifndef CP_CMD
 #define CP_CMD
 
+#include "include/libplatform/libplatform.h"
+#include "include/v8.h"
+#include "src/api.h"
+#include "v8JSON.h"
+
 #include "action.h"
 #include "details.h"
-#include "json/json.h"
 #include <string>
-namespace ControlProtocol {
 
+namespace ControlProtocol {
   class command {
 
   private:
-
+    v8JSON v8json;
     int nrIsolates;
     ControlProtocol::error overallError;
     ControlProtocol::action global;
@@ -22,8 +26,8 @@ namespace ControlProtocol {
     void setGlobalAction(ControlProtocol::action a);
     ControlProtocol::action getGlobal();
 
-    std::string serialise();
-    void deserialise(std::string info);
+    char * serialise();
+    void deserialise(char *info);
   };
 
 }
