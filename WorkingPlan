@@ -19,7 +19,23 @@ DONE >> getHeapSize() - gets current heap size
 DONE >> getThroughput() - gets current throughput
 HALF >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
 adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
-Integrate JSON protocol in V8 Overlord & successful build
+
+V8 JSON class:
+DONE >> decode
+DONE >> encode
+DONE >>	getNumber
+DONE >>	getString
+DONE >>	getValue
+	setNumber
+	setString
+	setValue
+	Integrate Locker for safe execution
+	User a separate fresh context so that running scripts are not impacted
+Integrate v8JSON in Protocol
+Integrate v8JSON and Protocol in Overlord
+Integrate v8JSON & Protocol in build process
+
+
 Build Python Monitor program
 -------------------------------------------------------------------------------
 Test connectivity between Monitor and Overlord

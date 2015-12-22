@@ -1,11 +1,11 @@
-inclink=-I include/
-lnk=-I include/ -L libs/ -l json
+inclink=-I include/ -std=c++0x
+lnk=-L./libs/ -ljson
 pfldr=protocol/
 
 all: main
 
 main: main.o details.o action.o error.o command.o
-	g++ main.o details.o action.o command.o error.o $(lnk) -o main
+	g++ -o main main.o details.o action.o command.o error.o $(lnk)
 
 main.o: main.cpp
 	g++ -c main.cpp $(inclink)
