@@ -78,8 +78,14 @@ int main (int argc, char* argv[])
         //cin.ignore(256, '\n');
         cout << "Enter stuff: ";
         bzero(s, 2000);
-        cin.getline(s, 300);
+        cin.getline(s, 1450);
         cout<< "sending "<<strlen(s)<< " chars"<<endl;
         write(listenFd, s, 1450);
+
+        bzero(s, 1450);
+        if(read(listenFd, s, strlen(s)) == -1)
+            break;
+            
+        cout<<"Overlord:"<<s<<endl;
     }
 }

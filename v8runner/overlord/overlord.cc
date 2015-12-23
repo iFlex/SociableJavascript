@@ -35,8 +35,9 @@ void * Overlord::serve(void * data){
     listen(listenFd, 5);
     
     len = sizeof(clntAdd);
-    
+        
     cout << "Overlord::Listening on port "<< portNo << endl;
+    command resp(1);
     while(true){
         //this is where client connects. svr will hang in this mode until client conn
         connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
@@ -50,15 +51,12 @@ void * Overlord::serve(void * data){
         
         cout << "Overlord:: New controller connected - Thread No: " << pthread_self() << endl;
         
-        char test[300];
-        bzero(test, 301);
+        char test[2000];
         bool loop = false;
-
-        command resp(1);
         while(!loop)
         {    
-            bzero(test, 301);
-            if(read(connFd, test, 300) == -1)
+            bzero(test, 2000);
+            if(read(connFd, test, 1450) == -1)
                 break;
             
             string tester (test);
@@ -67,10 +65,12 @@ void * Overlord::serve(void * data){
                 break;
 
             command cmd(test);
-            handleRequest(cmd,resp);
+            Overlord::handleRequest(cmd,resp);
 
             char *data = resp.serialise();
             write(connFd, data, strlen(data));
+            bzero(test,2000);
+            write(connFd, test, 1450 - strlen(data));
             delete data;
         }
     }
@@ -84,7 +84,7 @@ Overlord::Overlord(int portNo, bool synchronous) {
     port = portNo;
 
     if(synchronous)
-        Overlord::serve((void *)&port);
+        Overlord::serve((void *)(&port));
     else
         pthread_create(&tid,NULL,Overlord::serve,(void *)&port);
 }
@@ -100,14 +100,20 @@ void handleGlobalReuqests(command &response, string command){
     if(command == "status"){
         v8::internal::Isolate *isolate;
         action *actions = response.getIsolateActions();
+        if(actions == NULL)
+            return;
+
         details *detail;
-        
         int nrIsolates = response.getNrIsolates();
         for( int i = 0; i < nrIsolates ; ++i ){
-            isolate = v8::internal::Isolate::getIsolate(i);
-            detail = actions[i].getDetails();
-            detail->heap = isolate->getHeapSize();
-            detail->throughput = isolate->getThroughput();
+            isolate = v8::internal::Isolate::getIsolate(i+1);
+            if(isolate != NULL) {
+                detail = actions[i].getDetails();
+                detail->heap = isolate->getHeapSize();
+                detail->throughput = isolate->getThroughput();
+            } else {
+                cout<< "Isolate "<<(i+1)<<" is nonexistent"<<endl;
+            }
         }
     }
 }
@@ -132,7 +138,7 @@ void Overlord::handleRequest(command &cmd, command &response){
         cout<<"Nr isolates:"<<cmd.getNrIsolates()<<endl;
         int len = cmd.getNrIsolates();
         action * actions = cmd.getIsolateActions();
-        for( int i=0; i<cmd.getNrIsolates(); ++i )
+        for( int i = 0; i < cmd.getNrIsolates(); ++i )
             handleIsolateRequest(i,actions[i]);
     }
 }

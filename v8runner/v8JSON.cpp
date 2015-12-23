@@ -35,7 +35,7 @@ void * concur(void * data){
   cout<<"Done"<<endl;
   if(*root == NULL)
     cout<<"BAD FORMAT";
-  else {
+  /*else {
     cout<<"test:"<<v8j.getNumber(root,"test")<<endl;
     cout<<"str:"<<v8j.getString(root,"str")<<endl;
     Local<Value> inner = v8j.getValue(root,"inner");
@@ -54,7 +54,7 @@ void * concur(void * data){
   v8j.setString(inr,"doctored","did doctor this");
   v8j.setValue(r,"inner",inr);
   cout<<"Added values to new JSON"<<endl;
-  cout<<"JSON:"<<v8j.encode(&r)<<endl;
+  cout<<"JSON:"<<v8j.encode(&r)<<endl;*/
 }
 
 class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
@@ -92,10 +92,11 @@ int main(int argc, char* argv[]) {
     // Enter the context for compiling and running the hello world script.
     Context::Scope context_scope(context);
     concur(NULL);
-
-    std::cout<<"Starting new Overlord"<<endl;
-    //Overlord overlord(15004,true);
     
+
+    //std::cout<<"Starting new Overlord"<<endl;
+    //Overlord overlord(15009,true);
+    /*
     std::cout<<"DONE";
     ControlProtocol::command resp(1);  
     while(true){
@@ -108,9 +109,12 @@ int main(int argc, char* argv[]) {
       Overlord::handleRequest(cmd,resp);
       cout<<"Response:"<<resp.serialise()<<endl;
     }
-
+    */
   }
-
+  //pthread_t t;
+  //pthread_create(&t,NULL,concur,NULL);
+  //while(true);
+  concur(NULL);
   // Dispose the isolate and tear down V8.
   isolate->Dispose();
   V8::Dispose();
