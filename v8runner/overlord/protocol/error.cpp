@@ -38,6 +38,9 @@ namespace ControlProtocol {
   }
 
   void error::serialise( v8::Local<v8::Value> &v){
+    if(*v == NULL)
+      return;
+    
     if(hasError)
       v8json.setString(v,"error",errorMessage.c_str());
   }

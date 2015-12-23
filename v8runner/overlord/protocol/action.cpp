@@ -10,7 +10,6 @@ using namespace v8;
 
 namespace ControlProtocol {
   action::action() {
-
   }
 
   bool action::hasError(){
@@ -42,8 +41,12 @@ namespace ControlProtocol {
   }
 
   void action::deserialise(Local<Value> v){
-    string str(v8json.getString(v,"action"));
+    if(*v == NULL){
+      error.setMessage("absent");
+      return;
+    }
 
+    string str(v8json.getString(v,"action"));
     if(str.size() == 0){
       error.setMessage("missing global action tag");
     } else {

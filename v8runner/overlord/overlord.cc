@@ -4,8 +4,7 @@ using namespace std;
 using namespace ControlProtocol;
 
 void * Overlord::serve(void * data){
-    Overlord *overlord = (Overlord *) data;
-    
+    int portNo = *((int *)data);
     int connFd,listenFd;
     socklen_t len; //store size of the address
   
@@ -24,7 +23,7 @@ void * Overlord::serve(void * data){
     
     svrAdd.sin_family = AF_INET;
     svrAdd.sin_addr.s_addr = INADDR_ANY;
-    svrAdd.sin_port = htons(overlord->port);
+    svrAdd.sin_port = htons(portNo);
     
     //bind socket
     if(bind(listenFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0)
@@ -37,37 +36,43 @@ void * Overlord::serve(void * data){
     
     len = sizeof(clntAdd);
     
-    cout << "Overlord::Listening on port "<< overlord->port << endl;
-    //this is where client connects. svr will hang in this mode until client conn
-    connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
+    cout << "Overlord::Listening on port "<< portNo << endl;
+    while(true){
+        //this is where client connects. svr will hang in this mode until client conn
+        connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
 
-    if (connFd < 0) {
-      cerr << "Overlord::Cannot accept connection" << endl;
-      return 0;
-    } else {
-      cout << "Overlord::Connection successful" << endl;
-    }
-    
-    cout << "Overlord:: New controller connected - Thread No: " << pthread_self() << endl;
-    
-    char test[300];
-    bzero(test, 301);
-    bool loop = false;
-    
-    command cmd(1);
-    while(!loop)
-    {    
+        if (connFd < 0) {
+          cerr << "Overlord::Cannot accept connection" << endl;
+          return 0;
+        } else {
+          cout << "Overlord::Connection successful" << endl;
+        }
+        
+        cout << "Overlord:: New controller connected - Thread No: " << pthread_self() << endl;
+        
+        char test[300];
         bzero(test, 301);
-        
-        
-        read(connFd, test, 300);
-        
-        string tester (test);
-        if(tester == "exit")
-            break;
+        bool loop = false;
 
-        cmd.deserialise(test);
-        
+        command resp(1);
+        while(!loop)
+        {    
+            bzero(test, 301);
+            if(read(connFd, test, 300) == -1)
+                break;
+            
+            string tester (test);
+            cout<<"Processing("<<strlen(test)<<")"<<tester<<endl;
+            if(tester == "exit")
+                break;
+
+            command cmd(test);
+            handleRequest(cmd,resp);
+
+            char *data = resp.serialise();
+            write(connFd, data, strlen(data));
+            delete data;
+        }
     }
     cout << "\nClosing thread and conn" << endl;
     close(connFd);
@@ -79,7 +84,55 @@ Overlord::Overlord(int portNo, bool synchronous) {
     port = portNo;
 
     if(synchronous)
-        serve(NULL);
+        Overlord::serve((void *)&port);
     else
-        pthread_create(&tid,NULL,Overlord::serve,(void *)this);
+        pthread_create(&tid,NULL,Overlord::serve,(void *)&port);
+}
+
+void handleIsolateRequest(int i, action a){
+    v8::internal::Isolate *isl = v8::internal::Isolate::getIsolate(i);
+    if( isl == NULL )//no such isolate
+        return;
+
+}
+
+void handleGlobalReuqests(command &response, string command){
+    if(command == "status"){
+        v8::internal::Isolate *isolate;
+        action *actions = response.getIsolateActions();
+        details *detail;
+        
+        int nrIsolates = response.getNrIsolates();
+        for( int i = 0; i < nrIsolates ; ++i ){
+            isolate = v8::internal::Isolate::getIsolate(i);
+            detail = actions[i].getDetails();
+            detail->heap = isolate->getHeapSize();
+            detail->throughput = isolate->getThroughput();
+        }
+    }
+}
+
+void Overlord::handleRequest(command &cmd, command &response){
+    int nrIsolates = v8::internal::Isolate::getActiveIsolatesCount();
+    cout<<"Active isolates:"<<nrIsolates<<endl;
+    response.setNrIsolates(nrIsolates);
+    action *actions = new action[nrIsolates];
+    response.setIsolateActions(actions);
+
+    if(cmd.getError().exists()) {//there's an error or there is no global action
+        cout<<"Error:"<<cmd.getError().getMessage()<<endl;
+    } else {
+        if(cmd.getGlobal().getError().exists())
+            cout<<"Global action error:"<<cmd.getGlobal().getError().getMessage()<<endl;
+        else {
+            cout<<"Global Command "<<cmd.getGlobal().name<<endl;
+            handleGlobalReuqests(response,cmd.getGlobal().name);    
+        }
+
+        cout<<"Nr isolates:"<<cmd.getNrIsolates()<<endl;
+        int len = cmd.getNrIsolates();
+        action * actions = cmd.getIsolateActions();
+        for( int i=0; i<cmd.getNrIsolates(); ++i )
+            handleIsolateRequest(i,actions[i]);
+    }
 }

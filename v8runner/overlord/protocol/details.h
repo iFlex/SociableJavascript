@@ -14,6 +14,7 @@ namespace ControlProtocol {
   public:
     //properties
     int old_space,new_space,code_space,heap;
+    double throughput;
     std::string path;
     //methods
     details();

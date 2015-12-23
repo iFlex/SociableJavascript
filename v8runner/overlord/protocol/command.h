@@ -10,6 +10,7 @@
 #include "details.h"
 #include <string>
 
+//WARANING: program seems to crash if two command objects are in the same scope. Could have to do with Local<Value>
 namespace ControlProtocol {
   class command {
 
@@ -18,16 +19,24 @@ namespace ControlProtocol {
     int nrIsolates;
     ControlProtocol::error overallError;
     ControlProtocol::action global;
-    ControlProtocol::action * isolates;
+    ControlProtocol::action *isolates;
 
   //methods
   public:
-    command( int );
+    void setNrIsolates(int);
+    void setIsolateActions(ControlProtocol::action*);
     void setGlobalAction(ControlProtocol::action a);
-    ControlProtocol::action getGlobal();
+    
+    int getNrIsolates(){ return nrIsolates; }
+    ControlProtocol::action * getIsolateActions(){ return isolates;} 
+    ControlProtocol::action getGlobal() { return global; }
+    ControlProtocol::error getError(){ return overallError; }
 
     char * serialise();
     void deserialise(char *info);
+
+    command(int);
+    command(char *);
   };
 
 }

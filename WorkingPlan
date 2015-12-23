@@ -32,16 +32,15 @@ DONE >>	setValue
 HALF >>	Integrate Locker for safe execution
 Use a separate fresh context so that running scripts are not impacted
 
-Implement slight change in protocol
+DONE >> Implement protocol change to accomodate the limitations of v8JSON
 DONE >> Integrate v8JSON in Protocol
 DONE >> Integrate v8JSON & Protocol in build process
 
-Store a list of active isolates using STL Maps
-onCreation - addToList
-onTeardown - removeFromList
-
-Integrate v8JSON and Protocol in Overlord
-
+DONE >> Store a list of active isolates using STL Maps
+DONE >> onCreation - addToList
+DONE >> onTeardown - removeFromList
+TEST >> Integrate v8JSON and Protocol in Overlord
+Implement protocol actions in overlord
 
 Build Python Monitor program
 -------------------------------------------------------------------------------

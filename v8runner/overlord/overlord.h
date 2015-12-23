@@ -19,4 +19,5 @@ class Overlord {
 public:
 	Overlord(int,bool);
 	static void * serve(void *);
+	static void handleRequest(ControlProtocol::command &, ControlProtocol::command &);
 };

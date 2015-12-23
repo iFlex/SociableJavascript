@@ -73,13 +73,13 @@ int main (int argc, char* argv[])
     //send stuff to server
     for(;;)
     {
-        char s[300];
+        char s[2000];
         //cin.clear();
         //cin.ignore(256, '\n');
         cout << "Enter stuff: ";
-        bzero(s, 301);
+        bzero(s, 2000);
         cin.getline(s, 300);
-        
-        write(listenFd, s, strlen(s));
+        cout<< "sending "<<strlen(s)<< " chars"<<endl;
+        write(listenFd, s, 1450);
     }
 }
