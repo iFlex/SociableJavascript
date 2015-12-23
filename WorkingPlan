@@ -15,7 +15,7 @@ DONE >> Commit measurements to file for preliminary plotting
 Generate Plots for multiple benchmarks and decide how to calculate overall
 GC & EXEC time
 -------------------------------------------------------------------------------
-DONE >> getHeapSize() - gets current heap size 
+DONE >> getHeapSize() - gets current heap size
 DONE >> getThroughput() - gets current throughput
 HALF >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
 adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
@@ -35,6 +35,11 @@ Use a separate fresh context so that running scripts are not impacted
 Implement slight change in protocol
 DONE >> Integrate v8JSON in Protocol
 DONE >> Integrate v8JSON & Protocol in build process
+
+Store a list of active isolates using STL Maps
+onCreation - addToList
+onTeardown - removeFromList
+
 Integrate v8JSON and Protocol in Overlord
 
 
@@ -43,7 +48,7 @@ Build Python Monitor program
 Test connectivity between Monitor and Overlord
 Do more plots and test that restrictions are being obeyed
 -------------------------------------------------------------------------------
-++Write dissertation introduction chapter + what else 
+++Write dissertation introduction chapter + what else
 -------------------------------------------------------------------------------
 
 ---------------------------------COURSEWORK------------------------------------
@@ -59,5 +64,5 @@ Week 1 ( 16 - 20 Dec)
 Week 2 ( 21 - 27 Dec)
 
 Week 3 ( 28 - 3 Ian )
- 
+
 Week 4 ( 4 - 10 Ian )

@@ -1,0 +1,29 @@
+{
+  global:{
+    action:"",
+    error:"",
+    ...
+  },
+  TotalIsolates:Number,
+  isolates:{
+    1:{
+      action:"",
+      error:"",
+      ...
+    },
+    2:{
+      ...
+    }
+    ...
+  }
+}
+
+
+Actions:
+ACTION,LOCAL,GLOBAL
+
+status,1,1 - asks for current status information for isolates
+update,1,1 - update on the status information
+set_heap_size,1,0    - sets the size of the heap
+set_max_heap_size,1,0 - sets the maximum heap size of an isolate
+terminated,1,1              - notifies that entity has been terminated (isolate has been disposed, v8 process exited)
