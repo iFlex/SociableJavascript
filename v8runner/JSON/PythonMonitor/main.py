@@ -1,35 +1,27 @@
 #!/bin/src/python
-import operations;
-import packaging;
+from communicator import *
+from monitor import *
+from socket import *
 
 #flags
 DEBUG = True
 #Defaults
 address = "127.0.0.1"
-port = 12456
-
+port = 15000
 #network
-
-from socket import *
+mon = monitor();
 
 print "V8 Manager CLI"
 soc = socket(AF_INET,SOCK_STREAM);
 print "Connecting:"+str(address)+":"+str(port)
-try:
-    soc.connect((address,port));
-    print "Success";
-except Exception as e:
-    print "Could not connect "+str(e);
-    #if DEBUG == False:
-
-
-#exec loop
 while True:
-    cmd = raw_input(">");
-    if cmd == "exit":
+    try:
+        soc.connect((address,port));
+        print "Success";
         break;
+    except Exception as e:
+        print "Could not connect "+str(e);
 
-    operations.execute(cmd);
-
-print "Closing connection"
-soc.close();
+comm = communicator(soc,mon);
+policy = Policy(comm,mon);
+policy.run();

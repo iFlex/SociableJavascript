@@ -1,2 +1,0 @@
-#supported operations
-operations = {};
