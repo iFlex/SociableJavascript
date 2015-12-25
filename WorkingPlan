@@ -20,17 +20,19 @@ DONE >> getThroughput() - gets current throughput
 HALF >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
 adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
 
-V8 JSON class:
-DONE >> decode
-DONE >> encode
-DONE >>	getNumber
-DONE >>	getString
-DONE >>	getValue
-DONE >>	setNumber
-DONE >>	setString
-DONE >>	setValue
-HALF >>	Integrate Locker for safe execution
-Use a separate fresh context so that running scripts are not impacted
+<<USELESS - ABORTED>>
+|V8 JSON class:
+|DONE >> decode
+|DONE >> encode
+|DONE >>	getNumber
+|DONE >>	getString
+|DONE >>	getValue
+|DONE >>	setNumber
+|DONE >>	setString
+|DONE >>	setValue
+|DONE_NOT_WORKING >>	Integrate Locker for safe execution
+|Use a separate fresh context so that running scripts are not impacted
+<< using jsoncpp embedded in v8  >>
 
 DONE >> Implement protocol change to accomodate the limitations of v8JSON
 DONE >> Integrate v8JSON in Protocol
@@ -39,13 +41,14 @@ DONE >> Integrate v8JSON & Protocol in build process
 DONE >> Store a list of active isolates using STL Maps
 DONE >> onCreation - addToList
 DONE >> onTeardown - removeFromList
-TEST >> Integrate v8JSON and Protocol in Overlord
-Implement protocol actions in overlord
+DONE >> Integrate v8JSON and Protocol in Overlord
+NEED_MORE >> Implement protocol actions in overlord
 
 Build Python Monitor program
 -------------------------------------------------------------------------------
-Test connectivity between Monitor and Overlord
+DONE >> Test connectivity between Monitor and Overlord
 Do more plots and test that restrictions are being obeyed
+Add base64 encoding/decoding
 -------------------------------------------------------------------------------
 ++Write dissertation introduction chapter + what else
 -------------------------------------------------------------------------------

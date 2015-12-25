@@ -11,6 +11,11 @@
 #include <stdlib.h>
 #include <string>
 #include <pthread.h>
+
+#include "include/libplatform/libplatform.h"
+#include "include/v8.h"
+#include "src/api.h"
+
 #include "protocol/command.h"
 
 class Overlord {

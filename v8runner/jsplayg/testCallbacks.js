@@ -17,8 +17,8 @@ try {
  for( var i = 0; i < 1000; ++i ){
  	//print((i+1)*size+"B"+" av:"+_getHeapAvailable()+" hs:"+_getHeapSize());
  	
- 	if( i == 625 )
- 		_setMaxHeapSize("800");
+ 	//if( i == 625 )
+ 		//_setMaxHeapSize("800");
  	
 	//generate 1 MB
  	items.push(makeid(size));

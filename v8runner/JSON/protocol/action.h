@@ -4,12 +4,11 @@
 #include<string>
 #include "error.h"
 #include "details.h"
-#include "json/json.h"
+#include "../json/json.h"
 
 namespace ControlProtocol{
 
   class action{
-    bool isGlobal;
     ControlProtocol::error  error;
     ControlProtocol::details detail;
 

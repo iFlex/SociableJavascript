@@ -1,10 +1,10 @@
 #include "overlord.h"
-
+#include <string.h>
 using namespace std;
 using namespace ControlProtocol;
 
 void * Overlord::serve(void * data){
-    int portNo = *((int *)data);
+    int portNo = 15000;//*((int *)data);
     int connFd,listenFd;
     socklen_t len; //store size of the address
   
@@ -37,7 +37,7 @@ void * Overlord::serve(void * data){
     len = sizeof(clntAdd);
         
     cout << "Overlord::Listening on port "<< portNo << endl;
-    command resp(1);
+    command resp;
     while(true){
         //this is where client connects. svr will hang in this mode until client conn
         connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
@@ -56,22 +56,23 @@ void * Overlord::serve(void * data){
         while(!loop)
         {    
             bzero(test, 2000);
-            if(read(connFd, test, 1450) == -1)
+            if(read(connFd, test, 500) == -1)
                 break;
             
             string tester (test);
             cout<<"Processing("<<strlen(test)<<")"<<tester<<endl;
-            if(tester == "exit")
-                break;
+            if( tester.length()>0 ) {
+                command cmd(tester);
+                Overlord::handleRequest(cmd,resp);
 
-            command cmd(test);
-            Overlord::handleRequest(cmd,resp);
-
-            char *data = resp.serialise();
-            write(connFd, data, strlen(data));
-            bzero(test,2000);
-            write(connFd, test, 1450 - strlen(data));
-            delete data;
+                string r = resp.serialise();
+                cout<<"Response:"<<r<<endl;
+                const char* data = r.c_str();
+                cout<<"response len:"<<strlen(data)<<endl;
+                bzero(test,2000);
+                strcpy(test,data);
+                write(connFd, test, 1450);
+            }
         }
     }
     cout << "\nClosing thread and conn" << endl;
@@ -86,7 +87,7 @@ Overlord::Overlord(int portNo, bool synchronous) {
     if(synchronous)
         Overlord::serve((void *)(&port));
     else
-        pthread_create(&tid,NULL,Overlord::serve,(void *)&port);
+        pthread_create(&tid,NULL,Overlord::serve,((void *)(&port)));
 }
 
 void handleIsolateRequest(int i, action a){
@@ -104,12 +105,12 @@ void handleGlobalReuqests(command &response, string command){
             return;
 
         details *detail;
-        int nrIsolates = response.getNrIsolates();
+        int nrIsolates = (int) response.getNrIsolates();
         for( int i = 0; i < nrIsolates ; ++i ){
             isolate = v8::internal::Isolate::getIsolate(i+1);
             if(isolate != NULL) {
                 detail = actions[i].getDetails();
-                detail->heap = isolate->getHeapSize();
+                detail->heap = (int) isolate->getHeapSize();
                 detail->throughput = isolate->getThroughput();
             } else {
                 cout<< "Isolate "<<(i+1)<<" is nonexistent"<<endl;
@@ -136,9 +137,9 @@ void Overlord::handleRequest(command &cmd, command &response){
         }
 
         cout<<"Nr isolates:"<<cmd.getNrIsolates()<<endl;
-        int len = cmd.getNrIsolates();
+        int len = (int) cmd.getNrIsolates();
         action * actions = cmd.getIsolateActions();
-        for( int i = 0; i < cmd.getNrIsolates(); ++i )
+        for( int i = 0; i < len; ++i )
             handleIsolateRequest(i,actions[i]);
     }
 }

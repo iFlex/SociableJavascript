@@ -1,5 +1,5 @@
-inclink=-I include/ -std=c++0x
-lnk=-L./libs/ -ljson
+inclink=-std=c++0x
+lnk=-L ~/custom_libs -ljsoncpp
 pfldr=protocol/
 
 all: main

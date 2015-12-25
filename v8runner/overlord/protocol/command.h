@@ -1,21 +1,16 @@
 #ifndef CP_CMD
 #define CP_CMD
 
-#include "include/libplatform/libplatform.h"
-#include "include/v8.h"
-#include "src/api.h"
-#include "v8JSON.h"
-
 #include "action.h"
 #include "details.h"
+#include "../json/json.h"
 #include <string>
 
-//WARANING: program seems to crash if two command objects are in the same scope. Could have to do with Local<Value>
+using namespace std;
 namespace ControlProtocol {
   class command {
 
   private:
-    v8JSON v8json;
     int nrIsolates;
     ControlProtocol::error overallError;
     ControlProtocol::action global;
@@ -32,11 +27,11 @@ namespace ControlProtocol {
     ControlProtocol::action getGlobal() { return global; }
     ControlProtocol::error getError(){ return overallError; }
 
-    char * serialise();
-    void deserialise(char *info);
+    string serialise();
+    void deserialise(string);
 
-    command(int);
-    command(char *);
+    command();
+    command(string);
   };
 
 }

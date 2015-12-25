@@ -2,7 +2,7 @@
 #define CP_ERROR
 
 #include<string>
-#include "json/json.h"
+#include "../json/json.h"
 namespace ControlProtocol {
 
   class error {

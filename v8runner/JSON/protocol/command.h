@@ -3,27 +3,35 @@
 
 #include "action.h"
 #include "details.h"
-#include "json/json.h"
+#include "../json/json.h"
 #include <string>
-namespace ControlProtocol {
 
+using namespace std;
+namespace ControlProtocol {
   class command {
 
   private:
-
     int nrIsolates;
     ControlProtocol::error overallError;
     ControlProtocol::action global;
-    ControlProtocol::action * isolates;
+    ControlProtocol::action *isolates;
 
   //methods
   public:
-    command( int );
+    void setNrIsolates(int);
+    void setIsolateActions(ControlProtocol::action*);
     void setGlobalAction(ControlProtocol::action a);
-    ControlProtocol::action getGlobal();
+    
+    int getNrIsolates(){ return nrIsolates; }
+    ControlProtocol::action * getIsolateActions(){ return isolates;} 
+    ControlProtocol::action getGlobal() { return global; }
+    ControlProtocol::error getError(){ return overallError; }
 
-    std::string serialise();
-    void deserialise(std::string info);
+    string serialise();
+    void deserialise(string);
+
+    command();
+    command(string);
   };
 
 }

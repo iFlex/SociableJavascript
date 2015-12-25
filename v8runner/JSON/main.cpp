@@ -23,17 +23,20 @@ using namespace std;
 
 int main(){
   printf("JSON Tester\n");
-  ControlProtocol::command cmd(5);//just one isolate
+  ControlProtocol::action isl[2];
+  ControlProtocol::command cmd;//just one isolate
   ControlProtocol::action request;
   request.name = "set_old_space";
-
+  cmd.setNrIsolates(2);
+  cmd.setIsolateActions(isl);
+  
   ControlProtocol::details * m = request.getDetails();
   m->old_space = 123;
 
   cmd.setGlobalAction(request);
   std::cout<<"output:"<<cmd.serialise()<<endl;
 
-  ControlProtocol::command dcmd(5);
+  ControlProtocol::command dcmd;
   dcmd.deserialise(cmd.serialise());
 
   std::cout<<"after deserialisation::"<<dcmd.serialise()<<endl;

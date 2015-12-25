@@ -1,9 +1,0 @@
-DONE >> 1) Build JSON module
-DONE >> 2) Build Test program checking functionality
-DONE >> 3) Build sample program that encodes and decodes successfully
-4) Classes representing protocol
-
-compile:
- g++ -c main.cpp -I include/ -L lib/ -o main.o
-link:
- g++ main.o -I include/ -L libs/ -l json -o main
