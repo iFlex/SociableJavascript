@@ -52,6 +52,16 @@ IN_PROG >> Do more plots and test that restrictions are being obeyed
 IN_PROG >> Add base64 encoding/decoding
 * Implement memory management policy
 * Integrate in Chromium
+
+!! fix the terminate isolate method so that it does not cause a seg fault. This is because .Dispose simply calls the destructor
+try using Isolate.exit();
+
+!! find out if the newly discovered method for removing free space works and find out why it segfaults at the next command
+!! find out about threading and how to run concurrent code on same isolate - Locker, Unlocker proper setup
+at the moment the thread that loads the script is the one that executes it. So the script blocks the thread untill it finishes
+find a way to make it asynch
+!! look more into what algo it uses for GC and how it does GC overall
+!! read more about GC & mem management
 -------------------------------------------------------------------------------
 ++ Write dissertation introduction chapter + skeleton
 -------------------------------------------------------------------------------
