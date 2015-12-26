@@ -1,4 +1,6 @@
 import json
+from base64 import *
+
 class communicator:
 
     def __init__(self,socket,monitor):
@@ -7,13 +9,18 @@ class communicator:
         self.monitor = monitor;
         self.packetSize = 1450;
         self.id = monitor.addMachine(socket);
+        self.monitor.addV8(self.id);
 
-    def send(request):
-        if(self.id == 0):
+    def close(self):
+        self.socket.close();
+
+    def send(self,request):
+        if(self.id == 0 or request == 0):
             return 0;
 
         toSend = json.dumps(request);
-        padding = " "*(self.packetSize - len(request));
+        toSend = b64encode(toSend);
+        padding = ";"*(self.packetSize - len(request));
         response = "";
 
         try:
@@ -25,8 +32,10 @@ class communicator:
             return 0;
 
         try:
+            response = b64decode(response);
             response = json.loads(response);
-            monitor.update(id,response);
+            self.monitor.update(self.id,1,response);
             return 1;
         except Exception as e:
+            #print "Warning: error when processing server response:"+str(e)
             return 0;
