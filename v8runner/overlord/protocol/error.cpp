@@ -1,8 +1,5 @@
 #include "error.h"
 
-using namespace std;
-using namespace v8;
-
 namespace ControlProtocol {
   error::error(){
     hasError = false;
@@ -29,19 +26,17 @@ namespace ControlProtocol {
     return hasError;
   }
   /////////////////////////////////////////////
-  void error::deserialise( v8::Local<v8::Value> v) {
-    string str(v8json.getString(v,"error"));
-    if(str.size() > 0) {
-      errorMessage = str;
+  void error::deserialise( Json::Value v) {
+    
+    if(!v["error"].empty()){
+      errorMessage = v["error"].asString();
       hasError = true;
-    } 
+    }
+
   }
 
-  void error::serialise( v8::Local<v8::Value> &v){
-    if(*v == NULL)
-      return;
-    
+  void error::serialise( Json::Value &v){
     if(hasError)
-      v8json.setString(v,"error",errorMessage.c_str());
+      v["error"] = errorMessage;
   }
 }

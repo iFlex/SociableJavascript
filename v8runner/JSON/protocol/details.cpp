@@ -19,8 +19,11 @@ namespace ControlProtocol {
     if(!obj["heap"].empty())
       heap       = obj["heap"].asInt();
 
+    if(!obj["throughput"].empty())
+      throughput       = obj["throughput"].asDouble();
+
     if(!obj["path"].empty())
-      path       = obj["path"].asString();
+      path       = obj["path"].asString();    
   }
 
   void details::serialise(Json::Value &obj){
@@ -36,7 +39,10 @@ namespace ControlProtocol {
     if(heap)
       obj["heap"] = heap;
 
+    obj["throughput"] = throughput;
+    
     if(path.length())
       obj["path"] = path;
+    
   }
 }

@@ -82,10 +82,10 @@ int main (int argc, char* argv[])
         cout<< "sending "<<strlen(s)<< " chars"<<endl;
         write(listenFd, s, 1450);
 
-        bzero(s, 1450);
-        if(read(listenFd, s, strlen(s)) == -1)
+        bzero(s, 2000);
+        if(read(listenFd, s, 1450) == -1)
             break;
-            
+        
         cout<<"Overlord:"<<s<<endl;
     }
 }

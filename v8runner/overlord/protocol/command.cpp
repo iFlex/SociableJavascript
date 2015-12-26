@@ -1,74 +1,74 @@
 #include "command.h"
 #include "action.h"
-
-using namespace std;
-using namespace v8;
-
+#include <string.h>
 namespace ControlProtocol {
 
-  command::command(int i){
+  command::command(){
+    nrIsolates = 0;
   }
-  
-  command::command(char *info){
+
+  command::command(string info){
     deserialise(info);
   }
 
   void command::setNrIsolates(int nrIsol){
-    this->nrIsolates = nrIsol;
+    nrIsolates = nrIsol;
   }
-
-  void command::setIsolateActions(ControlProtocol::action* actions){
-    this->isolates = actions;
-  }
-
+    
   void command::setGlobalAction(ControlProtocol::action a){
       global = a;
   }
 
-  char * command::serialise() {
-    v8::Local<v8::Value> root = v8json.newEmptyObject();
-    v8json.setValue(root,"global",global.serialise());
-
-    if(this->nrIsolates > 0) {
-      Local<Value> inner = v8json.newEmptyObject();
-      char index[25];
-    
-      for( int i = 0; i < this->nrIsolates; ++i ) {
-        sprintf(index,"%d",i); 
-        v8json.setValue(inner,index,this->isolates[i].serialise());
-      }
-
-      v8json.setNumber(root,"TotalIsolates",(double)this->nrIsolates);
-      v8json.setValue(root,"isolates",inner);
-    }
-
-    return v8json.encode(&root);
+  void command::setIsolateActions(ControlProtocol::action* actions){
+    isolates = actions;
   }
 
-  void command::deserialise(char *info){
-    Local<Value> root = v8json.decode(info);
+  string command::serialise() {
+    Json::Value root;
+    root["global"] = global.serialise();
 
-    if(*root == NULL){
-      overallError.setMessage("BAD_FORMATTING");
-    } else {
-      global.deserialise(v8json.getValue(root,"global"));
-
-      if(this->nrIsolates > 0)
-        delete this->isolates;
-
-      this->nrIsolates = (int)v8json.getNumber(root,"TotalIsolates");
-      if(this->nrIsolates > 0) {
-        Local<Value> inner = v8json.getValue(root,"isolates");
-        this->isolates = new action[nrIsolates];
-        char index[25];
-  
-        for( int i = 0; i < this->nrIsolates; ++i ) {
-          sprintf(index,"%d",i);
-          Local<Value> rawAction = v8json.getValue(inner,index);
-          this->isolates[i].deserialise(rawAction);
-        }
+    if(this->nrIsolates > 0) {
+      Json::Value inner;
+      char index[25]; 
+      for( int i = 0; i < this->nrIsolates; ++i ) {
+        sprintf(index,"%d",i); 
+        inner[index] = this->isolates[i].serialise();
       }
+      root["TotalIsolates"] = this->nrIsolates;
+      root["isolates"] = inner;
     }
 
+    Json::StyledWriter writer;
+    return writer.write( root );
+  }
+
+
+  void command::deserialise(string info){
+    Json::Value root;   // will contains the root value after parsing.
+    Json::Reader reader;
+
+    bool success = reader.parse(info,root);
+
+    if(success){
+      if(!root["global"].empty())
+        global.deserialise(root["global"]);
+        
+      if(this->nrIsolates > 0)
+        delete this->isolates;
+      
+      this->nrIsolates = root["TotalIsolates"].asInt();
+      if(this->nrIsolates > 0) {
+        Json::Value inner = root["isolates"];
+        
+        this->isolates = new action[nrIsolates];
+        char index[25];
+        for( int i = 0; i < this->nrIsolates; ++i ) {
+          sprintf(index,"%d",i);
+          this->isolates[i].deserialise(inner[index]);
+        }
+      }
+    } else {
+      overallError.setMessage("Bad protocol formatting");
+    }
   }
 }
