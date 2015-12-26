@@ -45,31 +45,31 @@ DONE >> 13) V8 memory profiler reasearch
 15) Get external C process comm. with V8 to change the heap size
 DONE >> 16) Read paper Heap Sizing
 nonessential_17) Consider how DOS may occur & consider mitigation
-19) Take a look at build process of v8 to add new files to the build
-DONE>> 20) Devise a somple protocol for the v8 overlord server thread
+DONE >> 19) Take a look at build process of v8 to add new files to the build
+DONE >> 20) Devise a simple protocol for the v8 overlord server thread
   some queries that are going to publicise the state of the v8 heap
   some commands that are going to alter the size of the v8 heap
 
 DONE>> 21) Do a test on different machines
 HALF>> 22) Download Chrome codebase see where v8 is in the project
-PARTLY>> 23) Figure out how to get all isolates in a list to make an overall deamon
+DONE >> 23) Figure out how to get all isolates in a list to make an overall deamon
 DONE >> 24) Figure out a way to measure Isolate throughput
->> using GC prologue and epilogue hooks and timer
+ * using GC prologue and epilogue hooks and timer
 
 DONE >> 25) Identify the start and end of GC process
 GCprologue/epilogue hook
 examples in test files. just search for invocations of AddGCPrologueCallback
 
 PARTLY >> 27) Check what performance metrics V8 measures and get access to them
-D8 - generates plottable information
+D8 - generates plottable information but goes deep into program stack and heap nodes which makes in unnecessary and adds overhead
 
-28) Integrate JSON pretocol in Overlord + make CLI controller
-DONE>> 29) Draft progress report by next Monday
+DONE >> 28) Integrate JSON pretocol in Overlord + make CLI controller
+DONE >> 29) Draft progress report by next Monday
 26) Unit tests for good SE practices + dissertation talk
 27) Use GC hooks to measure GC pauses and do data analysis. Pause time vs exec time, + distribution analysis with bins
 * use to decide how to supply metrics to the overlord thread
 max, median, avg
-28) 
+28)
 
 
 * Keep security in mind
@@ -80,6 +80,7 @@ Dissertation - >
  * Tech overview of V8
  * Mem management
  * controlling heap size
+ * Unit Testing...
 
 Questions for Google Empl:
 > What IDE and other tools they use to program V8

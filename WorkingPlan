@@ -12,13 +12,14 @@ DONE >> Store time measurements in ExecTime and GCTime
 -------------------------------------------------------------------------------
 DONE >> Commit measurements to file for preliminary plotting
 -------------------------------------------------------------------------------
-Generate Plots for multiple benchmarks and decide how to calculate overall
+!! Generate Plots for multiple benchmarks and decide how to calculate overall
 GC & EXEC time
 -------------------------------------------------------------------------------
 DONE >> getHeapSize() - gets current heap size
 DONE >> getThroughput() - gets current throughput
-HALF >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
-adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
+DONE >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
+HALF >> adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
+ * using TryRemoveMemory() - causes weird behaviour at the moment
 
 <<USELESS - ABORTED>>
 |V8 JSON class:
@@ -34,7 +35,7 @@ adjustHeapSize() - brings the heap size closer to the target heap size ( careful
 |Use a separate fresh context so that running scripts are not impacted
 << using jsoncpp embedded in v8  >>
 
-DONE >> Implement protocol change to accomodate the limitations of v8JSON
+DONE >> Implement protocol change to accommodate the limitations of v8JSON
 DONE >> Integrate v8JSON in Protocol
 DONE >> Integrate v8JSON & Protocol in build process
 
@@ -42,13 +43,15 @@ DONE >> Store a list of active isolates using STL Maps
 DONE >> onCreation - addToList
 DONE >> onTeardown - removeFromList
 DONE >> Integrate v8JSON and Protocol in Overlord
-NEED_MORE >> Implement protocol actions in overlord
+DONE >> Implement protocol actions in overlord << DO_TEST
 
-Build Python Monitor program
+DONE >> Build Python Monitor program << DO_TEST
 -------------------------------------------------------------------------------
 DONE >> Test connectivity between Monitor and Overlord
-Do more plots and test that restrictions are being obeyed
-Add base64 encoding/decoding
+IN_PROG >> Do more plots and test that restrictions are being obeyed
+IN_PROG >> Add base64 encoding/decoding
+* Implement memory management policy
+* Integrate in Chromium
 -------------------------------------------------------------------------------
 ++Write dissertation introduction chapter + what else
 -------------------------------------------------------------------------------
