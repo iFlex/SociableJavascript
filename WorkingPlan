@@ -12,8 +12,8 @@ DONE >> Store time measurements in ExecTime and GCTime
 -------------------------------------------------------------------------------
 DONE >> Commit measurements to file for preliminary plotting
 -------------------------------------------------------------------------------
-!! Generate Plots for multiple benchmarks and decide how to calculate overall
-GC & EXEC time
+DONE >> Generate Plots for multiple benchmarks and decide how to calculate overall
+GC & EXEC time << DO_FOR_MORE_SCRIPTS
 -------------------------------------------------------------------------------
 DONE >> getHeapSize() - gets current heap size
 DONE >> getThroughput() - gets current throughput
@@ -21,19 +21,19 @@ DONE >> setHeapSizeTarget() - sets the target heap size to which the system shou
 HALF >> adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
  * using TryRemoveMemory() - causes weird behaviour at the moment
 
-<<USELESS - ABORTED>>
-|V8 JSON class:
-|DONE >> decode
-|DONE >> encode
-|DONE >>	getNumber
-|DONE >>	getString
-|DONE >>	getValue
-|DONE >>	setNumber
-|DONE >>	setString
-|DONE >>	setValue
-|DONE_NOT_WORKING >>	Integrate Locker for safe execution
-|Use a separate fresh context so that running scripts are not impacted
-<< using jsoncpp embedded in v8  >>
+  <<USELESS - ABORTED>>
+  |V8 JSON class:
+  |DONE >> decode
+  |DONE >> encode
+  |DONE >>	getNumber
+  |DONE >>	getString
+  |DONE >>	getValue
+  |DONE >>	setNumber
+  |DONE >>	setString
+  |DONE >>	setValue
+  |DONE_NOT_WORKING >>	Integrate Locker for safe execution
+  |Use a separate fresh context so that running scripts are not impacted
+  << using jsoncpp embedded in v8  >>
 
 DONE >> Implement protocol change to accommodate the limitations of v8JSON
 DONE >> Integrate v8JSON in Protocol
@@ -53,7 +53,7 @@ IN_PROG >> Add base64 encoding/decoding
 * Implement memory management policy
 * Integrate in Chromium
 -------------------------------------------------------------------------------
-++Write dissertation introduction chapter + what else
+++ Write dissertation introduction chapter + skeleton
 -------------------------------------------------------------------------------
 
 ---------------------------------COURSEWORK------------------------------------

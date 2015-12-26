@@ -52,7 +52,7 @@ DONE >> 20) Devise a simple protocol for the v8 overlord server thread
 
 DONE>> 21) Do a test on different machines
 HALF>> 22) Download Chrome codebase see where v8 is in the project
-DONE >> 23) Figure out how to get all isolates in a list to make an overall deamon
+DONE >> 23) Figure out how to get all isolates in a list to make an overall daemon
 DONE >> 24) Figure out a way to measure Isolate throughput
  * using GC prologue and epilogue hooks and timer
 
@@ -63,7 +63,7 @@ examples in test files. just search for invocations of AddGCPrologueCallback
 PARTLY >> 27) Check what performance metrics V8 measures and get access to them
 D8 - generates plottable information but goes deep into program stack and heap nodes which makes in unnecessary and adds overhead
 
-DONE >> 28) Integrate JSON pretocol in Overlord + make CLI controller
+DONE >> 28) Integrate JSON protocol in Overlord + make CLI controller
 DONE >> 29) Draft progress report by next Monday
 26) Unit tests for good SE practices + dissertation talk
 27) Use GC hooks to measure GC pauses and do data analysis. Pause time vs exec time, + distribution analysis with bins
