@@ -9,8 +9,6 @@ class RequestBuilder:
 
     def makeDefaultRequest(self,machineId):
         v8id = 1;
-        if self.monitor.getV8(self.monitor.getMachine(machineId),v8id) == 0:
-            return 0;
 
         result = {"global":{"action":""},"TotalIsolates":0,"isolates":{}};
         index = 1;
@@ -28,26 +26,50 @@ class RequestBuilder:
 
     def statusReport(self,machineId):
         result = self.makeDefaultRequest(machineId);
-        result["global"]["action"] = "status";
+        if result == 0:
+            return 0;
 
+        result["global"]["action"] = "status";
         return result;
 
     def isolateStatusReport(self,machineId,isolateId,result):
         if result == 0:
             result = self.makeDefaultRequest(machineId);
+            if result == 0:
+                return 0;
+
         result["isolates"][str(isolateId)]["action"] = "status";
         return result;
 
     def recommendHeapSize(self,machineId,isolateId,size,result):
         if result == 0:
             result = self.makeDefaultRequest(machineId);
-        result["isolates"][str(isolateId)]["action"] = "set_heap_size";
-        result["isolates"][str(isolateId)]["heap"] = size;
-        return result;
+            if result == 0:
+                return 0;
+        if "isolates" in result and str(isolateId) in result["isolates"]:
+            result["isolates"][str(isolateId)]["action"] = "set_heap_size";
+            result["isolates"][str(isolateId)]["heap"] = size;
+            return result;
+        return 0;
 
     def setMaxHeapSize(self,machineId,isolateId,size,result):
         if result == 0:
             result = self.makeDefaultRequest(machineId);
-        result["isolates"][str(isolateId)]["action"] = "set_max_heap_size";
-        result["isolates"][str(isolateId)]["heap"] = size;
-        return result;
+            if result == 0:
+                return 0;
+
+        if "isolates" in result and str(isolateId) in result["isolates"]:
+            result["isolates"][str(isolateId)]["action"] = "set_max_heap_size";
+            result["isolates"][str(isolateId)]["heap"] = size;
+            return result;
+        return 0;
+
+    def terminate(self,machineId,isolateId,result):
+        if result == 0:
+            result = self.makeDefaultRequest(machineId);
+            if result == 0:
+                return 0;
+        if "isolates" in result and str(isolateId) in result["isolates"]:
+            result["isolates"][str(isolateId)]["action"] = "terminate";
+            return result;
+        return 0;

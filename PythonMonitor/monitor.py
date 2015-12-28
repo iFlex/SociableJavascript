@@ -102,8 +102,45 @@ class monitor:
 
         return 0;
 
-    def update(self,id,response):
-        return ""
+    def getIsolateCount(self,machineId,v8Id):
+        v8 = self.getV8(self.getMachine(machineId),v8Id)
+        if v8 == 0:
+            return 0;
+        else:
+            return len(v8["isolates"].keys())
+
+    def isolateUpdate(self,machineId,v8Id,isolateId,info):
+        isolate = self.getIsolate(machineId,v8Id,isolateId);
+        if isolate == 0:
+            return;
+
+        if info["action"] == "update":
+            for key in info:
+                isolate[key] = info[key];
+
+        if info["action"] == "terminated":
+            self.removeIsolate(machineId,v8Id,isolateId);
+
+    def update(self,machineId,v8Id,response):
+        nris = response["TotalIsolates"];
+        recordedIsolateCount = self.getIsolateCount(machineId,v8Id)
+
+        #adjust isolate count
+        diff = nris - recordedIsolateCount;
+        if nris > recordedIsolateCount:
+            while diff > 0:
+                self.addIsolate(machineId,v8Id);
+                diff -= 1;
+        elif nris < recordedIsolateCount:
+            #TODO deal with this properly
+            while recordedIsolateCount > nris:
+                recordedIsolateCount -= 1;
+                self.removeIsolate(machineId,v8Id,recordedIsolateCount);
+
+        #update isolate status
+        for i in range(0,nris):
+            info = response["isolates"][str(i)];
+            self.isolateUpdate(machineId,v8Id,i,info)
 
     def debug(self):
         print self.STATUS;

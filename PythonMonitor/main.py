@@ -2,6 +2,7 @@
 from communicator import *
 from monitor import *
 from socket import *
+from policy import *
 
 #flags
 DEBUG = True
@@ -20,8 +21,7 @@ while True:
         print "Success";
         break;
     except Exception as e:
-        print "Could not connect "+str(e);
+        print "Could not connect "+str(e);    
 
 comm = communicator(soc,mon);
 policy = Policy(comm,mon);
-policy.run();
