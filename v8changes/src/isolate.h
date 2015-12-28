@@ -8,6 +8,8 @@
 #include <queue>
 #include <set>
 #include <chrono>
+#include <map>
+#include <list>
 
 #include "include/v8-debug.h"
 #include "src/allocation.h"
@@ -1360,14 +1362,31 @@ class Isolate {
   friend class v8::Locker;
   friend class v8::Unlocker;
   friend v8::StartupData v8::V8::CreateSnapshotDataBlob(const char*);
-
+  
+  private:
+    int ISOLATE_ID = 0;
+  
   public:
+    static void addNewIsolate(Isolate *);
+    static void removeIsolate(Isolate *);
+    static Isolate * getIsolate(int);
+    static int getActiveIsolatesCount();
+    //////////////////////////////////////////////////
+    void setIsolateId(int id){ 
+      if(!ISOLATE_ID)
+        ISOLATE_ID=id;
+    }
+    int getIsolateId(){ return ISOLATE_ID;}
     // Built-in Timing for V8 Overlord measurements
     // This will beused to measure execution and gc pause times
     high_resolution_clock::time_point timePrologue,timeEpilogue;
     int gcIndex = 0, sampleLength = 10000;
     int executionTimes[10000], gcTimes[10000];
-
+    double avgExec, avgGC;
+    ////////TODO: make the setTargetHeapSize also set the max heap size
+    int targetHeapSize; //recommended heap size
+    void setTargetHeapSize(int target){ targetHeapSize = target; }
+    void adjustHeapSize();
     //methods that hook into the Isolate's gc callbacks
     void gcPrologue(GCType type, GCCallbackFlags flags);
     void gcEpilogue(GCType type, GCCallbackFlags flags);

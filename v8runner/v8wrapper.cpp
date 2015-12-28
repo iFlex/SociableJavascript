@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <assert.h>
-
+#include <iostream>
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 #include "src/api.h"
@@ -17,6 +17,7 @@
 //#include "src/libplatform/default-platform.h"
 
 using namespace v8;
+using namespace std;
 
 void Print(const v8::FunctionCallbackInfo<v8::Value>& args);
 void ReportException(v8::Isolate* isolate, v8::TryCatch* handler);
@@ -132,13 +133,14 @@ int main(int argc, char* argv[]) {
                               NewStringType::kNormal).ToLocalChecked();
       // Compile the source code.
       Local<Script> script = Script::Compile(context, source).ToLocalChecked();
+      cout << ">>Compiled" <<endl;
       // Run the script to get the result.
       Local<Value> result = script->Run(context).ToLocalChecked();
+      cout << ">>After Run" <<endl;
+      
     }
   }
-  //printf("HEAP SIZE:%lld\n",);
-  HeapStatistics hs;
-  isolate-> GetHeapStatistics(&hs);
+  cout << ">>Before Dispose" <<endl; 
   // Dispose the isolate and tear down V8.
   isolate->Dispose();
   V8::Dispose();

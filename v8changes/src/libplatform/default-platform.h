@@ -14,8 +14,8 @@
 #include "src/base/macros.h"
 #include "src/base/platform/mutex.h"
 #include "src/libplatform/task-queue.h"
-
-int overlord(int);
+#include "src/overlord/overlord.h"
+//int overlord(int);
 
 namespace v8 {
 namespace platform {

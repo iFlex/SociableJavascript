@@ -2157,10 +2157,11 @@ class Heap {
   int scan_on_scavenge_pages_;
 
   NewSpace new_space_;
-  OldSpace* old_space_;
-  OldSpace* code_space_;
-  MapSpace* map_space_;
+  OldSpace* old_space_; //1
+  OldSpace* code_space_; //2
+  MapSpace* map_space_;   //3
   LargeObjectSpace* lo_space_;
+
   HeapState gc_state_;
   int gc_post_processing_depth_;
   Address new_space_top_after_last_gc_;

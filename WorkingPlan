@@ -12,15 +12,15 @@ DONE >> Store time measurements in ExecTime and GCTime
 -------------------------------------------------------------------------------
 DONE >> Commit measurements to file for preliminary plotting
 -------------------------------------------------------------------------------
-Generate Plots for multiple benchmarks and decide how to calculate overall
-GC & EXEC time
+DONE >> Generate Plots for multiple benchmarks and decide how to calculate overall
+GC & EXEC time - !! only binarytree and benchmark trigger garbage collection, need larger benchmarks
 -------------------------------------------------------------------------------
 DONE >> getHeapSize() - gets current heap size
 DONE >> getThroughput() - gets current throughput
-HALF >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
-adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
+DONE >> setHeapSizeTarget() - sets the target heap size to which the system should try to scale
+DONE_FAILED >> adjustHeapSize() - brings the heap size closer to the target heap size ( carefully segmented so that performance is not impacted )
 
-<<USELESS - ABORTED>>
+| USELESS - ABORTED 
 |V8 JSON class:
 |DONE >> decode
 |DONE >> encode
@@ -32,7 +32,7 @@ adjustHeapSize() - brings the heap size closer to the target heap size ( careful
 |DONE >>	setValue
 |DONE_NOT_WORKING >>	Integrate Locker for safe execution
 |Use a separate fresh context so that running scripts are not impacted
-<< using jsoncpp embedded in v8  >>
+| * using jsoncpp embedded in v8  >>
 
 DONE >> Implement protocol change to accomodate the limitations of v8JSON
 DONE >> Integrate v8JSON in Protocol
@@ -42,7 +42,7 @@ DONE >> Store a list of active isolates using STL Maps
 DONE >> onCreation - addToList
 DONE >> onTeardown - removeFromList
 DONE >> Integrate v8JSON and Protocol in Overlord
-NEED_MORE >> Implement protocol actions in overlord
+DONE >> Implement protocol actions in overlord
 
 Build Python Monitor program
 -------------------------------------------------------------------------------
@@ -52,6 +52,29 @@ Add base64 encoding/decoding
 -------------------------------------------------------------------------------
 ++Write dissertation introduction chapter + what else
 -------------------------------------------------------------------------------
+
+Maximum expansion - controlled through maximum old_space size
+
+Heap Size Control:
+Freeing from FreeList - trying to find full empty pages in the free lists and release the memory
+is not very effective as most scripts fragment the memory and full free pages are never encountered
+(tried finding pages in the old_space and map_space, large object space was ignored)
+
+Modify Mark-Compact to free immediately after compaction
+looks like the MarkCompact attempt to return as much memory as possible to the OS
+throug the use of evacuation_candidates. By forcing more garbage collection the 
+lasy sweeper is forced to simply do more work and free more memory. 
+
+To keep in mind the goals of the project, a way to determine the minimum heap size while
+the engine is running would be ideal.
+
+-> prerun script to find mimimum heap and then run with min heap. Impractical because realtime code is influenced by nondeterministic external events.
+
+!!!! ---------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+DISCOVERY: Setting the maximum heap size lowers the actual used memory if it is over the set threshold :D
+this saves me work :D yey
+?Does this impact the map_space? does the map space matter?
 
 ---------------------------------COURSEWORK------------------------------------
 CA4 ---------------------------------------------------------------------------

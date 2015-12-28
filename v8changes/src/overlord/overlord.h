@@ -12,4 +12,17 @@
 #include <string>
 #include <pthread.h>
 
-char overlord(int);
+#include "include/libplatform/libplatform.h"
+#include "include/v8.h"
+#include "src/api.h"
+
+#include "protocol/command.h"
+
+class Overlord {
+	pthread_t tid;
+	int port;
+public:
+	Overlord(int,bool);
+	static void * serve(void *);
+	static void handleRequest(ControlProtocol::command &, ControlProtocol::command &);
+};

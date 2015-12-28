@@ -2090,9 +2090,11 @@ class PagedSpace : public Space {
 
  protected:
   void AddMemory(Address start, intptr_t size);
-
+ 
+ public:
   FreeSpace* TryRemoveMemory(intptr_t size_in_bytes);
-
+ 
+ protected:
   void MoveOverFreeMemory(PagedSpace* other);
 
   // PagedSpaces that should be included in snapshots have different, i.e.,
