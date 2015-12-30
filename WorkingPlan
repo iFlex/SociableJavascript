@@ -109,11 +109,16 @@ the engine is running would be ideal.
 
 -> prerun script to find mimimum heap and then run with min heap. Impractical because realtime code is influenced by nondeterministic external events.
 
+
+Make GC less lazy if targetHeapSize < heapSize 
 !!!! ---------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------
 DISCOVERY: Setting the maximum heap size lowers the actual used memory if it is over the set threshold :D
 this saves me work :D yey
 ?Does this impact the map_space? does the map space matter?
+
+* the used memory fluctuates upon each GC
+* Find more benchmarks
 
 ---------------------------------COURSEWORK------------------------------------
 CA4 ---------------------------------------------------------------------------

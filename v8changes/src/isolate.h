@@ -1386,6 +1386,7 @@ class Isolate {
     ////////TODO: make the setTargetHeapSize also set the max heap size
     int targetHeapSize; //recommended heap size
     void setTargetHeapSize(int target){ targetHeapSize = target; }
+    int  getTargetHeapSize(){ return targetHeapSize; }
     void adjustHeapSize();
     //methods that hook into the Isolate's gc callbacks
     void gcPrologue(GCType type, GCCallbackFlags flags);

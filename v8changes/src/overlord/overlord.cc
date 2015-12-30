@@ -116,24 +116,29 @@ void * Overlord::serve(void * data){
         
         char test[2000];
         bool loop = false;
+        char *jsonStr;
         while(!loop)
         {    
             bzero(test, 2000);
             if(read(connFd, test, 500) == -1)
                 break;
             
-            string tester (test);
-            cout<<"Processing("<<strlen(test)<<")"<<tester<<endl;
-            if( tester.length()>0 ) {
-                command cmd(tester);
+            cout<<"Processing("<<strlen(test)<<")"<<test<<endl;
+            if(base64::decode(test,strlen(test),jsonStr)) {
+                
+                string scommand(jsonStr);
+                command cmd(scommand);
                 Overlord::handleRequest(cmd,resp);
 
                 string r = resp.serialise();
                 cout<<"Response:"<<r<<endl;
                 const char* data = r.c_str();
                 cout<<"response len:"<<strlen(data)<<endl;
+                
+                delete[] jsonStr;
+                base64::encode(data,strlen(data),jsonStr);
                 bzero(test,2000);
-                strcpy(test,data);
+                strcpy(test,jsonStr);
                 write(connFd, test, 1450);
             }
         }

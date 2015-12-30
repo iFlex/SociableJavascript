@@ -1745,6 +1745,8 @@
         '../../include/libplatform/libplatform.h',
         '../../src/overlord/overlord.h',
         '../../src/overlord/overlord.cc',
+        '../../src/overlord/base64/base64.h',
+        '../../src/overlord/base64/base64.cc',
         '../../src/overlord/json/json-forwards.h',
         '../../src/overlord/json/json.h',
         '../../src/overlord/json/jsoncpp.cpp',

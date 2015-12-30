@@ -46,19 +46,23 @@
 #include <fstream>
 using namespace std;
 
-ofstream exec,gc,hpsz;
+ofstream exec,gc,hpsz,thrpt,ithrpt;
 int opened = 0;
 
-void commit(int iexec, int igc, int sz){
+void commit(int iexec, int igc, int sz, double tp, double itp){
   if(!opened){
     exec.open("__execution.txt");
     gc.open("_collection.txt");
     hpsz.open("_heapsize.txt");
+    thrpt.open("_throughput.txt");
+    ithrpt.open("_instantthrpt.txt");
     opened = 1;
   }
   exec<<iexec<<endl;
   gc<<igc<<endl;
   hpsz<<sz<<endl;
+  thrpt<<tp<<endl;
+  ithrpt<<itp<<endl;
 }
 
 void closecommit(){
@@ -66,6 +70,8 @@ void closecommit(){
   exec.close();
   gc.close();
   hpsz.close();
+  thrpt.close();
+  ithrpt.close();
 }
 ///////////////////////////////////////////////////
 
@@ -580,13 +586,14 @@ void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
   garbageAverageTime += (int) duration;
 
   //printf(" - %d>\n",gcTimes[gcIndex]);
-  commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize());
   
   gcIndex ++;
-  
+
   avgExec = (double)executionAverageTime / (gcIndex-1);
   avgGC   = (double)garbageAverageTime   / gcIndex;
 
+  commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
+  
   gcIndex %= sampleLength;
   if( gcIndex % 500 ==  0) {
     cout<<"AvgGC:"<<avgGC<<" AvgExec:"<<avgExec<<" TP:"<<getThroughput()<<" size:"<<getHeapSize()<<" target:"<<targetHeapSize<<endl;

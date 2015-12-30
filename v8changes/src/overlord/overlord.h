@@ -15,7 +15,7 @@
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 #include "src/api.h"
-
+#include "base64/base64.h"
 #include "protocol/command.h"
 
 class Overlord {

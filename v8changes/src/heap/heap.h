@@ -1677,9 +1677,13 @@ class Heap {
     DCHECK(!ShouldFinalizeIncrementalMarking() ||
            !ShouldAbortIncrementalMarking());
   }
+  //M_TODO: Modify these functions to force GC to do more work
+  bool askedToReduce() const {
+    return true;//isolate_->getHeapSize() > isolate_->getTargetSize();
+  }
 
   inline bool ShouldReduceMemory() const {
-    return current_gc_flags_ & kReduceMemoryFootprintMask;
+    return (askedToReduce()) ? true :(current_gc_flags_ & kReduceMemoryFootprintMask);
   }
 
   inline bool ShouldAbortIncrementalMarking() const {
