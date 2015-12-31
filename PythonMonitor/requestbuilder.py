@@ -17,7 +17,7 @@ class RequestBuilder:
             if(isolate == 0):
                 break;
             else:
-                result["isolates"][str(isolate)] = {"action":""};
+                result["isolates"][str(isolate-1)] = {"action":""};
             index += 1
 
         index -= 1;

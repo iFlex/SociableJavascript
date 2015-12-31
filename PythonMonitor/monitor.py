@@ -84,6 +84,7 @@ class monitor:
         return id;
 
     def getIsolate(self,machineId,v8Id,isolateId):
+        isolateId -= 1
         v8 = self.getV8(self.getMachine(machineId),v8Id)
         if v8 == 0:
             return 0;
@@ -92,6 +93,7 @@ class monitor:
         return 0;
 
     def removeIsolate(self,machineId,v8Id,isolateId):
+        isolateId -= 1
         v8 = self.getV8(self.getMachine(machineId),v8Id)
         if v8 == 0:
             return 0;
@@ -110,6 +112,7 @@ class monitor:
             return len(v8["isolates"].keys())
 
     def isolateUpdate(self,machineId,v8Id,isolateId,info):
+        isolateId += 1
         isolate = self.getIsolate(machineId,v8Id,isolateId);
         if isolate == 0:
             return;

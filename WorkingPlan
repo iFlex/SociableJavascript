@@ -49,7 +49,9 @@ DONE >> Build Python Monitor program << DO_TEST
 IN_PROG >> Do more plots and test that restrictions are being obeyed
 DONE >> Add base64 encoding/decoding
 DONE >> make overlord aware of separated base64 streams + smart TCP flushing using padding
-* Test connectivity between Monitor and Overlord
+DONE >> Test connectivity between Monitor and Overlord
+Ensure packetisation is implemented correctly in both monitor and overlord in order to make sure each request gets isolated and handled
+
 * Integrate in Chromium
 * Implement memory management policy
 
