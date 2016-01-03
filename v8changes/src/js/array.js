@@ -12,7 +12,6 @@
 // Imports
 
 var AddIndexedProperty;
-var Delete;
 var FLAG_harmony_tolength;
 var GetIterator;
 var GetMethod;
@@ -26,16 +25,16 @@ var ObjectDefineProperty;
 var ObjectHasOwnProperty;
 var ObjectIsFrozen;
 var ObjectIsSealed;
-var ObjectToString;
+var ObjectToString = utils.ImportNow("object_to_string");
 var ObserveBeginPerformSplice;
 var ObserveEndPerformSplice;
 var ObserveEnqueueSpliceRecord;
+var SameValueZero;
 var iteratorSymbol = utils.ImportNow("iterator_symbol");
 var unscopablesSymbol = utils.ImportNow("unscopables_symbol");
 
 utils.Import(function(from) {
   AddIndexedProperty = from.AddIndexedProperty;
-  Delete = from.Delete;
   GetIterator = from.GetIterator;
   GetMethod = from.GetMethod;
   MakeTypeError = from.MakeTypeError;
@@ -45,10 +44,10 @@ utils.Import(function(from) {
   ObjectHasOwnProperty = from.ObjectHasOwnProperty;
   ObjectIsFrozen = from.ObjectIsFrozen;
   ObjectIsSealed = from.ObjectIsSealed;
-  ObjectToString = from.ObjectToString;
   ObserveBeginPerformSplice = from.ObserveBeginPerformSplice;
   ObserveEndPerformSplice = from.ObserveEndPerformSplice;
   ObserveEnqueueSpliceRecord = from.ObserveEnqueueSpliceRecord;
+  SameValueZero = from.SameValueZero;
 });
 
 utils.ImportFromExperimental(function(from) {
@@ -490,7 +489,7 @@ function ArrayPop() {
 
   n--;
   var value = array[n];
-  Delete(array, n, true);
+  %DeleteProperty_Strict(array, n);
   array.length = n;
   return value;
 }
@@ -1212,12 +1211,9 @@ function InnerArrayFilter(f, receiver, array, length) {
   var accumulator = new InternalArray();
   var accumulator_length = 0;
   var is_array = IS_ARRAY(array);
-  var stepping = DEBUG_IS_STEPPING(f);
   for (var i = 0; i < length; i++) {
     if (HAS_INDEX(array, i, is_array)) {
       var element = array[i];
-      // Prepare break slots for debugger step in.
-      if (stepping) %DebugPrepareStepInIfStepping(f);
       if (%_Call(f, receiver, element, i, array)) {
         accumulator[accumulator_length++] = element;
       }
@@ -1244,12 +1240,9 @@ function InnerArrayForEach(f, receiver, array, length) {
   if (!IS_CALLABLE(f)) throw MakeTypeError(kCalledNonCallable, f);
 
   var is_array = IS_ARRAY(array);
-  var stepping = DEBUG_IS_STEPPING(f);
   for (var i = 0; i < length; i++) {
     if (HAS_INDEX(array, i, is_array)) {
       var element = array[i];
-      // Prepare break slots for debugger step in.
-      if (stepping) %DebugPrepareStepInIfStepping(f);
       %_Call(f, receiver, element, i, array);
     }
   }
@@ -1271,12 +1264,9 @@ function InnerArraySome(f, receiver, array, length) {
   if (!IS_CALLABLE(f)) throw MakeTypeError(kCalledNonCallable, f);
 
   var is_array = IS_ARRAY(array);
-  var stepping = DEBUG_IS_STEPPING(f);
   for (var i = 0; i < length; i++) {
     if (HAS_INDEX(array, i, is_array)) {
       var element = array[i];
-      // Prepare break slots for debugger step in.
-      if (stepping) %DebugPrepareStepInIfStepping(f);
       if (%_Call(f, receiver, element, i, array)) return true;
     }
   }
@@ -1301,12 +1291,9 @@ function InnerArrayEvery(f, receiver, array, length) {
   if (!IS_CALLABLE(f)) throw MakeTypeError(kCalledNonCallable, f);
 
   var is_array = IS_ARRAY(array);
-  var stepping = DEBUG_IS_STEPPING(f);
   for (var i = 0; i < length; i++) {
     if (HAS_INDEX(array, i, is_array)) {
       var element = array[i];
-      // Prepare break slots for debugger step in.
-      if (stepping) %DebugPrepareStepInIfStepping(f);
       if (!%_Call(f, receiver, element, i, array)) return false;
     }
   }
@@ -1329,12 +1316,9 @@ function InnerArrayMap(f, receiver, array, length) {
 
   var accumulator = new InternalArray(length);
   var is_array = IS_ARRAY(array);
-  var stepping = DEBUG_IS_STEPPING(f);
   for (var i = 0; i < length; i++) {
     if (HAS_INDEX(array, i, is_array)) {
       var element = array[i];
-      // Prepare break slots for debugger step in.
-      if (stepping) %DebugPrepareStepInIfStepping(f);
       accumulator[i] = %_Call(f, receiver, element, i, array);
     }
   }
@@ -1497,12 +1481,9 @@ function InnerArrayReduce(callback, current, array, length, argumentsLength) {
     throw MakeTypeError(kReduceNoInitial);
   }
 
-  var stepping = DEBUG_IS_STEPPING(callback);
   for (; i < length; i++) {
     if (HAS_INDEX(array, i, is_array)) {
       var element = array[i];
-      // Prepare break slots for debugger step in.
-      if (stepping) %DebugPrepareStepInIfStepping(callback);
       current = callback(current, element, i, array);
     }
   }
@@ -1540,12 +1521,9 @@ function InnerArrayReduceRight(callback, current, array, length,
     throw MakeTypeError(kReduceNoInitial);
   }
 
-  var stepping = DEBUG_IS_STEPPING(callback);
   for (; i >= 0; i--) {
     if (HAS_INDEX(array, i, is_array)) {
       var element = array[i];
-      // Prepare break slots for debugger step in.
-      if (stepping) %DebugPrepareStepInIfStepping(callback);
       current = callback(current, element, i, array);
     }
   }
@@ -1718,9 +1696,44 @@ function ArrayFill(value, start, end) {
 }
 
 
-// ES5, 15.4.3.2
-function ArrayIsArray(obj) {
-  return IS_ARRAY(obj);
+function InnerArrayIncludes(searchElement, fromIndex, array, length) {
+  if (length === 0) {
+    return false;
+  }
+
+  var n = TO_INTEGER(fromIndex);
+
+  var k;
+  if (n >= 0) {
+    k = n;
+  } else {
+    k = length + n;
+    if (k < 0) {
+      k = 0;
+    }
+  }
+
+  while (k < length) {
+    var elementK = array[k];
+    if (SameValueZero(searchElement, elementK)) {
+      return true;
+    }
+
+    ++k;
+  }
+
+  return false;
+}
+
+
+// ES2016 draft, section 22.1.3.11
+function ArrayIncludes(searchElement, fromIndex) {
+  CHECK_OBJECT_COERCIBLE(this, "Array.prototype.includes");
+
+  var array = TO_OBJECT(this);
+  var length = TO_LENGTH(array.length);
+
+  return InnerArrayIncludes(searchElement, fromIndex, array, length);
 }
 
 
@@ -1761,7 +1774,7 @@ function ArrayFrom(arrayLike, mapfn, receiver) {
     while (true) {
       var next = iterator.next();
 
-      if (!IS_OBJECT(next)) {
+      if (!IS_RECEIVER(next)) {
         throw MakeTypeError(kIteratorResultNotAnObject, next);
       }
 
@@ -1837,7 +1850,6 @@ var unscopables = {
 
 // Set up non-enumerable functions on the Array object.
 utils.InstallFunctions(GlobalArray, DONT_ENUM, [
-  "isArray", ArrayIsArray,
   "from", ArrayFrom,
   "of", ArrayOf
 ]);
@@ -1883,7 +1895,8 @@ utils.InstallFunctions(GlobalArray.prototype, DONT_ENUM, [
   "copyWithin", getFunction("copyWithin", ArrayCopyWithin, 2),
   "find", getFunction("find", ArrayFind, 1),
   "findIndex", getFunction("findIndex", ArrayFindIndex, 1),
-  "fill", getFunction("fill", ArrayFill, 1)
+  "fill", getFunction("fill", ArrayFill, 1),
+  "includes", getFunction("includes", ArrayIncludes, 1),
 ]);
 
 %FinishArrayPrototypeSetup(GlobalArray.prototype);
@@ -1935,6 +1948,7 @@ utils.Export(function(to) {
   to.InnerArrayFind = InnerArrayFind;
   to.InnerArrayFindIndex = InnerArrayFindIndex;
   to.InnerArrayForEach = InnerArrayForEach;
+  to.InnerArrayIncludes = InnerArrayIncludes;
   to.InnerArrayIndexOf = InnerArrayIndexOf;
   to.InnerArrayJoin = InnerArrayJoin;
   to.InnerArrayLastIndexOf = InnerArrayLastIndexOf;

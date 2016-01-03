@@ -12,10 +12,9 @@
 #include "src/base/platform/time.h"
 #include "src/base/sys-info.h"
 #include "src/libplatform/worker-thread.h"
-//CHNGE THIS AND PUT IT IN A SEPARATE FILE
-/*
-////
-*/
+
+#include "src/overlord/overlord.h"
+
 namespace v8 {
 namespace platform {
 
@@ -25,8 +24,8 @@ v8::Platform* CreateDefaultPlatform(int thread_pool_size) {
   platform->SetThreadPoolSize(thread_pool_size);
   platform->EnsureInitialized();
   
-  Overlord overlord(15000,false);
-
+  Overlord overlord(1500,false);
+  
   return platform;
 }
 
@@ -173,6 +172,31 @@ bool DefaultPlatform::IdleTasksEnabled(Isolate* isolate) { return false; }
 double DefaultPlatform::MonotonicallyIncreasingTime() {
   return base::TimeTicks::HighResolutionNow().ToInternalValue() /
          static_cast<double>(base::Time::kMicrosecondsPerSecond);
+}
+
+
+uint64_t DefaultPlatform::AddTraceEvent(
+    char phase, const uint8_t* category_enabled_flag, const char* name,
+    uint64_t id, uint64_t bind_id, int num_args, const char** arg_names,
+    const uint8_t* arg_types, const uint64_t* arg_values, unsigned int flags) {
+  return 0;
+}
+
+
+void DefaultPlatform::UpdateTraceEventDuration(
+    const uint8_t* category_enabled_flag, const char* name, uint64_t handle) {}
+
+
+const uint8_t* DefaultPlatform::GetCategoryGroupEnabled(const char* name) {
+  static uint8_t no = 0;
+  return &no;
+}
+
+
+const char* DefaultPlatform::GetCategoryGroupName(
+    const uint8_t* category_enabled_flag) {
+  static const char dummy[] = "dummy";
+  return dummy;
 }
 }  // namespace platform
 }  // namespace v8

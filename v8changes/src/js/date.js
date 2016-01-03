@@ -70,12 +70,6 @@ function MakeTime(hour, min, sec, ms) {
 }
 
 
-// ECMA 262 - 15.9.1.12
-function TimeInYear(year) {
-  return DaysInYear(year) * msPerDay;
-}
-
-
 // Compute number of days given a year, month, date.
 // Note that month and date can lie outside the normal range.
 //   For example:
@@ -132,7 +126,7 @@ var Date_cache = {
 
 
 function DateConstructor(year, month, date, hours, minutes, seconds, ms) {
-  if (!%_IsConstructCall()) {
+  if (IS_UNDEFINED(new.target)) {
     // ECMA 262 - 15.9.2
     return %_Call(DateToString, new GlobalDate());
   }
@@ -140,9 +134,11 @@ function DateConstructor(year, month, date, hours, minutes, seconds, ms) {
   // ECMA 262 - 15.9.3
   var argc = %_ArgumentsLength();
   var value;
+  var result;
   if (argc == 0) {
     value = %DateCurrentTime();
-    SET_UTC_DATE_VALUE(this, value);
+    result = %NewObject(GlobalDate, new.target);
+    SET_UTC_DATE_VALUE(result, value);
   } else if (argc == 1) {
     if (IS_NUMBER(year)) {
       value = TimeClip(year);
@@ -169,7 +165,8 @@ function DateConstructor(year, month, date, hours, minutes, seconds, ms) {
       var time = TO_PRIMITIVE(year);
       value = IS_STRING(time) ? DateParse(time) : TO_NUMBER(time);
     }
-    SET_UTC_DATE_VALUE(this, value);
+    result = %NewObject(GlobalDate, new.target);
+    SET_UTC_DATE_VALUE(result, value);
   } else {
     year = TO_NUMBER(year);
     month = TO_NUMBER(month);
@@ -184,8 +181,11 @@ function DateConstructor(year, month, date, hours, minutes, seconds, ms) {
     var day = MakeDay(year, month, date);
     var time = MakeTime(hours, minutes, seconds, ms);
     value = MakeDate(day, time);
-    SET_LOCAL_DATE_VALUE(this, value);
+    result = %NewObject(GlobalDate, new.target);
+    SET_LOCAL_DATE_VALUE(result, value);
   }
+
+  return result;
 }
 
 

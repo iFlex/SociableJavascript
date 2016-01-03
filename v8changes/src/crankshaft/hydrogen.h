@@ -7,11 +7,11 @@
 
 #include "src/accessors.h"
 #include "src/allocation.h"
-#include "src/ast.h"
+#include "src/ast/ast.h"
+#include "src/ast/scopes.h"
 #include "src/bailout-reason.h"
 #include "src/compiler.h"
 #include "src/crankshaft/hydrogen-instructions.h"
-#include "src/scopes.h"
 #include "src/zone.h"
 
 namespace v8 {
@@ -1403,11 +1403,8 @@ class HGraphBuilder {
       KeyedAccessStoreMode store_mode);
 
   HInstruction* AddElementAccess(
-      HValue* elements,
-      HValue* checked_key,
-      HValue* val,
-      HValue* dependency,
-      ElementsKind elements_kind,
+      HValue* elements, HValue* checked_key, HValue* val, HValue* dependency,
+      HValue* backing_store_owner, ElementsKind elements_kind,
       PropertyAccessType access_type,
       LoadKeyedHoleMode load_mode = NEVER_RETURN_HOLE);
 
@@ -2202,7 +2199,6 @@ class HOptimizedGraphBuilder : public HGraphBuilder, public AstVisitor {
   F(IsTypedArray)                      \
   F(IsRegExp)                          \
   F(IsJSProxy)                         \
-  F(IsConstructCall)                   \
   F(Call)                              \
   F(ArgumentsLength)                   \
   F(Arguments)                         \
@@ -2222,7 +2218,7 @@ class HOptimizedGraphBuilder : public HGraphBuilder, public AstVisitor {
   F(ToLength)                          \
   F(ToNumber)                          \
   F(IsFunction)                        \
-  F(IsSpecObject)                      \
+  F(IsJSReceiver)                      \
   F(MathPow)                           \
   F(IsMinusZero)                       \
   F(HasCachedArrayIndex)               \
@@ -2270,8 +2266,6 @@ class HOptimizedGraphBuilder : public HGraphBuilder, public AstVisitor {
   F(CreateIterResultObject)            \
   /* Arrays */                         \
   F(HasFastPackedElements)             \
-  /* Strings */                        \
-  F(StringGetLength)                   \
   /* JSValue */                        \
   F(JSValueGetValue)
 
@@ -2830,6 +2824,7 @@ class HOptimizedGraphBuilder : public HGraphBuilder, public AstVisitor {
 
   HValue* BuildContextChainWalk(Variable* var);
 
+  HValue* AddThisFunction();
   HInstruction* BuildThisFunction();
 
   HInstruction* BuildFastLiteral(Handle<JSObject> boilerplate_object,

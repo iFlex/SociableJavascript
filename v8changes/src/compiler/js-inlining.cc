@@ -4,25 +4,21 @@
 
 #include "src/compiler/js-inlining.h"
 
-#include "src/ast.h"
-#include "src/ast-numbering.h"
+#include "src/ast/ast.h"
+#include "src/ast/ast-numbering.h"
+#include "src/ast/scopes.h"
 #include "src/compiler.h"
 #include "src/compiler/all-nodes.h"
 #include "src/compiler/ast-graph-builder.h"
 #include "src/compiler/common-operator.h"
-#include "src/compiler/common-operator-reducer.h"
-#include "src/compiler/dead-code-elimination.h"
 #include "src/compiler/graph-reducer.h"
-#include "src/compiler/js-global-object-specialization.h"
-#include "src/compiler/js-native-context-specialization.h"
 #include "src/compiler/js-operator.h"
 #include "src/compiler/node-matchers.h"
 #include "src/compiler/node-properties.h"
 #include "src/compiler/operator-properties.h"
 #include "src/isolate-inl.h"
-#include "src/parser.h"
-#include "src/rewriter.h"
-#include "src/scopes.h"
+#include "src/parsing/parser.h"
+#include "src/parsing/rewriter.h"
 
 namespace v8 {
 namespace internal {
@@ -59,7 +55,6 @@ class JSCallAccessor {
   }
 
   Node* frame_state_before() {
-    DCHECK_EQ(IrOpcode::kJSCallFunction, call_->opcode());
     return NodeProperties::GetFrameStateInput(call_, 1);
   }
 
@@ -137,22 +132,23 @@ class CopyVisitor {
 };
 
 
-Reduction JSInliner::InlineCall(Node* call, Node* context, Node* frame_state,
-                                Node* start, Node* end) {
+Reduction JSInliner::InlineCall(Node* call, Node* new_target, Node* context,
+                                Node* frame_state, Node* start, Node* end) {
   // The scheduler is smart enough to place our code; we just ensure {control}
   // becomes the control input of the start of the inlinee, and {effect} becomes
   // the effect input of the start of the inlinee.
   Node* control = NodeProperties::GetControlInput(call);
   Node* effect = NodeProperties::GetEffectInput(call);
 
+  int const inlinee_new_target_index =
+      static_cast<int>(start->op()->ValueOutputCount()) - 3;
   int const inlinee_arity_index =
       static_cast<int>(start->op()->ValueOutputCount()) - 2;
-  // Context is last parameter.
   int const inlinee_context_index =
       static_cast<int>(start->op()->ValueOutputCount()) - 1;
 
-  // {inliner_inputs} counts JSFunction, Receiver, arguments, but not
-  // context, effect, control.
+  // {inliner_inputs} counts JSFunction, receiver, arguments, but not
+  // new target value, argument count, context, effect or control.
   int inliner_inputs = call->op()->ValueInputCount();
   // Iterate over all uses of the start node.
   for (Edge edge : start->use_edges()) {
@@ -161,10 +157,13 @@ Reduction JSInliner::InlineCall(Node* call, Node* context, Node* frame_state,
       case IrOpcode::kParameter: {
         int index = 1 + ParameterIndexOf(use->op());
         DCHECK_LE(index, inlinee_context_index);
-        if (index < inliner_inputs && index < inlinee_arity_index) {
+        if (index < inliner_inputs && index < inlinee_new_target_index) {
           // There is an input from the call, and the index is a value
           // projection but not the context, so rewire the input.
           Replace(use, call->InputAt(index));
+        } else if (index == inlinee_new_target_index) {
+          // The projection is requesting the new target value.
+          Replace(use, new_target);
         } else if (index == inlinee_arity_index) {
           // The projection is requesting the number of arguments.
           Replace(use, jsgraph_->Int32Constant(inliner_inputs - 2));
@@ -224,7 +223,7 @@ Reduction JSInliner::InlineCall(Node* call, Node* context, Node* frame_state,
     values.push_back(control_output);
     effects.push_back(control_output);
     Node* value_output = jsgraph_->graph()->NewNode(
-        jsgraph_->common()->Phi(kMachAnyTagged, input_count),
+        jsgraph_->common()->Phi(MachineRepresentation::kTagged, input_count),
         static_cast<int>(values.size()), &values.front());
     Node* effect_output = jsgraph_->graph()->NewNode(
         jsgraph_->common()->EffectPhi(input_count),
@@ -265,6 +264,18 @@ Node* JSInliner::CreateArtificialFrameState(Node* node, Node* outer_frame_state,
 }
 
 
+namespace {
+
+// TODO(mstarzinger,verwaest): Move this predicate onto SharedFunctionInfo?
+bool NeedsImplicitReceiver(Handle<JSFunction> function, Isolate* isolate) {
+  Code* construct_stub = function->shared()->construct_stub();
+  return construct_stub != *isolate->builtins()->JSBuiltinsConstructStub() &&
+         construct_stub != *isolate->builtins()->ConstructedNonConstructable();
+}
+
+}  // namespace
+
+
 Reduction JSInliner::Reduce(Node* node) {
   if (!IrOpcode::IsInlineeOpcode(node->opcode())) return NoChange();
 
@@ -284,9 +295,18 @@ Reduction JSInliner::ReduceJSCall(Node* node, Handle<JSFunction> function) {
   DCHECK(IrOpcode::IsInlineeOpcode(node->opcode()));
   JSCallAccessor call(node);
 
+  // Function must be inlineable.
   if (!function->shared()->IsInlineable()) {
-    // Function must be inlineable.
     TRACE("Not inlining %s into %s because callee is not inlineable\n",
+          function->shared()->DebugName()->ToCString().get(),
+          info_->shared_info()->DebugName()->ToCString().get());
+    return NoChange();
+  }
+
+  // Constructor must be constructable.
+  if (node->opcode() == IrOpcode::kJSCallConstruct &&
+      !function->IsConstructor()) {
+    TRACE("Not inlining %s into %s because constructor is not constructable.\n",
           function->shared()->DebugName()->ToCString().get(),
           info_->shared_info()->DebugName()->ToCString().get());
     return NoChange();
@@ -294,15 +314,16 @@ Reduction JSInliner::ReduceJSCall(Node* node, Handle<JSFunction> function) {
 
   // Class constructors are callable, but [[Call]] will raise an exception.
   // See ES6 section 9.2.1 [[Call]] ( thisArgument, argumentsList ).
-  if (IsClassConstructor(function->shared()->kind())) {
-    TRACE("Not inlining %s into %s because callee is classConstructor\n",
+  if (node->opcode() == IrOpcode::kJSCallFunction &&
+      IsClassConstructor(function->shared()->kind())) {
+    TRACE("Not inlining %s into %s because callee is a class constructor.\n",
           function->shared()->DebugName()->ToCString().get(),
           info_->shared_info()->DebugName()->ToCString().get());
     return NoChange();
   }
 
+  // Function contains break points.
   if (function->shared()->HasDebugInfo()) {
-    // Function contains break points.
     TRACE("Not inlining %s into %s because callee may contain break points\n",
           function->shared()->DebugName()->ToCString().get(),
           info_->shared_info()->DebugName()->ToCString().get());
@@ -356,9 +377,6 @@ Reduction JSInliner::ReduceJSCall(Node* node, Handle<JSFunction> function) {
   if (info_->is_deoptimization_enabled()) {
     info.MarkAsDeoptimizationEnabled();
   }
-  if (info_->is_native_context_specializing()) {
-    info.MarkAsNativeContextSpecializing();
-  }
 
   if (!Compiler::ParseAndAnalyze(info.parse_info())) {
     TRACE("Not inlining %s into %s because parsing failed\n",
@@ -410,74 +428,49 @@ Reduction JSInliner::ReduceJSCall(Node* node, Handle<JSFunction> function) {
   AstGraphBuilder graph_builder(local_zone_, &info, &jsgraph);
   graph_builder.CreateGraph(false);
 
-  // TODO(mstarzinger): Unify this with the Pipeline once JSInliner refactoring
-  // starts.
-  if (info.is_native_context_specializing()) {
-    GraphReducer graph_reducer(local_zone_, &graph, jsgraph.Dead());
-    DeadCodeElimination dead_code_elimination(&graph_reducer, &graph,
-                                              jsgraph.common());
-    CommonOperatorReducer common_reducer(&graph_reducer, &graph,
-                                         jsgraph.common(), jsgraph.machine());
-    JSGlobalObjectSpecialization global_object_specialization(
-        &graph_reducer, &jsgraph,
-        info.is_deoptimization_enabled()
-            ? JSGlobalObjectSpecialization::kDeoptimizationEnabled
-            : JSGlobalObjectSpecialization::kNoFlags,
-        handle(info.global_object(), info.isolate()), info_->dependencies());
-    JSNativeContextSpecialization native_context_specialization(
-        &graph_reducer, &jsgraph,
-        info.is_deoptimization_enabled()
-            ? JSNativeContextSpecialization::kDeoptimizationEnabled
-            : JSNativeContextSpecialization::kNoFlags,
-        handle(info.global_object()->native_context(), info.isolate()),
-        info_->dependencies(), local_zone_);
-    graph_reducer.AddReducer(&dead_code_elimination);
-    graph_reducer.AddReducer(&common_reducer);
-    graph_reducer.AddReducer(&global_object_specialization);
-    graph_reducer.AddReducer(&native_context_specialization);
-    graph_reducer.ReduceGraph();
-  }
-
   CopyVisitor visitor(&graph, jsgraph_->graph(), &zone);
   visitor.CopyGraph();
 
   Node* start = visitor.GetCopy(graph.start());
   Node* end = visitor.GetCopy(graph.end());
   Node* frame_state = call.frame_state_after();
+  Node* new_target = jsgraph_->UndefinedConstant();
 
   // Insert nodes around the call that model the behavior required for a
-  // constructor dispatch and turn the constructor call into a regular call.
+  // constructor dispatch (allocate implicit receiver and check return value).
   // This models the behavior usually accomplished by our {JSConstructStub}.
   // Note that the context has to be the callers context (input to call node).
-  if (node->opcode() == IrOpcode::kJSCallConstruct) {
+  Node* receiver = jsgraph_->UndefinedConstant();  // Implicit receiver.
+  if (node->opcode() == IrOpcode::kJSCallConstruct &&
+      NeedsImplicitReceiver(function, info_->isolate())) {
     Node* effect = NodeProperties::GetEffectInput(node);
     Node* context = NodeProperties::GetContextInput(node);
-    Node* create = jsgraph_->graph()->NewNode(jsgraph_->javascript()->Create(),
-                                              call.target(), call.new_target(),
-                                              context, frame_state, effect);
+    Node* create = jsgraph_->graph()->NewNode(
+        jsgraph_->javascript()->Create(), call.target(), call.new_target(),
+        context, call.frame_state_before(), effect);
     NodeProperties::ReplaceEffectInput(node, create);
-    // TODO(4544): For now Runtime_GetNewTarget depends on the actual target to
-    // coincide with the new target. Fix this!
-    CHECK_EQ(call.target(), call.new_target());
-    // TODO(4544): For derived constructors we should not allocate an implicit
-    // receiver and also the return value should not be checked afterwards.
-    CHECK(!IsClassConstructor(function->shared()->kind()));
-    // Swizzle the inputs of the {JSCallConstruct} node to look like inputs to
-    // any {JSCallFunction} node so that the rest of the inlining machinery
-    // behaves as if we were dealing with a regular function invocation.
-    node->RemoveInput(call.formal_arguments() + 1);  // Drop new.target.
-    node->InsertInput(jsgraph_->graph()->zone(), 1, create);
     // Insert a check of the return value to determine whether the return value
     // or the implicit receiver should be selected as a result of the call.
     Node* check = jsgraph_->graph()->NewNode(
-        jsgraph_->javascript()->CallRuntime(Runtime::kInlineIsSpecObject, 1),
+        jsgraph_->javascript()->CallRuntime(Runtime::kInlineIsJSReceiver, 1),
         node, context, node, start);
     Node* select = jsgraph_->graph()->NewNode(
-        jsgraph_->common()->Select(kMachAnyTagged), check, node, create);
+        jsgraph_->common()->Select(MachineRepresentation::kTagged), check, node,
+        create);
     NodeProperties::ReplaceUses(node, select, check, node, node);
     NodeProperties::ReplaceValueInput(select, node, 1);
     NodeProperties::ReplaceValueInput(check, node, 0);
     NodeProperties::ReplaceEffectInput(check, node);
+    receiver = create;  // The implicit receiver.
+  }
+
+  // Swizzle the inputs of the {JSCallConstruct} node to look like inputs to a
+  // normal {JSCallFunction} node so that the rest of the inlining machinery
+  // behaves as if we were dealing with a regular function invocation.
+  if (node->opcode() == IrOpcode::kJSCallConstruct) {
+    new_target = call.new_target();  // Retrieve new target value input.
+    node->RemoveInput(call.formal_arguments() + 1);  // Drop new target.
+    node->InsertInput(jsgraph_->graph()->zone(), 1, receiver);
     // Insert a construct stub frame into the chain of frame states. This will
     // reconstruct the proper frame when deoptimizing within the constructor.
     frame_state = CreateArtificialFrameState(
@@ -509,16 +502,17 @@ Reduction JSInliner::ReduceJSCall(Node* node, Handle<JSFunction> function) {
   }
 
   // Insert argument adaptor frame if required. The callees formal parameter
-  // count (i.e. value outputs of start node minus target, receiver, num args
-  // and context) have to match the number of arguments passed to the call.
-  DCHECK_EQ(parameter_count, start->op()->ValueOutputCount() - 4);
+  // count (i.e. value outputs of start node minus target, receiver, new target,
+  // arguments count and context) have to match the number of arguments passed
+  // to the call.
+  DCHECK_EQ(parameter_count, start->op()->ValueOutputCount() - 5);
   if (call.formal_arguments() != parameter_count) {
     frame_state = CreateArtificialFrameState(
         node, frame_state, call.formal_arguments(),
         FrameStateType::kArgumentsAdaptor, info.shared_info());
   }
 
-  return InlineCall(node, context, frame_state, start, end);
+  return InlineCall(node, new_target, context, frame_state, start, end);
 }
 
 }  // namespace compiler

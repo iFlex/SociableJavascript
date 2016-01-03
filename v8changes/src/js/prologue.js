@@ -171,7 +171,6 @@ function PostNatives(utils) {
   var expose_list = [
     "ArrayToString",
     "ErrorToString",
-    "FunctionSourceString",
     "GetIterator",
     "GetMethod",
     "InnerArrayEvery",
@@ -201,13 +200,14 @@ function PostNatives(utils) {
     "ObjectDefineProperty",
     "ObserveArrayMethods",
     "ObserveObjectMethods",
-    "OwnPropertyKeys",
+    "PromiseChain",
+    "PromiseDeferred",
+    "PromiseResolved",
     "SameValueZero",
     "SetIterator",
     "SetIteratorNext",
     "SetValues",
     "SymbolToString",
-    "ToNameArray",
     "ToPositiveInteger",
     // From runtime:
     "is_concat_spreadable_symbol",
@@ -218,6 +218,7 @@ function PostNatives(utils) {
     "reflect_construct",
     "regexp_flags_symbol",
     "to_string_tag_symbol",
+    "object_to_string",
   ];
 
   var filtered_exports = {};
@@ -245,8 +246,6 @@ function PostExperimentals(utils) {
     imports_from_experimental(exports_container);
   }
 
-  utils.InitializeRNG();
-  utils.InitializeRNG = UNDEFINED;
   utils.CreateDoubleResultArray();
   utils.CreateDoubleResultArray = UNDEFINED;
 
@@ -262,8 +261,6 @@ function PostDebug(utils) {
     imports(exports_container);
   }
 
-  utils.InitializeRNG();
-  utils.InitializeRNG = UNDEFINED;
   utils.CreateDoubleResultArray();
   utils.CreateDoubleResultArray = UNDEFINED;
 
@@ -289,7 +286,7 @@ function InitializeBuiltinTypedArrays(utils, rng_state, rempio2result) {
 
 // -----------------------------------------------------------------------
 
-%OptimizeObjectForAddingMultipleProperties(utils, 15);
+%OptimizeObjectForAddingMultipleProperties(utils, 14);
 
 utils.Import = Import;
 utils.ImportNow = ImportNow;

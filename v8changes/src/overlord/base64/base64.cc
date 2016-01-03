@@ -63,6 +63,10 @@ namespace base64{
 		out[index] = 0;
 		return out;
 	}
+	
+	void encode(const char *in, int in_len, char* &out){
+		out = encode(in,in_len);
+	}
 
 	bool decode(const char *in, int in_len, char* &out){
 		if( (in_len*6) % 8)

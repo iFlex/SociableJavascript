@@ -78,8 +78,7 @@ Callable CodeFactory::CallICInOptimizedCode(Isolate* isolate, int argc,
 Callable CodeFactory::StoreIC(Isolate* isolate, LanguageMode language_mode) {
   return Callable(
       StoreIC::initialize_stub(isolate, language_mode, UNINITIALIZED),
-      FLAG_vector_stores ? VectorStoreICTrampolineDescriptor(isolate)
-                         : StoreDescriptor(isolate));
+      VectorStoreICTrampolineDescriptor(isolate));
 }
 
 
@@ -87,10 +86,9 @@ Callable CodeFactory::StoreIC(Isolate* isolate, LanguageMode language_mode) {
 Callable CodeFactory::StoreICInOptimizedCode(
     Isolate* isolate, LanguageMode language_mode,
     InlineCacheState initialization_state) {
-  CallInterfaceDescriptor descriptor =
-      FLAG_vector_stores && initialization_state != MEGAMORPHIC
-          ? VectorStoreICDescriptor(isolate)
-          : StoreDescriptor(isolate);
+  CallInterfaceDescriptor descriptor = initialization_state != MEGAMORPHIC
+                                           ? VectorStoreICDescriptor(isolate)
+                                           : StoreDescriptor(isolate);
   return Callable(StoreIC::initialize_stub_in_optimized_code(
                       isolate, language_mode, initialization_state),
                   descriptor);
@@ -102,8 +100,7 @@ Callable CodeFactory::KeyedStoreIC(Isolate* isolate,
                                    LanguageMode language_mode) {
   return Callable(
       KeyedStoreIC::initialize_stub(isolate, language_mode, UNINITIALIZED),
-      FLAG_vector_stores ? VectorStoreICTrampolineDescriptor(isolate)
-                         : StoreDescriptor(isolate));
+      VectorStoreICTrampolineDescriptor(isolate));
 }
 
 
@@ -111,10 +108,9 @@ Callable CodeFactory::KeyedStoreIC(Isolate* isolate,
 Callable CodeFactory::KeyedStoreICInOptimizedCode(
     Isolate* isolate, LanguageMode language_mode,
     InlineCacheState initialization_state) {
-  CallInterfaceDescriptor descriptor =
-      FLAG_vector_stores && initialization_state != MEGAMORPHIC
-          ? VectorStoreICDescriptor(isolate)
-          : StoreDescriptor(isolate);
+  CallInterfaceDescriptor descriptor = initialization_state != MEGAMORPHIC
+                                           ? VectorStoreICDescriptor(isolate)
+                                           : StoreDescriptor(isolate);
   return Callable(KeyedStoreIC::initialize_stub_in_optimized_code(
                       isolate, language_mode, initialization_state),
                   descriptor);
@@ -152,11 +148,9 @@ Callable CodeFactory::InstanceOf(Isolate* isolate) {
 
 
 // static
-Callable CodeFactory::ToBoolean(Isolate* isolate,
-                                ToBooleanStub::ResultMode mode,
-                                ToBooleanStub::Types types) {
-  ToBooleanStub stub(isolate, mode, types);
-  return Callable(stub.GetCode(), stub.GetCallInterfaceDescriptor());
+Callable CodeFactory::ToBoolean(Isolate* isolate) {
+  Handle<Code> code = ToBooleanStub::GetUninitialized(isolate);
+  return Callable(code, ToBooleanDescriptor(isolate));
 }
 
 
@@ -203,6 +197,13 @@ Callable CodeFactory::RegExpConstructResult(Isolate* isolate) {
 
 
 // static
+Callable CodeFactory::RegExpExec(Isolate* isolate) {
+  RegExpExecStub stub(isolate);
+  return Callable(stub.GetCode(), stub.GetCallInterfaceDescriptor());
+}
+
+
+// static
 Callable CodeFactory::StringAdd(Isolate* isolate, StringAddFlags flags,
                                 PretenureFlag pretenure_flag) {
   StringAddStub stub(isolate, flags, pretenure_flag);
@@ -218,8 +219,22 @@ Callable CodeFactory::StringCompare(Isolate* isolate) {
 
 
 // static
+Callable CodeFactory::SubString(Isolate* isolate) {
+  SubStringStub stub(isolate);
+  return Callable(stub.GetCode(), stub.GetCallInterfaceDescriptor());
+}
+
+
+// static
 Callable CodeFactory::Typeof(Isolate* isolate) {
   TypeofStub stub(isolate);
+  return Callable(stub.GetCode(), stub.GetCallInterfaceDescriptor());
+}
+
+
+// static
+Callable CodeFactory::FastCloneRegExp(Isolate* isolate) {
+  FastCloneRegExpStub stub(isolate);
   return Callable(stub.GetCode(), stub.GetCallInterfaceDescriptor());
 }
 
@@ -305,6 +320,20 @@ Callable CodeFactory::Call(Isolate* isolate, ConvertReceiverMode mode) {
 Callable CodeFactory::CallFunction(Isolate* isolate, ConvertReceiverMode mode) {
   return Callable(isolate->builtins()->CallFunction(mode),
                   CallTrampolineDescriptor(isolate));
+}
+
+
+// static
+Callable CodeFactory::Construct(Isolate* isolate) {
+  return Callable(isolate->builtins()->Construct(),
+                  ConstructTrampolineDescriptor(isolate));
+}
+
+
+// static
+Callable CodeFactory::ConstructFunction(Isolate* isolate) {
+  return Callable(isolate->builtins()->ConstructFunction(),
+                  ConstructTrampolineDescriptor(isolate));
 }
 
 

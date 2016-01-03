@@ -6,11 +6,11 @@
 
 #include "src/accessors.h"
 #include "src/arguments.h"
+#include "src/ast/scopeinfo.h"
+#include "src/ast/scopes.h"
 #include "src/frames-inl.h"
 #include "src/isolate-inl.h"
 #include "src/messages.h"
-#include "src/scopeinfo.h"
-#include "src/scopes.h"
 
 namespace v8 {
 namespace internal {
@@ -231,7 +231,8 @@ Object* DeclareLookupSlot(Isolate* isolate, Handle<String> name,
                         &binding_flags);
     if (attributes != ABSENT &&
         (binding_flags == MUTABLE_CHECK_INITIALIZED ||
-         binding_flags == IMMUTABLE_CHECK_INITIALIZED)) {
+         binding_flags == IMMUTABLE_CHECK_INITIALIZED ||
+         binding_flags == IMMUTABLE_CHECK_INITIALIZED_HARMONY)) {
       return ThrowRedeclarationError(isolate, name);
     }
     attr = static_cast<PropertyAttributes>(attr & ~EVAL_DECLARED);
@@ -293,7 +294,7 @@ Object* DeclareLookupSlot(Isolate* isolate, Handle<String> name,
       DCHECK(context->IsBlockContext());
       object = isolate->factory()->NewJSObject(
           isolate->context_extension_function());
-      Handle<Object> extension =
+      Handle<HeapObject> extension =
           isolate->factory()->NewSloppyBlockWithEvalContextExtension(
               handle(context->scope_info()), object);
       context->set_extension(*extension);
@@ -520,6 +521,26 @@ Handle<JSObject> NewStrictArguments(Isolate* isolate, Handle<JSFunction> callee,
 }
 
 
+template <typename T>
+Handle<JSObject> NewRestArguments(Isolate* isolate, Handle<JSFunction> callee,
+                                  T parameters, int argument_count,
+                                  int start_index) {
+  int num_elements = std::max(0, argument_count - start_index);
+  Handle<JSObject> result = isolate->factory()->NewJSArray(
+      FAST_ELEMENTS, num_elements, num_elements, Strength::WEAK,
+      DONT_INITIALIZE_ARRAY_ELEMENTS);
+  {
+    DisallowHeapAllocation no_gc;
+    FixedArray* elements = FixedArray::cast(result->elements());
+    WriteBarrierMode mode = result->GetWriteBarrierMode(no_gc);
+    for (int i = 0; i < num_elements; i++) {
+      elements->set(i, parameters[i + start_index], mode);
+    }
+  }
+  return result;
+}
+
+
 class HandleArguments BASE_EMBEDDED {
  public:
   explicit HandleArguments(Handle<Object>* array) : array_(array) {}
@@ -570,6 +591,22 @@ RUNTIME_FUNCTION(Runtime_NewStrictArguments_Generic) {
 }
 
 
+RUNTIME_FUNCTION(Runtime_NewRestArguments_Generic) {
+  HandleScope scope(isolate);
+  DCHECK(args.length() == 2);
+  CONVERT_ARG_HANDLE_CHECKED(JSFunction, callee, 0)
+  CONVERT_SMI_ARG_CHECKED(start_index, 1);
+  // This generic runtime function can also be used when the caller has been
+  // inlined, we use the slow but accurate {Runtime::GetCallerArguments}.
+  int argument_count = 0;
+  base::SmartArrayPointer<Handle<Object>> arguments =
+      Runtime::GetCallerArguments(isolate, 0, &argument_count);
+  HandleArguments argument_getter(arguments.get());
+  return *NewRestArguments(isolate, callee, argument_getter, argument_count,
+                           start_index);
+}
+
+
 RUNTIME_FUNCTION(Runtime_NewSloppyArguments) {
   HandleScope scope(isolate);
   DCHECK(args.length() == 3);
@@ -601,6 +638,54 @@ RUNTIME_FUNCTION(Runtime_NewStrictArguments) {
 #endif  // DEBUG
   ParameterArguments argument_getter(parameters);
   return *NewStrictArguments(isolate, callee, argument_getter, argument_count);
+}
+
+
+static Handle<JSArray> NewRestParam(Isolate* isolate, Object** parameters,
+                                    int num_params, int rest_index,
+                                    LanguageMode language_mode) {
+  parameters -= rest_index;
+  int num_elements = std::max(0, num_params - rest_index);
+  Handle<FixedArray> elements =
+      isolate->factory()->NewUninitializedFixedArray(num_elements);
+  for (int i = 0; i < num_elements; ++i) {
+    elements->set(i, *--parameters);
+  }
+  return isolate->factory()->NewJSArrayWithElements(
+      elements, FAST_ELEMENTS, num_elements, strength(language_mode));
+}
+
+
+RUNTIME_FUNCTION(Runtime_NewRestParam) {
+  HandleScope scope(isolate);
+  DCHECK(args.length() == 4);
+  Object** parameters = reinterpret_cast<Object**>(args[0]);
+  CONVERT_SMI_ARG_CHECKED(num_params, 1);
+  CONVERT_SMI_ARG_CHECKED(rest_index, 2);
+  CONVERT_SMI_ARG_CHECKED(language_mode, 3);
+
+  return *NewRestParam(isolate, parameters, num_params, rest_index,
+                       static_cast<LanguageMode>(language_mode));
+}
+
+
+RUNTIME_FUNCTION(Runtime_NewRestParamSlow) {
+  HandleScope scope(isolate);
+  DCHECK(args.length() == 2);
+  CONVERT_SMI_ARG_CHECKED(rest_index, 0);
+  CONVERT_SMI_ARG_CHECKED(language_mode, 1);
+
+  JavaScriptFrameIterator it(isolate);
+
+  // Find the frame that holds the actual arguments passed to the function.
+  it.AdvanceToArgumentsFrame();
+  JavaScriptFrame* frame = it.frame();
+
+  int argument_count = frame->GetArgumentsLength();
+  Object** parameters = reinterpret_cast<Object**>(frame->GetParameterSlot(-1));
+
+  return *NewRestParam(isolate, parameters, argument_count, rest_index,
+                       static_cast<LanguageMode>(language_mode));
 }
 
 
@@ -704,31 +789,9 @@ RUNTIME_FUNCTION(Runtime_NewFunctionContext) {
 
 RUNTIME_FUNCTION(Runtime_PushWithContext) {
   HandleScope scope(isolate);
-  DCHECK(args.length() == 2);
-  Handle<JSReceiver> extension_object;
-  if (args[0]->IsJSReceiver()) {
-    extension_object = args.at<JSReceiver>(0);
-  } else {
-    // Try to convert the object to a proper JavaScript object.
-    MaybeHandle<JSReceiver> maybe_object =
-        Object::ToObject(isolate, args.at<Object>(0));
-    if (!maybe_object.ToHandle(&extension_object)) {
-      Handle<Object> handle = args.at<Object>(0);
-      THROW_NEW_ERROR_RETURN_FAILURE(
-          isolate, NewTypeError(MessageTemplate::kWithExpression, handle));
-    }
-  }
-
-  Handle<JSFunction> function;
-  if (args[1]->IsSmi()) {
-    // A smi sentinel indicates a context nested inside global code rather
-    // than some function.  There is a canonical empty function that can be
-    // gotten from the native context.
-    function = handle(isolate->native_context()->closure());
-  } else {
-    function = args.at<JSFunction>(1);
-  }
-
+  DCHECK_EQ(2, args.length());
+  CONVERT_ARG_HANDLE_CHECKED(JSReceiver, extension_object, 0);
+  CONVERT_ARG_HANDLE_CHECKED(JSFunction, function, 1);
   Handle<Context> current(isolate->context());
   Handle<Context> context =
       isolate->factory()->NewWithContext(function, current, extension_object);
@@ -739,18 +802,10 @@ RUNTIME_FUNCTION(Runtime_PushWithContext) {
 
 RUNTIME_FUNCTION(Runtime_PushCatchContext) {
   HandleScope scope(isolate);
-  DCHECK(args.length() == 3);
+  DCHECK_EQ(3, args.length());
   CONVERT_ARG_HANDLE_CHECKED(String, name, 0);
   CONVERT_ARG_HANDLE_CHECKED(Object, thrown_object, 1);
-  Handle<JSFunction> function;
-  if (args[2]->IsSmi()) {
-    // A smi sentinel indicates a context nested inside global code rather
-    // than some function.  There is a canonical empty function that can be
-    // gotten from the native context.
-    function = handle(isolate->native_context()->closure());
-  } else {
-    function = args.at<JSFunction>(2);
-  }
+  CONVERT_ARG_HANDLE_CHECKED(JSFunction, function, 2);
   Handle<Context> current(isolate->context());
   Handle<Context> context = isolate->factory()->NewCatchContext(
       function, current, name, thrown_object);
@@ -761,17 +816,9 @@ RUNTIME_FUNCTION(Runtime_PushCatchContext) {
 
 RUNTIME_FUNCTION(Runtime_PushBlockContext) {
   HandleScope scope(isolate);
-  DCHECK(args.length() == 2);
+  DCHECK_EQ(2, args.length());
   CONVERT_ARG_HANDLE_CHECKED(ScopeInfo, scope_info, 0);
-  Handle<JSFunction> function;
-  if (args[1]->IsSmi()) {
-    // A smi sentinel indicates a context nested inside global code rather
-    // than some function.  There is a canonical empty function that can be
-    // gotten from the native context.
-    function = handle(isolate->native_context()->closure());
-  } else {
-    function = args.at<JSFunction>(1);
-  }
+  CONVERT_ARG_HANDLE_CHECKED(JSFunction, function, 1);
   Handle<Context> current(isolate->context());
   Handle<Context> context =
       isolate->factory()->NewBlockContext(function, current, scope_info);
@@ -813,7 +860,7 @@ RUNTIME_FUNCTION(Runtime_PushModuleContext) {
   Context* previous = isolate->context();
   context->set_previous(previous);
   context->set_closure(previous->closure());
-  context->set_global_object(previous->global_object());
+  context->set_native_context(previous->native_context());
   isolate->set_context(*context);
 
   // Find hosting scope and initialize internal variable holding module there.
@@ -863,8 +910,10 @@ RUNTIME_FUNCTION(Runtime_DeclareModules) {
       }
     }
 
-    if (JSObject::PreventExtensions(module, Object::THROW_ON_ERROR).IsNothing())
+    if (JSObject::PreventExtensions(module, Object::THROW_ON_ERROR)
+            .IsNothing()) {
       DCHECK(false);
+    }
   }
 
   DCHECK(!isolate->has_pending_exception());
@@ -902,10 +951,9 @@ RUNTIME_FUNCTION(Runtime_DeleteLookupSlot) {
   // the global object, or the subject of a with.  Try to delete it
   // (respecting DONT_DELETE).
   Handle<JSObject> object = Handle<JSObject>::cast(holder);
-  Handle<Object> result;
-  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(isolate, result,
-                                     JSReceiver::DeleteProperty(object, name));
-  return *result;
+  Maybe<bool> result = JSReceiver::DeleteProperty(object, name);
+  MAYBE_RETURN(result, isolate->heap()->exception());
+  return isolate->heap()->ToBoolean(result.FromJust());
 }
 
 

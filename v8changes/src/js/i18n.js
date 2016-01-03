@@ -197,21 +197,21 @@ function addBoundMethod(obj, methodName, implementation, length) {
       var boundMethod;
       if (IS_UNDEFINED(length) || length === 2) {
         boundMethod = function(x, y) {
-          if (%_IsConstructCall()) {
+          if (!IS_UNDEFINED(new.target)) {
             throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
           }
           return implementation(that, x, y);
         }
       } else if (length === 1) {
         boundMethod = function(x) {
-          if (%_IsConstructCall()) {
+          if (!IS_UNDEFINED(new.target)) {
             throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
           }
           return implementation(that, x);
         }
       } else {
         boundMethod = function() {
-          if (%_IsConstructCall()) {
+          if (!IS_UNDEFINED(new.target)) {
             throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
           }
           // DateTimeFormat.format needs to be 0 arg method, but can stil
@@ -947,23 +947,26 @@ function initializeCollator(collator, locales, options) {
  *
  * @constructor
  */
-function Collator() {
-  var locales = %_Arguments(0);
-  var options = %_Arguments(1);
+%AddNamedProperty(Intl, 'Collator', function() {
+    var locales = %_Arguments(0);
+    var options = %_Arguments(1);
 
-  if (IS_UNDEFINED(new.target)) return new Collator(locales, options);
+    if (!this || this === Intl) {
+      // Constructor is called as a function.
+      return new Intl.Collator(locales, options);
+    }
 
-  return initializeCollator(this, locales, options);
-}
-
-%AddNamedProperty(Intl, 'Collator', Collator, DONT_ENUM);
+    return initializeCollator(TO_OBJECT(this), locales, options);
+  },
+  DONT_ENUM
+);
 
 
 /**
  * Collator resolvedOptions method.
  */
 %AddNamedProperty(Intl.Collator.prototype, 'resolvedOptions', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -999,7 +1002,7 @@ function Collator() {
  * Options are optional parameter.
  */
 %AddNamedProperty(Intl.Collator, 'supportedLocalesOf', function(locales) {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1186,22 +1189,26 @@ function initializeNumberFormat(numberFormat, locales, options) {
  *
  * @constructor
  */
-function NumberFormat() {
-  var locales = %_Arguments(0);
-  var options = %_Arguments(1);
+%AddNamedProperty(Intl, 'NumberFormat', function() {
+    var locales = %_Arguments(0);
+    var options = %_Arguments(1);
 
-  if (IS_UNDEFINED(new.target)) return new NumberFormat(locales, options);
+    if (!this || this === Intl) {
+      // Constructor is called as a function.
+      return new Intl.NumberFormat(locales, options);
+    }
 
-  return initializeNumberFormat(this, locales, options);
-}
-%AddNamedProperty(Intl, 'NumberFormat', NumberFormat, DONT_ENUM);
+    return initializeNumberFormat(TO_OBJECT(this), locales, options);
+  },
+  DONT_ENUM
+);
 
 
 /**
  * NumberFormat resolvedOptions method.
  */
 %AddNamedProperty(Intl.NumberFormat.prototype, 'resolvedOptions', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1256,7 +1263,7 @@ function NumberFormat() {
  * Options are optional parameter.
  */
 %AddNamedProperty(Intl.NumberFormat, 'supportedLocalesOf', function(locales) {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1567,7 +1574,7 @@ function initializeDateTimeFormat(dateFormat, locales, options) {
   var formatter = %CreateDateTimeFormat(
     requestedLocale, {skeleton: ldmlString, timeZone: tz}, resolved);
 
-  if (!IS_UNDEFINED(tz) && tz !== resolved.timeZone) {
+  if (resolved.timeZone === "Etc/Unknown") {
     throw MakeRangeError(kUnsupportedTimeZone, tz);
   }
 
@@ -1584,22 +1591,26 @@ function initializeDateTimeFormat(dateFormat, locales, options) {
  *
  * @constructor
  */
-function DateTimeFormat() {
-  var locales = %_Arguments(0);
-  var options = %_Arguments(1);
+%AddNamedProperty(Intl, 'DateTimeFormat', function() {
+    var locales = %_Arguments(0);
+    var options = %_Arguments(1);
 
-  if (IS_UNDEFINED(new.target)) return new DateTimeFormat(locales, options);
+    if (!this || this === Intl) {
+      // Constructor is called as a function.
+      return new Intl.DateTimeFormat(locales, options);
+    }
 
-  return initializeDateTimeFormat(this, locales, options);
-}
-%AddNamedProperty(Intl, 'DateTimeFormat', DateTimeFormat, DONT_ENUM);
+    return initializeDateTimeFormat(TO_OBJECT(this), locales, options);
+  },
+  DONT_ENUM
+);
 
 
 /**
  * DateTimeFormat resolvedOptions method.
  */
 %AddNamedProperty(Intl.DateTimeFormat.prototype, 'resolvedOptions', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1673,7 +1684,7 @@ function DateTimeFormat() {
  * Options are optional parameter.
  */
 %AddNamedProperty(Intl.DateTimeFormat, 'supportedLocalesOf', function(locales) {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1820,7 +1831,7 @@ function initializeBreakIterator(iterator, locales, options) {
  */
 %AddNamedProperty(Intl.v8BreakIterator.prototype, 'resolvedOptions',
   function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1853,7 +1864,7 @@ function initializeBreakIterator(iterator, locales, options) {
  */
 %AddNamedProperty(Intl.v8BreakIterator, 'supportedLocalesOf',
   function(locales) {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1967,7 +1978,7 @@ function OverrideFunction(object, name, f) {
  * Overrides the built-in method.
  */
 OverrideFunction(GlobalString.prototype, 'localeCompare', function(that) {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -1992,7 +2003,7 @@ OverrideFunction(GlobalString.prototype, 'localeCompare', function(that) {
  */
 
 OverrideFunction(GlobalString.prototype, 'normalize', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -2020,7 +2031,7 @@ OverrideFunction(GlobalString.prototype, 'normalize', function() {
  * If locale or options are omitted, defaults are used.
  */
 OverrideFunction(GlobalNumber.prototype, 'toLocaleString', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -2061,7 +2072,7 @@ function toLocaleDateTime(date, locales, options, required, defaults, service) {
  * present in the output.
  */
 OverrideFunction(GlobalDate.prototype, 'toLocaleString', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -2079,7 +2090,7 @@ OverrideFunction(GlobalDate.prototype, 'toLocaleString', function() {
  * in the output.
  */
 OverrideFunction(GlobalDate.prototype, 'toLocaleDateString', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 
@@ -2097,7 +2108,7 @@ OverrideFunction(GlobalDate.prototype, 'toLocaleDateString', function() {
  * in the output.
  */
 OverrideFunction(GlobalDate.prototype, 'toLocaleTimeString', function() {
-    if (%_IsConstructCall()) {
+    if (!IS_UNDEFINED(new.target)) {
       throw MakeTypeError(kOrdinaryFunctionCalledAsConstructor);
     }
 

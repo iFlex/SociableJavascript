@@ -407,9 +407,9 @@ class Isolate {
   // PerIsolateThreadData work on some older versions of gcc.
   class ThreadDataTable;
   class EntryStackItem;
-
  public:
   ~Isolate();
+
   // A thread has a PerIsolateThreadData instance for each isolate that it has
   // entered. That instance is allocated when the isolate is initially entered
   // and reused on subsequent entries.
@@ -486,14 +486,9 @@ class Isolate {
     return isolate;
   }
 
-  INLINE(static Isolate* UncheckedCurrent()) {
-    DCHECK(base::NoBarrier_Load(&isolate_key_created_) == 1);
-    return reinterpret_cast<Isolate*>(
-        base::Thread::GetThreadLocal(isolate_key_));
-  }
-
-  // Like UncheckedCurrent, but skips the check that |isolate_key_| was
-  // initialized. Callers have to ensure that themselves.
+  // Like Current, but skips the check that |isolate_key_| was initialized.
+  // Callers have to ensure that themselves.
+  // DO NOT USE. The only remaining callsite will be deleted soon.
   INLINE(static Isolate* UnsafeCurrent()) {
     return reinterpret_cast<Isolate*>(
         base::Thread::GetThreadLocal(isolate_key_));
@@ -527,6 +522,10 @@ class Isolate {
   // Find the PerThread for given (isolate, thread) combination
   // If one does not yet exist, return null.
   PerIsolateThreadData* FindPerThreadDataForThread(ThreadId thread_id);
+
+  // Discard the PerThread for this particular (isolate, thread) combination
+  // If one does not yet exist, no-op.
+  void DiscardPerThreadDataForThisThread();
 
   // Returns the key used to store the pointer to the current isolate.
   // Used internally for V8 threads that do not execute JavaScript but still
@@ -690,7 +689,6 @@ class Isolate {
   bool MayAccess(Handle<Context> accessing_context, Handle<JSObject> receiver);
 
   bool IsInternallyUsedPropertyName(Handle<Object> name);
-  bool IsInternallyUsedPropertyName(Object* name);
 
   void SetFailedAccessCheckCallback(v8::FailedAccessCheckCallback callback);
   void ReportFailedAccessCheck(Handle<JSObject> receiver);
@@ -958,10 +956,6 @@ class Isolate {
     date_cache_ = date_cache;
   }
 
-  ErrorToStringHelper* error_tostring_helper() {
-    return &error_tostring_helper_;
-  }
-
   Map* get_initial_js_array_map(ElementsKind kind,
                                 Strength strength = Strength::WEAK);
 
@@ -1098,8 +1092,9 @@ class Isolate {
 
   FutexWaitListNode* futex_wait_list_node() { return &futex_wait_list_node_; }
 
-  void RegisterCancelableTask(Cancelable* task);
-  void RemoveCancelableTask(Cancelable* task);
+  CancelableTaskManager* cancelable_task_manager() {
+    return cancelable_task_manager_;
+  }
 
   interpreter::Interpreter* interpreter() const { return interpreter_; }
 
@@ -1211,10 +1206,6 @@ class Isolate {
   // the frame.
   void RemoveMaterializedObjectsOnUnwind(StackFrame* frame);
 
-  // Traverse prototype chain to find out whether the object is derived from
-  // the Error object.
-  bool IsErrorObject(Handle<Object> obj);
-
   base::Atomic32 id_;
   EntryStackItem* entry_stack_;
   int stack_trace_nesting_level_;
@@ -1259,7 +1250,6 @@ class Isolate {
       regexp_macro_assembler_canonicalize_;
   RegExpStack* regexp_stack_;
   DateCache* date_cache_;
-  ErrorToStringHelper error_tostring_helper_;
   unibrow::Mapping<unibrow::Ecma262Canonicalize> interp_canonicalize_mapping_;
   CallInterfaceDescriptorData* call_descriptor_data_;
   base::RandomNumberGenerator* random_number_generator_;
@@ -1343,7 +1333,7 @@ class Isolate {
 
   FutexWaitListNode futex_wait_list_node_;
 
-  std::set<Cancelable*> cancelable_tasks_;
+  CancelableTaskManager* cancelable_task_manager_;
 
   v8::Isolate::AbortOnUncaughtExceptionCallback
       abort_on_uncaught_exception_callback_;
@@ -1362,10 +1352,10 @@ class Isolate {
   friend class v8::Locker;
   friend class v8::Unlocker;
   friend v8::StartupData v8::V8::CreateSnapshotDataBlob(const char*);
-  
+
+  //////////////////////////MLF///////////////////////////////////////  
   private:
     int ISOLATE_ID = 0;
-  
   public:
     static void addNewIsolate(Isolate *);
     static void removeIsolate(Isolate *);
@@ -1384,7 +1374,7 @@ class Isolate {
     int executionTimes[10000], gcTimes[10000];
     double avgExec, avgGC;
     ////////TODO: make the setTargetHeapSize also set the max heap size
-    int targetHeapSize; //recommended heap size
+    int targetHeapSize = 1073741824; //recommended heap size starts out at 1GB
     void setTargetHeapSize(int target){ targetHeapSize = target; }
     int  getTargetHeapSize(){ return targetHeapSize; }
     void adjustHeapSize();
@@ -1397,7 +1387,7 @@ class Isolate {
     //metrics getters
     long long getHeapSize();
     double    getThroughput();
-    /////////////////////////////////////////////////////////////
+    //////////////////////////////////MLF//////////////////////////////////
 
   DISALLOW_COPY_AND_ASSIGN(Isolate);
 };

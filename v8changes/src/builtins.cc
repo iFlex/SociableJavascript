@@ -19,6 +19,7 @@
 #include "src/profiler/cpu-profiler.h"
 #include "src/property-descriptor.h"
 #include "src/prototype.h"
+#include "src/string-builder.h"
 #include "src/vm-state-inl.h"
 
 namespace v8 {
@@ -31,7 +32,10 @@ template <BuiltinExtraArguments extra_args>
 class BuiltinArguments : public Arguments {
  public:
   BuiltinArguments(int length, Object** arguments)
-      : Arguments(length, arguments) { }
+      : Arguments(length, arguments) {
+    // Check we have at least the receiver.
+    DCHECK_LE(1, this->length());
+  }
 
   Object*& operator[] (int index) {
     DCHECK(index < length());
@@ -43,51 +47,75 @@ class BuiltinArguments : public Arguments {
     return Arguments::at<S>(index);
   }
 
+  Handle<Object> atOrUndefined(Isolate* isolate, int index) {
+    if (index >= length()) {
+      return isolate->factory()->undefined_value();
+    }
+    return at<Object>(index);
+  }
+
   Handle<Object> receiver() {
     return Arguments::at<Object>(0);
   }
 
-  Handle<JSFunction> called_function() {
-    STATIC_ASSERT(extra_args == NEEDS_CALLED_FUNCTION);
-    return Arguments::at<JSFunction>(Arguments::length() - 1);
-  }
+  Handle<JSFunction> target();
+  Handle<HeapObject> new_target();
 
   // Gets the total number of arguments including the receiver (but
   // excluding extra arguments).
-  int length() const {
-    STATIC_ASSERT(extra_args == NO_EXTRA_ARGUMENTS);
-    return Arguments::length();
-  }
-
-#ifdef DEBUG
-  void Verify() {
-    // Check we have at least the receiver.
-    DCHECK(Arguments::length() >= 1);
-  }
-#endif
+  int length() const;
 };
 
 
-// Specialize BuiltinArguments for the called function extra argument.
+// Specialize BuiltinArguments for the extra arguments.
 
 template <>
-int BuiltinArguments<NEEDS_CALLED_FUNCTION>::length() const {
+int BuiltinArguments<BuiltinExtraArguments::kNone>::length() const {
+  return Arguments::length();
+}
+
+template <>
+int BuiltinArguments<BuiltinExtraArguments::kTarget>::length() const {
   return Arguments::length() - 1;
 }
 
-#ifdef DEBUG
 template <>
-void BuiltinArguments<NEEDS_CALLED_FUNCTION>::Verify() {
-  // Check we have at least the receiver and the called function.
-  DCHECK(Arguments::length() >= 2);
-  // Make sure cast to JSFunction succeeds.
-  called_function();
+Handle<JSFunction> BuiltinArguments<BuiltinExtraArguments::kTarget>::target() {
+  return Arguments::at<JSFunction>(Arguments::length() - 1);
 }
-#endif
+
+template <>
+int BuiltinArguments<BuiltinExtraArguments::kNewTarget>::length() const {
+  return Arguments::length() - 1;
+}
+
+template <>
+Handle<HeapObject>
+BuiltinArguments<BuiltinExtraArguments::kNewTarget>::new_target() {
+  return Arguments::at<HeapObject>(Arguments::length() - 1);
+}
+
+template <>
+int BuiltinArguments<BuiltinExtraArguments::kTargetAndNewTarget>::length()
+    const {
+  return Arguments::length() - 2;
+}
+
+template <>
+Handle<JSFunction>
+BuiltinArguments<BuiltinExtraArguments::kTargetAndNewTarget>::target() {
+  return Arguments::at<JSFunction>(Arguments::length() - 2);
+}
+
+template <>
+Handle<HeapObject>
+BuiltinArguments<BuiltinExtraArguments::kTargetAndNewTarget>::new_target() {
+  return Arguments::at<HeapObject>(Arguments::length() - 1);
+}
 
 
-#define DEF_ARG_TYPE(name, spec)                      \
-  typedef BuiltinArguments<spec> name##ArgumentsType;
+#define DEF_ARG_TYPE(name, spec) \
+  typedef BuiltinArguments<BuiltinExtraArguments::spec> name##ArgumentsType;
 BUILTIN_LIST_C(DEF_ARG_TYPE)
 #undef DEF_ARG_TYPE
 
@@ -105,62 +133,16 @@ BUILTIN_LIST_C(DEF_ARG_TYPE)
 // In the body of the builtin function the arguments can be accessed
 // through the BuiltinArguments object args.
 
-#ifdef DEBUG
-
 #define BUILTIN(name)                                            \
   MUST_USE_RESULT static Object* Builtin_Impl_##name(            \
       name##ArgumentsType args, Isolate* isolate);               \
   MUST_USE_RESULT static Object* Builtin_##name(                 \
       int args_length, Object** args_object, Isolate* isolate) { \
     name##ArgumentsType args(args_length, args_object);          \
-    args.Verify();                                               \
     return Builtin_Impl_##name(args, isolate);                   \
   }                                                              \
   MUST_USE_RESULT static Object* Builtin_Impl_##name(            \
       name##ArgumentsType args, Isolate* isolate)
-
-#else  // For release mode.
-
-#define BUILTIN(name)                                            \
-  static Object* Builtin_impl##name(                             \
-      name##ArgumentsType args, Isolate* isolate);               \
-  static Object* Builtin_##name(                                 \
-      int args_length, Object** args_object, Isolate* isolate) { \
-    name##ArgumentsType args(args_length, args_object);          \
-    return Builtin_impl##name(args, isolate);                    \
-  }                                                              \
-  static Object* Builtin_impl##name(                             \
-      name##ArgumentsType args, Isolate* isolate)
-#endif
-
-
-#ifdef DEBUG
-inline bool CalledAsConstructor(Isolate* isolate) {
-  // Calculate the result using a full stack frame iterator and check
-  // that the state of the stack is as we assume it to be in the
-  // code below.
-  StackFrameIterator it(isolate);
-  DCHECK(it.frame()->is_exit());
-  it.Advance();
-  StackFrame* frame = it.frame();
-  bool reference_result = frame->is_construct();
-  Address fp = Isolate::c_entry_fp(isolate->thread_local_top());
-  // Because we know fp points to an exit frame we can use the relevant
-  // part of ExitFrame::ComputeCallerState directly.
-  const int kCallerOffset = ExitFrameConstants::kCallerFPOffset;
-  Address caller_fp = Memory::Address_at(fp + kCallerOffset);
-  // This inlines the part of StackFrame::ComputeType that grabs the
-  // type of the current frame.  Note that StackFrame::ComputeType
-  // has been specialized for each architecture so if any one of them
-  // changes this code has to be changed as well.
-  const int kMarkerOffset = StandardFrameConstants::kMarkerOffset;
-  const Smi* kConstructMarker = Smi::FromInt(StackFrame::CONSTRUCT);
-  Object* marker = Memory::Object_at(caller_fp + kMarkerOffset);
-  bool result = (marker == kConstructMarker);
-  DCHECK_EQ(result, reference_result);
-  return result;
-}
-#endif
 
 
 // ----------------------------------------------------------------------------
@@ -306,7 +288,7 @@ inline MaybeHandle<FixedArrayBase> EnsureJSArrayWithWritableFastElements(
 
 MUST_USE_RESULT static Object* CallJsIntrinsic(
     Isolate* isolate, Handle<JSFunction> function,
-    BuiltinArguments<NO_EXTRA_ARGUMENTS> args) {
+    BuiltinArguments<BuiltinExtraArguments::kNone> args) {
   HandleScope handleScope(isolate);
   int argc = args.length() - 1;
   ScopedVector<Handle<Object> > argv(argc);
@@ -955,7 +937,7 @@ void CollectElementIndices(Handle<JSObject> object, uint32_t range,
 }
 
 
-bool IterateElementsSlow(Isolate* isolate, Handle<JSObject> receiver,
+bool IterateElementsSlow(Isolate* isolate, Handle<JSReceiver> receiver,
                          uint32_t length, ArrayConcatVisitor* visitor) {
   for (uint32_t i = 0; i < length; ++i) {
     HandleScope loop_scope(isolate);
@@ -975,7 +957,7 @@ bool IterateElementsSlow(Isolate* isolate, Handle<JSObject> receiver,
 
 
 /**
- * A helper function that visits elements of a JSObject in numerical
+ * A helper function that visits "array" elements of a JSReceiver in numerical
  * order.
  *
  * The visitor argument called for each existing element in the array
@@ -984,7 +966,7 @@ bool IterateElementsSlow(Isolate* isolate, Handle<JSObject> receiver,
  * length.
  * Returns false if any access threw an exception, otherwise true.
  */
-bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
+bool IterateElements(Isolate* isolate, Handle<JSReceiver> receiver,
                      ArrayConcatVisitor* visitor) {
   uint32_t length = 0;
 
@@ -1010,15 +992,16 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
     // use the slow case.
     return IterateElementsSlow(isolate, receiver, length, visitor);
   }
+  Handle<JSObject> array = Handle<JSObject>::cast(receiver);
 
-  switch (receiver->GetElementsKind()) {
+  switch (array->GetElementsKind()) {
     case FAST_SMI_ELEMENTS:
     case FAST_ELEMENTS:
     case FAST_HOLEY_SMI_ELEMENTS:
     case FAST_HOLEY_ELEMENTS: {
       // Run through the elements FixedArray and use HasElement and GetElement
       // to check the prototype for missing elements.
-      Handle<FixedArray> elements(FixedArray::cast(receiver->elements()));
+      Handle<FixedArray> elements(FixedArray::cast(array->elements()));
       int fast_length = static_cast<int>(length);
       DCHECK(fast_length <= elements->length());
       for (int j = 0; j < fast_length; j++) {
@@ -1027,14 +1010,14 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
         if (!element_value->IsTheHole()) {
           visitor->visit(j, element_value);
         } else {
-          Maybe<bool> maybe = JSReceiver::HasElement(receiver, j);
+          Maybe<bool> maybe = JSReceiver::HasElement(array, j);
           if (!maybe.IsJust()) return false;
           if (maybe.FromJust()) {
-            // Call GetElement on receiver, not its prototype, or getters won't
+            // Call GetElement on array, not its prototype, or getters won't
             // have the correct receiver.
             ASSIGN_RETURN_ON_EXCEPTION_VALUE(
-                isolate, element_value,
-                Object::GetElement(isolate, receiver, j), false);
+                isolate, element_value, Object::GetElement(isolate, array, j),
+                false);
             visitor->visit(j, element_value);
           }
         }
@@ -1047,12 +1030,12 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
       if (length == 0) break;
       // Run through the elements FixedArray and use HasElement and GetElement
       // to check the prototype for missing elements.
-      if (receiver->elements()->IsFixedArray()) {
-        DCHECK(receiver->elements()->length() == 0);
+      if (array->elements()->IsFixedArray()) {
+        DCHECK(array->elements()->length() == 0);
         break;
       }
       Handle<FixedDoubleArray> elements(
-          FixedDoubleArray::cast(receiver->elements()));
+          FixedDoubleArray::cast(array->elements()));
       int fast_length = static_cast<int>(length);
       DCHECK(fast_length <= elements->length());
       for (int j = 0; j < fast_length; j++) {
@@ -1063,15 +1046,15 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
               isolate->factory()->NewNumber(double_value);
           visitor->visit(j, element_value);
         } else {
-          Maybe<bool> maybe = JSReceiver::HasElement(receiver, j);
+          Maybe<bool> maybe = JSReceiver::HasElement(array, j);
           if (!maybe.IsJust()) return false;
           if (maybe.FromJust()) {
-            // Call GetElement on receiver, not its prototype, or getters won't
+            // Call GetElement on array, not its prototype, or getters won't
             // have the correct receiver.
             Handle<Object> element_value;
             ASSIGN_RETURN_ON_EXCEPTION_VALUE(
-                isolate, element_value,
-                Object::GetElement(isolate, receiver, j), false);
+                isolate, element_value, Object::GetElement(isolate, array, j),
+                false);
             visitor->visit(j, element_value);
           }
         }
@@ -1081,17 +1064,17 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
     case DICTIONARY_ELEMENTS: {
       // CollectElementIndices() can't be called when there's a JSProxy
       // on the prototype chain.
-      for (PrototypeIterator iter(isolate, receiver); !iter.IsAtEnd();
+      for (PrototypeIterator iter(isolate, array); !iter.IsAtEnd();
            iter.Advance()) {
         if (PrototypeIterator::GetCurrent(iter)->IsJSProxy()) {
-          return IterateElementsSlow(isolate, receiver, length, visitor);
+          return IterateElementsSlow(isolate, array, length, visitor);
         }
       }
-      Handle<SeededNumberDictionary> dict(receiver->element_dictionary());
+      Handle<SeededNumberDictionary> dict(array->element_dictionary());
       List<uint32_t> indices(dict->Capacity() / 2);
       // Collect all indices in the object and the prototypes less
       // than length. This might introduce duplicates in the indices list.
-      CollectElementIndices(receiver, length, &indices);
+      CollectElementIndices(array, length, &indices);
       indices.Sort(&compareUInt32);
       int j = 0;
       int n = indices.length();
@@ -1100,8 +1083,7 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
         uint32_t index = indices[j];
         Handle<Object> element;
         ASSIGN_RETURN_ON_EXCEPTION_VALUE(
-            isolate, element, Object::GetElement(isolate, receiver, index),
-            false);
+            isolate, element, Object::GetElement(isolate, array, index), false);
         visitor->visit(index, element);
         // Skip to next different index (i.e., omit duplicates).
         do {
@@ -1112,7 +1094,7 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
     }
     case UINT8_CLAMPED_ELEMENTS: {
       Handle<FixedUint8ClampedArray> pixels(
-          FixedUint8ClampedArray::cast(receiver->elements()));
+          FixedUint8ClampedArray::cast(array->elements()));
       for (uint32_t j = 0; j < length; j++) {
         Handle<Smi> e(Smi::FromInt(pixels->get_scalar(j)), isolate);
         visitor->visit(j, e);
@@ -1120,43 +1102,43 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
       break;
     }
     case INT8_ELEMENTS: {
-      IterateTypedArrayElements<FixedInt8Array, int8_t>(isolate, receiver, true,
+      IterateTypedArrayElements<FixedInt8Array, int8_t>(isolate, array, true,
                                                         true, visitor);
       break;
     }
     case UINT8_ELEMENTS: {
-      IterateTypedArrayElements<FixedUint8Array, uint8_t>(isolate, receiver,
-                                                          true, true, visitor);
+      IterateTypedArrayElements<FixedUint8Array, uint8_t>(isolate, array, true,
+                                                          true, visitor);
       break;
     }
     case INT16_ELEMENTS: {
-      IterateTypedArrayElements<FixedInt16Array, int16_t>(isolate, receiver,
-                                                          true, true, visitor);
+      IterateTypedArrayElements<FixedInt16Array, int16_t>(isolate, array, true,
+                                                          true, visitor);
       break;
     }
     case UINT16_ELEMENTS: {
       IterateTypedArrayElements<FixedUint16Array, uint16_t>(
-          isolate, receiver, true, true, visitor);
+          isolate, array, true, true, visitor);
       break;
     }
     case INT32_ELEMENTS: {
-      IterateTypedArrayElements<FixedInt32Array, int32_t>(isolate, receiver,
-                                                          true, false, visitor);
+      IterateTypedArrayElements<FixedInt32Array, int32_t>(isolate, array, true,
+                                                          false, visitor);
       break;
     }
     case UINT32_ELEMENTS: {
       IterateTypedArrayElements<FixedUint32Array, uint32_t>(
-          isolate, receiver, true, false, visitor);
+          isolate, array, true, false, visitor);
       break;
     }
     case FLOAT32_ELEMENTS: {
-      IterateTypedArrayElements<FixedFloat32Array, float>(
-          isolate, receiver, false, false, visitor);
+      IterateTypedArrayElements<FixedFloat32Array, float>(isolate, array, false,
+                                                          false, visitor);
       break;
     }
     case FLOAT64_ELEMENTS: {
       IterateTypedArrayElements<FixedFloat64Array, double>(
-          isolate, receiver, false, false, visitor);
+          isolate, array, false, false, visitor);
       break;
     }
     case FAST_SLOPPY_ARGUMENTS_ELEMENTS:
@@ -1165,8 +1147,7 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
         HandleScope loop_scope(isolate);
         Handle<Object> element;
         ASSIGN_RETURN_ON_EXCEPTION_VALUE(
-            isolate, element, Object::GetElement(isolate, receiver, index),
-            false);
+            isolate, element, Object::GetElement(isolate, array, index), false);
         visitor->visit(index, element);
       }
       break;
@@ -1178,37 +1159,29 @@ bool IterateElements(Isolate* isolate, Handle<JSObject> receiver,
 
 
 bool HasConcatSpreadableModifier(Isolate* isolate, Handle<JSArray> obj) {
+  DCHECK(isolate->IsFastArrayConstructorPrototypeChainIntact());
   if (!FLAG_harmony_concat_spreadable) return false;
   Handle<Symbol> key(isolate->factory()->is_concat_spreadable_symbol());
-  Maybe<bool> maybe =
-      JSReceiver::HasProperty(Handle<JSReceiver>::cast(obj), key);
-  if (!maybe.IsJust()) return false;
-  return maybe.FromJust();
+  Maybe<bool> maybe = JSReceiver::HasProperty(obj, key);
+  return maybe.FromMaybe(false);
 }
 
 
-bool IsConcatSpreadable(Isolate* isolate, Handle<Object> obj) {
+static Maybe<bool> IsConcatSpreadable(Isolate* isolate, Handle<Object> obj) {
   HandleScope handle_scope(isolate);
-  if (!obj->IsSpecObject()) return false;
+  if (!obj->IsJSReceiver()) return Just(false);
   if (FLAG_harmony_concat_spreadable) {
     Handle<Symbol> key(isolate->factory()->is_concat_spreadable_symbol());
     Handle<Object> value;
     MaybeHandle<Object> maybeValue =
         i::Runtime::GetObjectProperty(isolate, obj, key);
-    if (maybeValue.ToHandle(&value) && !value->IsUndefined()) {
-      return value->BooleanValue();
-    }
+    if (!maybeValue.ToHandle(&value)) return Nothing<bool>();
+    if (!value->IsUndefined()) return Just(value->BooleanValue());
   }
-  return obj->IsJSArray();
+  return Object::IsArray(obj);
 }
 
 
-/**
- * Array::concat implementation.
- * See ECMAScript 262, 15.4.4.4.
- * TODO(581): Fix non-compliance for very large concatenations and update to
- * following the ECMAScript 5 specification.
- */
 Object* Slow_ArrayConcat(Arguments* args, Isolate* isolate) {
   int argument_count = args->length();
 
@@ -1364,10 +1337,10 @@ Object* Slow_ArrayConcat(Arguments* args, Isolate* isolate) {
 
   for (int i = 0; i < argument_count; i++) {
     Handle<Object> obj((*args)[i], isolate);
-    bool spreadable = IsConcatSpreadable(isolate, obj);
-    if (isolate->has_pending_exception()) return isolate->heap()->exception();
-    if (spreadable) {
-      Handle<JSObject> object = Handle<JSObject>::cast(obj);
+    Maybe<bool> spreadable = IsConcatSpreadable(isolate, obj);
+    MAYBE_RETURN(spreadable, isolate->heap()->exception());
+    if (spreadable.FromJust()) {
+      Handle<JSReceiver> object = Handle<JSReceiver>::cast(obj);
       if (!IterateElements(isolate, object, &visitor)) {
         return isolate->heap()->exception();
       }
@@ -1427,6 +1400,7 @@ MaybeHandle<JSArray> Fast_ArrayConcat(Isolate* isolate, Arguments* args) {
 
 }  // namespace
 
+// ES6 22.1.3.1 Array.prototype.concat
 BUILTIN(ArrayConcat) {
   HandleScope scope(isolate);
 
@@ -1446,6 +1420,172 @@ BUILTIN(ArrayConcat) {
   }
   if (isolate->has_pending_exception()) return isolate->heap()->exception();
   return Slow_ArrayConcat(&args, isolate);
+}
+
+
+// ES6 22.1.2.2 Array.isArray
+BUILTIN(ArrayIsArray) {
+  HandleScope scope(isolate);
+  DCHECK_EQ(2, args.length());
+  Handle<Object> object = args.at<Object>(1);
+  Maybe<bool> result = Object::IsArray(object);
+  MAYBE_RETURN(result, isolate->heap()->exception());
+  return *isolate->factory()->ToBoolean(result.FromJust());
+}
+
+
+// ES6 19.1.2.1 Object.assign
+BUILTIN(ObjectAssign) {
+  HandleScope scope(isolate);
+  Handle<Object> target = args.atOrUndefined(isolate, 1);
+
+  // 1. Let to be ? ToObject(target).
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(isolate, target,
+                                     Execution::ToObject(isolate, target));
+  Handle<JSReceiver> to = Handle<JSReceiver>::cast(target);
+  // 2. If only one argument was passed, return to.
+  if (args.length() == 2) return *to;
+  // 3. Let sources be the List of argument values starting with the
+  //    second argument.
+  // 4. For each element nextSource of sources, in ascending index order,
+  for (int i = 2; i < args.length(); ++i) {
+    Handle<Object> next_source = args.at<Object>(i);
+    // 4a. If nextSource is undefined or null, let keys be an empty List.
+    if (next_source->IsUndefined() || next_source->IsNull()) continue;
+    // 4b. Else,
+    // 4b i. Let from be ToObject(nextSource).
+    Handle<JSReceiver> from =
+        Object::ToObject(isolate, next_source).ToHandleChecked();
+    // 4b ii. Let keys be ? from.[[OwnPropertyKeys]]().
+    Handle<FixedArray> keys;
+    ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+        isolate, keys, JSReceiver::GetKeys(from, JSReceiver::OWN_ONLY,
+                                           ALL_PROPERTIES, KEEP_NUMBERS));
+    // 4c. Repeat for each element nextKey of keys in List order,
+    for (int j = 0; j < keys->length(); ++j) {
+      Handle<Object> next_key(keys->get(j), isolate);
+      // 4c i. Let desc be ? from.[[GetOwnProperty]](nextKey).
+      PropertyDescriptor desc;
+      Maybe<bool> found =
+          JSReceiver::GetOwnPropertyDescriptor(isolate, from, next_key, &desc);
+      if (found.IsNothing()) return isolate->heap()->exception();
+      // 4c ii. If desc is not undefined and desc.[[Enumerable]] is true, then
+      if (found.FromJust() && desc.enumerable()) {
+        // 4c ii 1. Let propValue be ? Get(from, nextKey).
+        Handle<Object> prop_value;
+        ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+            isolate, prop_value,
+            Runtime::GetObjectProperty(isolate, from, next_key, STRICT));
+        // 4c ii 2. Let status be ? Set(to, nextKey, propValue, true).
+        Handle<Object> status;
+        ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+            isolate, status, Runtime::SetObjectProperty(isolate, to, next_key,
+                                                        prop_value, STRICT));
+      }
+    }
+  }
+  // 5. Return to.
+  return *to;
+}
+
+
+// ES6 section 19.1.2.2 Object.create ( O [ , Properties ] )
+BUILTIN(ObjectCreate) {
+  HandleScope scope(isolate);
+  Handle<Object> prototype = args.atOrUndefined(isolate, 1);
+  if (!prototype->IsNull() && !prototype->IsJSReceiver()) {
+    THROW_NEW_ERROR_RETURN_FAILURE(
+        isolate, NewTypeError(MessageTemplate::kProtoObjectOrNull, prototype));
+  }
+
+  // Generate the map with the specified {prototype} based on the Object
+  // function's initial map from the current native context.
+  // TODO(bmeurer): Use a dedicated cache for Object.create; think about
+  // slack tracking for Object.create.
+  Handle<Map> map(isolate->native_context()->object_function()->initial_map(),
+                  isolate);
+  if (map->prototype() != *prototype) {
+    map = Map::TransitionToPrototype(map, prototype, FAST_PROTOTYPE);
+  }
+
+  // Actually allocate the object.
+  Handle<JSObject> object = isolate->factory()->NewJSObjectFromMap(map);
+
+  // Define the properties if properties was specified and is not undefined.
+  Handle<Object> properties = args.atOrUndefined(isolate, 2);
+  if (!properties->IsUndefined()) {
+    RETURN_FAILURE_ON_EXCEPTION(
+        isolate, JSReceiver::DefineProperties(isolate, object, properties));
+  }
+
+  return *object;
+}
+
+
+namespace {
+
+bool CodeGenerationFromStringsAllowed(Isolate* isolate,
+                                      Handle<Context> context) {
+  DCHECK(context->allow_code_gen_from_strings()->IsFalse());
+  // Check with callback if set.
+  AllowCodeGenerationFromStringsCallback callback =
+      isolate->allow_code_gen_callback();
+  if (callback == NULL) {
+    // No callback set and code generation disallowed.
+    return false;
+  } else {
+    // Callback set. Let it decide if code generation is allowed.
+    VMState<EXTERNAL> state(isolate);
+    return callback(v8::Utils::ToLocal(context));
+  }
+}
+
+
+MaybeHandle<JSFunction> CompileString(Handle<Context> context,
+                                      Handle<String> source,
+                                      ParseRestriction restriction) {
+  Isolate* const isolate = context->GetIsolate();
+  Handle<Context> native_context(context->native_context(), isolate);
+
+  // Check if native context allows code generation from
+  // strings. Throw an exception if it doesn't.
+  if (native_context->allow_code_gen_from_strings()->IsFalse() &&
+      !CodeGenerationFromStringsAllowed(isolate, native_context)) {
+    Handle<Object> error_message =
+        native_context->ErrorMessageForCodeGenerationFromStrings();
+    THROW_NEW_ERROR(isolate, NewEvalError(MessageTemplate::kCodeGenFromStrings,
+                                          error_message),
+                    JSFunction);
+  }
+
+  // Compile source string in the native context.
+  Handle<SharedFunctionInfo> outer_info(native_context->closure()->shared(),
+                                        isolate);
+  return Compiler::GetFunctionFromEval(source, outer_info, native_context,
+                                       SLOPPY, restriction,
+                                       RelocInfo::kNoPosition);
+}
+
+}  // namespace
+
+
+// ES6 section 18.2.1 eval (x)
+BUILTIN(GlobalEval) {
+  HandleScope scope(isolate);
+  Handle<Object> x = args.atOrUndefined(isolate, 1);
+  Handle<JSFunction> target = args.target();
+  Handle<JSObject> target_global_proxy(target->global_proxy(), isolate);
+  if (!x->IsString()) return *x;
+  Handle<JSFunction> function;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, function,
+      CompileString(handle(target->native_context(), isolate),
+                    Handle<String>::cast(x), NO_PARSE_RESTRICTION));
+  Handle<Object> result;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, result,
+      Execution::Call(isolate, function, target_global_proxy, 0, nullptr));
+  return *result;
 }
 
 
@@ -1473,12 +1613,11 @@ BUILTIN(ReflectDefineProperty) {
     return isolate->heap()->exception();
   }
 
-  bool result =
+  Maybe<bool> result =
       JSReceiver::DefineOwnProperty(isolate, Handle<JSReceiver>::cast(target),
                                     name, &desc, Object::DONT_THROW);
-  if (isolate->has_pending_exception()) return isolate->heap()->exception();
-  // TODO(neis): Make DefineOwnProperty return Maybe<bool>.
-  return *isolate->factory()->ToBoolean(result);
+  MAYBE_RETURN(result, isolate->heap()->exception());
+  return *isolate->factory()->ToBoolean(result.FromJust());
 }
 
 
@@ -1500,21 +1639,18 @@ BUILTIN(ReflectDeleteProperty) {
   ASSIGN_RETURN_FAILURE_ON_EXCEPTION(isolate, name,
                                      Object::ToName(isolate, key));
 
-  Handle<Object> result;
-  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
-      isolate, result, JSReceiver::DeletePropertyOrElement(
-                           Handle<JSReceiver>::cast(target), name));
-
-  return *result;
+  Maybe<bool> result = JSReceiver::DeletePropertyOrElement(
+      Handle<JSReceiver>::cast(target), name, SLOPPY);
+  MAYBE_RETURN(result, isolate->heap()->exception());
+  return *isolate->factory()->ToBoolean(result.FromJust());
 }
 
 
 // ES6 section 26.1.6 Reflect.get
 BUILTIN(ReflectGet) {
   HandleScope scope(isolate);
-  Handle<Object> undef = isolate->factory()->undefined_value();
-  Handle<Object> target = args.length() > 1 ? args.at<Object>(1) : undef;
-  Handle<Object> key = args.length() > 2 ? args.at<Object>(2) : undef;
+  Handle<Object> target = args.atOrUndefined(isolate, 1);
+  Handle<Object> key = args.atOrUndefined(isolate, 2);
   Handle<Object> receiver = args.length() > 3 ? args.at<Object>(3) : target;
 
   if (!target->IsJSReceiver()) {
@@ -1556,10 +1692,10 @@ BUILTIN(ReflectGetOwnPropertyDescriptor) {
                                      Object::ToName(isolate, key));
 
   PropertyDescriptor desc;
-  bool found = JSReceiver::GetOwnPropertyDescriptor(
+  Maybe<bool> found = JSReceiver::GetOwnPropertyDescriptor(
       isolate, Handle<JSReceiver>::cast(target), name, &desc);
-  if (isolate->has_pending_exception()) return isolate->heap()->exception();
-  if (!found) return isolate->heap()->undefined_value();
+  MAYBE_RETURN(found, isolate->heap()->exception());
+  if (!found.FromJust()) return isolate->heap()->undefined_value();
   return *desc.ToObject(isolate);
 }
 
@@ -1621,20 +1757,32 @@ BUILTIN(ReflectIsExtensible) {
                                   "Reflect.isExtensible")));
   }
 
-  // TODO(neis): For now, we ignore proxies.  Once proxies are fully
-  // implemented, do something like the following:
-  /*
-  Maybe<bool> maybe = JSReceiver::IsExtensible(
-      Handle<JSReceiver>::cast(target));
-  if (!maybe.IsJust()) return isolate->heap()->exception();
-  return *isolate->factory()->ToBoolean(maybe.FromJust());
-  */
+  Maybe<bool> result =
+      JSReceiver::IsExtensible(Handle<JSReceiver>::cast(target));
+  MAYBE_RETURN(result, isolate->heap()->exception());
+  return *isolate->factory()->ToBoolean(result.FromJust());
+}
 
-  if (target->IsJSObject()) {
-    return *isolate->factory()->ToBoolean(
-        JSObject::IsExtensible(Handle<JSObject>::cast(target)));
+
+// ES6 section 26.1.11 Reflect.ownKeys
+BUILTIN(ReflectOwnKeys) {
+  HandleScope scope(isolate);
+  DCHECK_EQ(2, args.length());
+  Handle<Object> target = args.at<Object>(1);
+
+  if (!target->IsJSReceiver()) {
+    THROW_NEW_ERROR_RETURN_FAILURE(
+        isolate, NewTypeError(MessageTemplate::kCalledOnNonObject,
+                              isolate->factory()->NewStringFromAsciiChecked(
+                                  "Reflect.ownKeys")));
   }
-  return *isolate->factory()->false_value();
+
+  Handle<FixedArray> keys;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, keys, JSReceiver::GetKeys(Handle<JSReceiver>::cast(target),
+                                         JSReceiver::OWN_ONLY, ALL_PROPERTIES,
+                                         CONVERT_TO_STRING));
+  return *isolate->factory()->NewJSArrayWithElements(keys);
 }
 
 
@@ -1653,18 +1801,17 @@ BUILTIN(ReflectPreventExtensions) {
 
   Maybe<bool> result = JSReceiver::PreventExtensions(
       Handle<JSReceiver>::cast(target), Object::DONT_THROW);
-  return result.IsJust() ? *isolate->factory()->ToBoolean(result.FromJust())
-                         : isolate->heap()->exception();
+  MAYBE_RETURN(result, isolate->heap()->exception());
+  return *isolate->factory()->ToBoolean(result.FromJust());
 }
 
 
 // ES6 section 26.1.13 Reflect.set
 BUILTIN(ReflectSet) {
   HandleScope scope(isolate);
-  Handle<Object> undef = isolate->factory()->undefined_value();
-  Handle<Object> target = args.length() > 1 ? args.at<Object>(1) : undef;
-  Handle<Object> key = args.length() > 2 ? args.at<Object>(2) : undef;
-  Handle<Object> value = args.length() > 3 ? args.at<Object>(3) : undef;
+  Handle<Object> target = args.atOrUndefined(isolate, 1);
+  Handle<Object> key = args.atOrUndefined(isolate, 2);
+  Handle<Object> value = args.atOrUndefined(isolate, 3);
   Handle<Object> receiver = args.length() > 4 ? args.at<Object>(4) : target;
 
   if (!target->IsJSReceiver()) {
@@ -1733,12 +1880,226 @@ BUILTIN(DateToPrimitive) {
 }
 
 
+namespace {
+
+// ES6 section 19.2.1.1.1 CreateDynamicFunction
+MaybeHandle<JSFunction> CreateDynamicFunction(
+    Isolate* isolate,
+    BuiltinArguments<BuiltinExtraArguments::kTargetAndNewTarget> args,
+    const char* token) {
+  // Compute number of arguments, ignoring the receiver.
+  DCHECK_LE(1, args.length());
+  int const argc = args.length() - 1;
+
+  // Build the source string.
+  Handle<String> source;
+  {
+    IncrementalStringBuilder builder(isolate);
+    builder.AppendCharacter('(');
+    builder.AppendCString(token);
+    builder.AppendCharacter('(');
+    bool parenthesis_in_arg_string = false;
+    if (argc > 1) {
+      for (int i = 1; i < argc; ++i) {
+        if (i > 1) builder.AppendCharacter(',');
+        Handle<String> param;
+        ASSIGN_RETURN_ON_EXCEPTION(
+            isolate, param, Object::ToString(isolate, args.at<Object>(i)),
+            JSFunction);
+        param = String::Flatten(param);
+        builder.AppendString(param);
+        // If the formal parameters string include ) - an illegal
+        // character - it may make the combined function expression
+        // compile. We avoid this problem by checking for this early on.
+        DisallowHeapAllocation no_gc;  // Ensure vectors stay valid.
+        String::FlatContent param_content = param->GetFlatContent();
+        for (int i = 0, length = param->length(); i < length; ++i) {
+          if (param_content.Get(i) == ')') {
+            parenthesis_in_arg_string = true;
+            break;
+          }
+        }
+      }
+      // If the formal parameters include an unbalanced block comment, the
+      // function must be rejected. Since JavaScript does not allow nested
+      // comments we can include a trailing block comment to catch this.
+      builder.AppendCString("\n/**/");
+    }
+    builder.AppendCString(") {\n");
+    if (argc > 0) {
+      Handle<String> body;
+      ASSIGN_RETURN_ON_EXCEPTION(
+          isolate, body, Object::ToString(isolate, args.at<Object>(argc)),
+          JSFunction);
+      builder.AppendString(body);
+    }
+    builder.AppendCString("\n})");
+    ASSIGN_RETURN_ON_EXCEPTION(isolate, source, builder.Finish(), JSFunction);
+
+    // The SyntaxError must be thrown after all the (observable) ToString
+    // conversions are done.
+    if (parenthesis_in_arg_string) {
+      THROW_NEW_ERROR(isolate,
+                      NewSyntaxError(MessageTemplate::kParenthesisInArgString),
+                      JSFunction);
+    }
+  }
+
+  // Compile the string in the constructor and not a helper so that errors to
+  // come from here.
+  Handle<JSFunction> target = args.target();
+  Handle<JSObject> target_global_proxy(target->global_proxy(), isolate);
+  Handle<JSFunction> function;
+  {
+    ASSIGN_RETURN_ON_EXCEPTION(
+        isolate, function,
+        CompileString(handle(target->native_context(), isolate), source,
+                      ONLY_SINGLE_FUNCTION_LITERAL),
+        JSFunction);
+    Handle<Object> result;
+    ASSIGN_RETURN_ON_EXCEPTION(
+        isolate, result,
+        Execution::Call(isolate, function, target_global_proxy, 0, nullptr),
+        JSFunction);
+    function = Handle<JSFunction>::cast(result);
+    function->shared()->set_name_should_print_as_anonymous(true);
+  }
+
+  // If new.target is equal to target then the function created
+  // is already correctly setup and nothing else should be done
+  // here. But if new.target is not equal to target then we are
+  // have a Function builtin subclassing case and therefore the
+  // function has wrong initial map. To fix that we create a new
+  // function object with correct initial map.
+  Handle<Object> unchecked_new_target = args.new_target();
+  if (!unchecked_new_target->IsUndefined() &&
+      !unchecked_new_target.is_identical_to(target)) {
+    Handle<JSReceiver> new_target =
+        Handle<JSReceiver>::cast(unchecked_new_target);
+    Handle<Map> initial_map;
+    ASSIGN_RETURN_ON_EXCEPTION(
+        isolate, initial_map,
+        JSFunction::GetDerivedMap(isolate, target, new_target), JSFunction);
+
+    Handle<SharedFunctionInfo> shared_info(function->shared(), isolate);
+    Handle<Map> map = Map::AsLanguageMode(
+        initial_map, shared_info->language_mode(), shared_info->kind());
+
+    Handle<Context> context(function->context(), isolate);
+    function = isolate->factory()->NewFunctionFromSharedFunctionInfo(
+        map, shared_info, context, NOT_TENURED);
+  }
+  return function;
+}
+
+}  // namespace
+
+
+// ES6 section 19.2.1.1 Function ( p1, p2, ... , pn, body )
+BUILTIN(FunctionConstructor) {
+  HandleScope scope(isolate);
+  Handle<JSFunction> result;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, result, CreateDynamicFunction(isolate, args, "function"));
+  return *result;
+}
+
+
+// ES6 section 19.2.3.2 Function.prototype.bind ( thisArg, ...args )
+BUILTIN(FunctionPrototypeBind) {
+  HandleScope scope(isolate);
+  DCHECK_LE(1, args.length());
+  if (!args.receiver()->IsCallable()) {
+    THROW_NEW_ERROR_RETURN_FAILURE(
+        isolate, NewTypeError(MessageTemplate::kFunctionBind));
+  }
+
+  // Allocate the bound function with the given {this_arg} and {args}.
+  Handle<JSReceiver> target = args.at<JSReceiver>(0);
+  Handle<Object> this_arg = isolate->factory()->undefined_value();
+  ScopedVector<Handle<Object>> argv(std::max(0, args.length() - 2));
+  if (args.length() > 1) {
+    this_arg = args.at<Object>(1);
+    for (int i = 2; i < args.length(); ++i) {
+      argv[i - 2] = args.at<Object>(i);
+    }
+  }
+  Handle<JSBoundFunction> function;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, function,
+      isolate->factory()->NewJSBoundFunction(target, this_arg, argv));
+
+  // TODO(bmeurer): Optimize the rest for the common cases where {target} is
+  // a function with some initial map or even a bound function.
+  // Setup the "length" property based on the "length" of the {target}.
+  Handle<Object> length(Smi::FromInt(0), isolate);
+  Maybe<bool> target_has_length =
+      JSReceiver::HasOwnProperty(target, isolate->factory()->length_string());
+  if (!target_has_length.IsJust()) {
+    return isolate->heap()->exception();
+  } else if (target_has_length.FromJust()) {
+    Handle<Object> target_length;
+    ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+        isolate, target_length,
+        JSReceiver::GetProperty(target, isolate->factory()->length_string()));
+    if (target_length->IsNumber()) {
+      length = isolate->factory()->NewNumber(std::max(
+          0.0, DoubleToInteger(target_length->Number()) - argv.length()));
+    }
+  }
+  function->set_length(*length);
+
+  // Setup the "name" property based on the "name" of the {target}.
+  Handle<Object> target_name;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, target_name,
+      JSReceiver::GetProperty(target, isolate->factory()->name_string()));
+  Handle<String> name;
+  if (!target_name->IsString()) {
+    name = isolate->factory()->bound__string();
+  } else {
+    ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+        isolate, name, Name::ToFunctionName(Handle<String>::cast(target_name)));
+    ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+        isolate, name, isolate->factory()->NewConsString(
+                           isolate->factory()->bound__string(), name));
+  }
+  function->set_name(*name);
+  return *function;
+}
+
+
+// ES6 section 19.2.3.5 Function.prototype.toString ( )
+BUILTIN(FunctionPrototypeToString) {
+  HandleScope scope(isolate);
+  Handle<Object> receiver = args.receiver();
+  if (receiver->IsJSBoundFunction()) {
+    return *JSBoundFunction::ToString(Handle<JSBoundFunction>::cast(receiver));
+  } else if (receiver->IsJSFunction()) {
+    return *JSFunction::ToString(Handle<JSFunction>::cast(receiver));
+  }
+  THROW_NEW_ERROR_RETURN_FAILURE(
+      isolate, NewTypeError(MessageTemplate::kNotGeneric,
+                            isolate->factory()->NewStringFromAsciiChecked(
+                                "Function.prototype.toString")));
+}
+
+
+// ES6 section 25.2.1.1 GeneratorFunction (p1, p2, ... , pn, body)
+BUILTIN(GeneratorFunctionConstructor) {
+  HandleScope scope(isolate);
+  Handle<JSFunction> result;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, result, CreateDynamicFunction(isolate, args, "function*"));
+  return *result;
+}
+
+
 // ES6 section 19.4.1.1 Symbol ( [ description ] ) for the [[Call]] case.
 BUILTIN(SymbolConstructor) {
   HandleScope scope(isolate);
-  DCHECK_EQ(2, args.length());
   Handle<Symbol> result = isolate->factory()->NewSymbol();
-  Handle<Object> description = args.at<Object>(1);
+  Handle<Object> description = args.atOrUndefined(isolate, 1);
   if (!description->IsUndefined()) {
     ASSIGN_RETURN_FAILURE_ON_EXCEPTION(isolate, description,
                                        Object::ToString(isolate, description));
@@ -1754,6 +2115,40 @@ BUILTIN(SymbolConstructor_ConstructStub) {
   THROW_NEW_ERROR_RETURN_FAILURE(
       isolate, NewTypeError(MessageTemplate::kNotConstructor,
                             isolate->factory()->Symbol_string()));
+}
+
+
+// ES6 19.1.3.6 Object.prototype.toString
+BUILTIN(ObjectProtoToString) {
+  HandleScope scope(isolate);
+  Handle<Object> object = args.at<Object>(0);
+  Handle<String> result;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(
+      isolate, result, JSObject::ObjectProtoToString(isolate, object));
+  return *result;
+}
+
+
+// ES6 section 26.2.1.1 Proxy ( target, handler ) for the [[Call]] case.
+BUILTIN(ProxyConstructor) {
+  HandleScope scope(isolate);
+  THROW_NEW_ERROR_RETURN_FAILURE(
+      isolate,
+      NewTypeError(MessageTemplate::kConstructorNotFunction,
+                   isolate->factory()->NewStringFromAsciiChecked("Proxy")));
+}
+
+
+// ES6 section 26.2.1.1 Proxy ( target, handler ) for the [[Construct]] case.
+BUILTIN(ProxyConstructor_ConstructStub) {
+  HandleScope scope(isolate);
+  DCHECK(isolate->proxy_function()->IsConstructor());
+  Handle<Object> target = args.atOrUndefined(isolate, 1);
+  Handle<Object> handler = args.atOrUndefined(isolate, 2);
+  Handle<JSProxy> result;
+  ASSIGN_RETURN_FAILURE_ON_EXCEPTION(isolate, result,
+                                     JSProxy::New(isolate, target, handler));
+  return *result;
 }
 
 
@@ -1780,11 +2175,13 @@ BUILTIN(RestrictedStrictArgumentsPropertiesThrower) {
 //
 
 
+namespace {
+
 template <bool is_construct>
-MUST_USE_RESULT static MaybeHandle<Object> HandleApiCallHelper(
-    Isolate* isolate, BuiltinArguments<NEEDS_CALLED_FUNCTION>& args) {
+MUST_USE_RESULT MaybeHandle<Object> HandleApiCallHelper(
+    Isolate* isolate, BuiltinArguments<BuiltinExtraArguments::kTarget> args) {
   HandleScope scope(isolate);
-  Handle<JSFunction> function = args.called_function();
+  Handle<JSFunction> function = args.target();
   // TODO(ishell): turn this back to a DCHECK.
   CHECK(function->shared()->IsApiFunction());
 
@@ -1859,10 +2256,11 @@ MUST_USE_RESULT static MaybeHandle<Object> HandleApiCallHelper(
   return scope.CloseAndEscape(args.receiver());
 }
 
+}  // namespace
+
 
 BUILTIN(HandleApiCall) {
   HandleScope scope(isolate);
-  DCHECK(!CalledAsConstructor(isolate));
   Handle<Object> result;
   ASSIGN_RETURN_FAILURE_ON_EXCEPTION(isolate, result,
                                      HandleApiCallHelper<false>(isolate, args));
@@ -1872,7 +2270,6 @@ BUILTIN(HandleApiCall) {
 
 BUILTIN(HandleApiCallConstruct) {
   HandleScope scope(isolate);
-  DCHECK(CalledAsConstructor(isolate));
   Handle<Object> result;
   ASSIGN_RETURN_FAILURE_ON_EXCEPTION(isolate, result,
                                      HandleApiCallHelper<true>(isolate, args));
@@ -1910,11 +2307,12 @@ Handle<Code> Builtins::Call(ConvertReceiverMode mode) {
 
 namespace {
 
-class RelocatableArguments : public BuiltinArguments<NEEDS_CALLED_FUNCTION>,
-                             public Relocatable {
+class RelocatableArguments
+    : public BuiltinArguments<BuiltinExtraArguments::kTarget>,
+      public Relocatable {
  public:
   RelocatableArguments(Isolate* isolate, int length, Object** arguments)
-      : BuiltinArguments<NEEDS_CALLED_FUNCTION>(length, arguments),
+      : BuiltinArguments<BuiltinExtraArguments::kTarget>(length, arguments),
         Relocatable(isolate) {}
 
   virtual inline void IterateInstance(ObjectVisitor* v) {
@@ -1964,12 +2362,8 @@ MaybeHandle<Object> Builtins::InvokeApiFunction(Handle<JSFunction> function,
 // API. The object can be called as either a constructor (using new) or just as
 // a function (without new).
 MUST_USE_RESULT static Object* HandleApiCallAsFunctionOrConstructor(
-    Isolate* isolate,
-    bool is_construct_call,
-    BuiltinArguments<NO_EXTRA_ARGUMENTS> args) {
-  // Non-functions are never called as constructors. Even if this is an object
-  // called as a constructor the delegate call is not a construct call.
-  DCHECK(!CalledAsConstructor(isolate));
+    Isolate* isolate, bool is_construct_call,
+    BuiltinArguments<BuiltinExtraArguments::kNone> args) {
   Heap* heap = isolate->heap();
 
   Handle<Object> receiver = args.receiver();
@@ -2161,11 +2555,6 @@ static void Generate_Slot_DebugBreak(MacroAssembler* masm) {
 }
 
 
-static void Generate_PlainReturn_LiveEdit(MacroAssembler* masm) {
-  DebugCodegen::GeneratePlainReturnLiveEdit(masm);
-}
-
-
 static void Generate_FrameDropper_LiveEdit(MacroAssembler* masm) {
   DebugCodegen::GenerateFrameDropperLiveEdit(masm);
 }
@@ -2226,36 +2615,34 @@ void Builtins::InitBuiltinFunctionTable() {
   functions[builtin_count].s_name = NULL;
   functions[builtin_count].name = builtin_count;
   functions[builtin_count].flags = static_cast<Code::Flags>(0);
-  functions[builtin_count].extra_args = NO_EXTRA_ARGUMENTS;
+  functions[builtin_count].extra_args = BuiltinExtraArguments::kNone;
 
-#define DEF_FUNCTION_PTR_C(aname, aextra_args)                         \
-    functions->generator = FUNCTION_ADDR(Generate_Adaptor);            \
-    functions->c_code = FUNCTION_ADDR(Builtin_##aname);                \
-    functions->s_name = #aname;                                        \
-    functions->name = c_##aname;                                       \
-    functions->flags = Code::ComputeFlags(Code::BUILTIN);              \
-    functions->extra_args = aextra_args;                               \
-    ++functions;
+#define DEF_FUNCTION_PTR_C(aname, aextra_args)                \
+  functions->generator = FUNCTION_ADDR(Generate_Adaptor);     \
+  functions->c_code = FUNCTION_ADDR(Builtin_##aname);         \
+  functions->s_name = #aname;                                 \
+  functions->name = c_##aname;                                \
+  functions->flags = Code::ComputeFlags(Code::BUILTIN);       \
+  functions->extra_args = BuiltinExtraArguments::aextra_args; \
+  ++functions;
 
-#define DEF_FUNCTION_PTR_A(aname, kind, state, extra)                       \
-    functions->generator = FUNCTION_ADDR(Generate_##aname);                 \
-    functions->c_code = NULL;                                               \
-    functions->s_name = #aname;                                             \
-    functions->name = k##aname;                                             \
-    functions->flags = Code::ComputeFlags(Code::kind,                       \
-                                          state,                            \
-                                          extra);                           \
-    functions->extra_args = NO_EXTRA_ARGUMENTS;                             \
-    ++functions;
+#define DEF_FUNCTION_PTR_A(aname, kind, state, extra)              \
+  functions->generator = FUNCTION_ADDR(Generate_##aname);          \
+  functions->c_code = NULL;                                        \
+  functions->s_name = #aname;                                      \
+  functions->name = k##aname;                                      \
+  functions->flags = Code::ComputeFlags(Code::kind, state, extra); \
+  functions->extra_args = BuiltinExtraArguments::kNone;            \
+  ++functions;
 
-#define DEF_FUNCTION_PTR_H(aname, kind)                                     \
-    functions->generator = FUNCTION_ADDR(Generate_##aname);                 \
-    functions->c_code = NULL;                                               \
-    functions->s_name = #aname;                                             \
-    functions->name = k##aname;                                             \
-    functions->flags = Code::ComputeHandlerFlags(Code::kind);               \
-    functions->extra_args = NO_EXTRA_ARGUMENTS;                             \
-    ++functions;
+#define DEF_FUNCTION_PTR_H(aname, kind)                     \
+  functions->generator = FUNCTION_ADDR(Generate_##aname);   \
+  functions->c_code = NULL;                                 \
+  functions->s_name = #aname;                               \
+  functions->name = k##aname;                               \
+  functions->flags = Code::ComputeHandlerFlags(Code::kind); \
+  functions->extra_args = BuiltinExtraArguments::kNone;     \
+  ++functions;
 
   BUILTIN_LIST_C(DEF_FUNCTION_PTR_C)
   BUILTIN_LIST_A(DEF_FUNCTION_PTR_A)
@@ -2293,7 +2680,8 @@ void Builtins::SetUp(Isolate* isolate, bool create_heap_objects) {
   // separate code object for each one.
   for (int i = 0; i < builtin_count; i++) {
     if (create_heap_objects) {
-      MacroAssembler masm(isolate, u.buffer, sizeof u.buffer);
+      MacroAssembler masm(isolate, u.buffer, sizeof u.buffer,
+                          CodeObjectRequired::kYes);
       // Generate the code/adaptor.
       typedef void (*Generator)(MacroAssembler*, int, BuiltinExtraArguments);
       Generator g = FUNCTION_CAST<Generator>(functions[i].generator);
@@ -2359,12 +2747,12 @@ const char* Builtins::Lookup(byte* pc) {
 
 
 void Builtins::Generate_InterruptCheck(MacroAssembler* masm) {
-  masm->TailCallRuntime(Runtime::kInterrupt, 0, 1);
+  masm->TailCallRuntime(Runtime::kInterrupt);
 }
 
 
 void Builtins::Generate_StackCheck(MacroAssembler* masm) {
-  masm->TailCallRuntime(Runtime::kStackGuard, 0, 1);
+  masm->TailCallRuntime(Runtime::kStackGuard);
 }
 
 

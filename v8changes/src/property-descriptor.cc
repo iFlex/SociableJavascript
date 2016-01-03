@@ -103,7 +103,7 @@ bool ToPropertyDescriptorFastPath(Isolate* isolate, Handle<Object> obj,
 
 static void CreateDataProperty(Isolate* isolate, Handle<JSObject> object,
                                Handle<String> name, Handle<Object> value) {
-  LookupIterator it(object, name);
+  LookupIterator it(object, name, LookupIterator::OWN_SKIP_INTERCEPTOR);
   Maybe<bool> result = JSObject::CreateDataProperty(&it, value);
   CHECK(result.IsJust() && result.FromJust());
 }
@@ -148,7 +148,7 @@ bool PropertyDescriptor::ToPropertyDescriptor(Isolate* isolate,
                                               PropertyDescriptor* desc) {
   // 1. ReturnIfAbrupt(Obj).
   // 2. If Type(Obj) is not Object, throw a TypeError exception.
-  if (!obj->IsSpecObject()) {
+  if (!obj->IsJSReceiver()) {
     isolate->Throw(*isolate->factory()->NewTypeError(
         MessageTemplate::kPropertyDescObject, obj));
     return false;

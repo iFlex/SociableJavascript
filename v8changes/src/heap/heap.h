@@ -61,6 +61,7 @@ namespace internal {
   V(Map, fixed_cow_array_map, FixedCOWArrayMap)                                \
   V(Map, fixed_double_array_map, FixedDoubleArrayMap)                          \
   V(Map, weak_cell_map, WeakCellMap)                                           \
+  V(Map, transition_array_map, TransitionArrayMap)                             \
   V(Map, one_byte_string_map, OneByteStringMap)                                \
   V(Map, one_byte_internalized_string_map, OneByteInternalizedStringMap)       \
   V(Map, function_context_map, FunctionContextMap)                             \
@@ -166,7 +167,6 @@ namespace internal {
   V(FixedArray, extra_natives_source_cache, ExtraNativesSourceCache)           \
   V(FixedArray, experimental_extra_natives_source_cache,                       \
     ExperimentalExtraNativesSourceCache)                                       \
-  V(FixedArray, code_stub_natives_source_cache, CodeStubNativesSourceCache)    \
   V(Script, empty_script, EmptyScript)                                         \
   V(NameDictionary, intrinsic_function_names, IntrinsicFunctionNames)          \
   V(Cell, undefined_cell, UndefinedCell)                                       \
@@ -179,17 +179,17 @@ namespace internal {
   V(FixedArray, allocation_sites_scratchpad, AllocationSitesScratchpad)        \
   V(FixedArray, microtask_queue, MicrotaskQueue)                               \
   V(TypeFeedbackVector, dummy_vector, DummyVector)                             \
+  V(FixedArray, cleared_optimized_code_map, ClearedOptimizedCodeMap)           \
   V(FixedArray, detached_contexts, DetachedContexts)                           \
   V(ArrayList, retained_maps, RetainedMaps)                                    \
   V(WeakHashTable, weak_object_to_code_table, WeakObjectToCodeTable)           \
   V(PropertyCell, array_protector, ArrayProtector)                             \
   V(PropertyCell, empty_property_cell, EmptyPropertyCell)                      \
   V(Object, weak_stack_trace_list, WeakStackTraceList)                         \
-  V(Object, code_stub_context, CodeStubContext)                                \
-  V(JSObject, code_stub_exports_object, CodeStubExportsObject)                 \
   V(Object, noscript_shared_function_infos, NoScriptSharedFunctionInfos)       \
   V(FixedArray, interpreter_table, InterpreterTable)                           \
   V(Map, bytecode_array_map, BytecodeArrayMap)                                 \
+  V(WeakCell, empty_weak_cell, EmptyWeakCell)                                  \
   V(BytecodeArray, empty_bytecode_array, EmptyBytecodeArray)
 
 
@@ -212,9 +212,11 @@ namespace internal {
 #define INTERNALIZED_STRING_LIST(V)                              \
   V(anonymous_string, "anonymous")                               \
   V(apply_string, "apply")                                       \
+  V(assign_string, "assign")                                     \
   V(arguments_string, "arguments")                               \
   V(Arguments_string, "Arguments")                               \
   V(Array_string, "Array")                                       \
+  V(bind_string, "bind")                                         \
   V(bool16x8_string, "bool16x8")                                 \
   V(Bool16x8_string, "Bool16x8")                                 \
   V(bool32x4_string, "bool32x4")                                 \
@@ -223,8 +225,10 @@ namespace internal {
   V(Bool8x16_string, "Bool8x16")                                 \
   V(boolean_string, "boolean")                                   \
   V(Boolean_string, "Boolean")                                   \
+  V(bound__string, "bound ")                                     \
   V(byte_length_string, "byteLength")                            \
   V(byte_offset_string, "byteOffset")                            \
+  V(call_string, "call")                                         \
   V(callee_string, "callee")                                     \
   V(caller_string, "caller")                                     \
   V(cell_value_string, "%cell_value")                            \
@@ -234,10 +238,12 @@ namespace internal {
   V(configurable_string, "configurable")                         \
   V(constructor_string, "constructor")                           \
   V(construct_string, "construct")                               \
+  V(create_string, "create")                                     \
   V(Date_string, "Date")                                         \
   V(default_string, "default")                                   \
   V(defineProperty_string, "defineProperty")                     \
   V(deleteProperty_string, "deleteProperty")                     \
+  V(display_name_string, "displayName")                          \
   V(done_string, "done")                                         \
   V(dot_result_string, ".result")                                \
   V(dot_string, ".")                                             \
@@ -281,6 +287,7 @@ namespace internal {
   V(nan_string, "NaN")                                           \
   V(next_string, "next")                                         \
   V(null_string, "null")                                         \
+  V(null_to_string, "[object Null]")                             \
   V(number_string, "number")                                     \
   V(Number_string, "Number")                                     \
   V(object_string, "object")                                     \
@@ -288,8 +295,10 @@ namespace internal {
   V(ownKeys_string, "ownKeys")                                   \
   V(preventExtensions_string, "preventExtensions")               \
   V(private_api_string, "private_api")                           \
+  V(Promise_string, "Promise")                                   \
   V(proto_string, "__proto__")                                   \
   V(prototype_string, "prototype")                               \
+  V(Proxy_string, "Proxy")                                       \
   V(query_colon_string, "(?:)")                                  \
   V(RegExp_string, "RegExp")                                     \
   V(setPrototypeOf_string, "setPrototypeOf")                     \
@@ -316,6 +325,7 @@ namespace internal {
   V(uint8x16_string, "uint8x16")                                 \
   V(Uint8x16_string, "Uint8x16")                                 \
   V(undefined_string, "undefined")                               \
+  V(undefined_to_string, "[object Undefined]")                   \
   V(valueOf_string, "valueOf")                                   \
   V(value_string, "value")                                       \
   V(WeakMap_string, "WeakMap")                                   \
@@ -345,6 +355,7 @@ namespace internal {
   V(intl_impl_object_symbol)                \
   V(intl_initialized_marker_symbol)         \
   V(megamorphic_symbol)                     \
+  V(native_context_index_symbol)            \
   V(nonexistent_symbol)                     \
   V(nonextensible_symbol)                   \
   V(normal_ic_symbol)                       \
@@ -361,8 +372,10 @@ namespace internal {
   V(promise_value_symbol)                   \
   V(sealed_symbol)                          \
   V(stack_trace_symbol)                     \
+  V(strict_function_transition_symbol)      \
   V(string_iterator_iterated_string_symbol) \
   V(string_iterator_next_index_symbol)      \
+  V(strong_function_transition_symbol)      \
   V(uninitialized_symbol)
 
 #define PUBLIC_SYMBOL_LIST(V)                 \
@@ -420,6 +433,7 @@ namespace internal {
   V(FixedCOWArrayMap)                   \
   V(FixedDoubleArrayMap)                \
   V(WeakCellMap)                        \
+  V(TransitionArrayMap)                 \
   V(NoInterceptorResultSentinel)        \
   V(HashTableMap)                       \
   V(OrderedHashTableMap)                \
@@ -445,6 +459,7 @@ namespace internal {
   V(JSMessageObjectMap)                 \
   V(ForeignMap)                         \
   V(NeanderMap)                         \
+  V(EmptyWeakCell)                      \
   V(empty_string)                       \
   PRIVATE_SYMBOL_LIST(V)
 
@@ -807,14 +822,12 @@ class Heap {
   // TODO(hpayer): There is still a missmatch between capacity and actual
   // committed memory size.
   bool CanExpandOldGeneration(int size) {
+    if (force_oom_) return false;
     return (CommittedOldGenerationMemory() + size) < MaxOldGenerationSize();
   }
 
   // Clear the Instanceof cache (used when a prototype changes).
   inline void ClearInstanceofCache();
-
-  // Iterates the whole code space to clear all keyed store ICs.
-  void ClearAllKeyedStoreICs();
 
   // FreeSpace objects have a null map after deserialization. Update the map.
   void RepairFreeListsAfterDeserialization();
@@ -888,6 +901,13 @@ class Heap {
   }
   Object* encountered_weak_cells() const { return encountered_weak_cells_; }
 
+  void set_encountered_transition_arrays(Object* transition_array) {
+    encountered_transition_arrays_ = transition_array;
+  }
+  Object* encountered_transition_arrays() const {
+    return encountered_transition_arrays_;
+  }
+
   // Number of mark-sweeps.
   int ms_count() const { return ms_count_; }
 
@@ -950,8 +970,6 @@ class Heap {
   void ClearNormalizedMapCaches();
 
   void IncrementDeferredCount(v8::Isolate::UseCounterFeature feature);
-
-  bool concurrent_sweeping_enabled() { return concurrent_sweeping_enabled_; }
 
   inline bool OldGenerationAllocationLimitReached();
 
@@ -1022,9 +1040,12 @@ class Heap {
   bool HasHighFragmentation();
   bool HasHighFragmentation(intptr_t used, intptr_t committed);
 
+  //M_TODO: Modify these functions to force GC to do more work
+  bool askedToReduce() const;
+
   void SetOptimizeForLatency() { optimize_for_memory_usage_ = false; }
   void SetOptimizeForMemoryUsage() { optimize_for_memory_usage_ = true; }
-  bool ShouldOptimizeForMemoryUsage() { return optimize_for_memory_usage_; }
+  bool ShouldOptimizeForMemoryUsage() { return askedToReduce() || optimize_for_memory_usage_; }
 
   // ===========================================================================
   // Initialization. ===========================================================
@@ -1160,14 +1181,6 @@ class Heap {
 
   void SetRootMaterializedObjects(FixedArray* objects) {
     roots_[kMaterializedObjectsRootIndex] = objects;
-  }
-
-  void SetRootCodeStubContext(Object* value) {
-    roots_[kCodeStubContextRootIndex] = value;
-  }
-
-  void SetRootCodeStubExportsObject(JSObject* value) {
-    roots_[kCodeStubExportsObjectRootIndex] = value;
   }
 
   void SetRootScriptList(Object* value) {
@@ -1677,11 +1690,7 @@ class Heap {
     DCHECK(!ShouldFinalizeIncrementalMarking() ||
            !ShouldAbortIncrementalMarking());
   }
-  //M_TODO: Modify these functions to force GC to do more work
-  bool askedToReduce() const {
-    return true;//isolate_->getHeapSize() > isolate_->getTargetSize();
-  }
-
+  
   inline bool ShouldReduceMemory() const {
     return (askedToReduce()) ? true :(current_gc_flags_ & kReduceMemoryFootprintMask);
   }
@@ -1735,6 +1744,10 @@ class Heap {
   // Initializes a JSObject based on its map.
   void InitializeJSObjectFromMap(JSObject* obj, FixedArray* properties,
                                  Map* map);
+
+  // Initializes JSObject body starting at given offset.
+  void InitializeJSObjectBody(JSObject* obj, Map* map, int start_offset);
+
   void InitializeAllocationMemento(AllocationMemento* memento,
                                    AllocationSite* allocation_site);
 
@@ -1820,6 +1833,8 @@ class Heap {
 
   void AddToRingBuffer(const char* string);
   void GetFromRingBuffer(char* buffer);
+
+  void CompactRetainedMaps(ArrayList* retained_maps);
 
   // Attempt to over-approximate the weak closure by marking object groups and
   // implicit references from global handles, but don't atomically complete
@@ -2104,6 +2119,8 @@ class Heap {
 
   MUST_USE_RESULT AllocationResult AllocateWeakCell(HeapObject* value);
 
+  MUST_USE_RESULT AllocationResult AllocateTransitionArray(int capacity);
+
   // Allocates a new utility object in the old generation.
   MUST_USE_RESULT AllocationResult AllocateStruct(InstanceType type);
 
@@ -2117,6 +2134,8 @@ class Heap {
   MUST_USE_RESULT AllocationResult InternalizeStringWithKey(HashTableKey* key);
 
   MUST_USE_RESULT AllocationResult InternalizeString(String* str);
+
+  void set_force_oom(bool value) { force_oom_ = value; }
 
   // The amount of external memory registered through the API kept alive
   // by global handles
@@ -2156,16 +2175,20 @@ class Heap {
   // For keeping track of context disposals.
   int contexts_disposed_;
 
+  // The length of the retained_maps array at the time of context disposal.
+  // This separates maps in the retained_maps array that were created before
+  // and after context disposal.
+  int number_of_disposed_maps_;
+
   int global_ic_age_;
 
   int scan_on_scavenge_pages_;
 
   NewSpace new_space_;
-  OldSpace* old_space_; //1
-  OldSpace* code_space_; //2
-  MapSpace* map_space_;   //3
+  OldSpace* old_space_;
+  OldSpace* code_space_;
+  MapSpace* map_space_;
   LargeObjectSpace* lo_space_;
-
   HeapState gc_state_;
   int gc_post_processing_depth_;
   Address new_space_top_after_last_gc_;
@@ -2225,6 +2248,8 @@ class Heap {
   Object* encountered_weak_collections_;
 
   Object* encountered_weak_cells_;
+
+  Object* encountered_transition_arrays_;
 
   StoreBufferRebuilder store_buffer_rebuilder_;
 
@@ -2356,11 +2381,12 @@ class Heap {
 
   bool deserialization_complete_;
 
-  bool concurrent_sweeping_enabled_;
-
   StrongRootsList* strong_roots_list_;
 
   ArrayBufferTracker* array_buffer_tracker_;
+
+  // Used for testing purposes.
+  bool force_oom_;
 
   // Classes in "heap" can be friends.
   friend class AlwaysAllocateScope;
@@ -2369,6 +2395,7 @@ class Heap {
   friend class HeapIterator;
   friend class IdleScavengeObserver;
   friend class IncrementalMarking;
+  friend class IteratePointersToFromSpaceVisitor;
   friend class MarkCompactCollector;
   friend class MarkCompactMarkingVisitor;
   friend class NewSpace;

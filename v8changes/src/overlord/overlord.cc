@@ -1,17 +1,14 @@
 #include "overlord.h"
 #include <string.h>
 #include <iostream>
+
 using namespace std;
 using namespace ControlProtocol;
 using namespace v8;
 
-void handleIsolateRequest(int, action, command &);
+#define CMD_SEPARATOR ';'
 
-void onePageFreeTest(){
-    v8::internal::Isolate *isl = v8::internal::Isolate::getIsolate(1);
-    if(isl)
-        isl->setTargetHeapSize((int)(isl->getHeapSize() - v8::internal::Page::kPageSize));
-}
+void handleIsolateRequest(int, action, command &);
 
 void overlordTestCli(){
     command rsp;
@@ -25,10 +22,6 @@ void overlordTestCli(){
         string s;
         cout<<">";
         cin>>s;
-        if( s == "x" ){
-            onePageFreeTest();
-            continue;
-        }
 
         if(s == "stats"){
             a.name = "status";
@@ -99,9 +92,9 @@ void * Overlord::serve(void * data){
     
     len = sizeof(clntAdd);
         
-    cout << "Overlord::Listening on port "<< portNo << endl;
     command resp;
     while(true){
+        cout << "Overlord::Listening on port "<< portNo << endl;
         //this is where client connects. svr will hang in this mode until client conn
         connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
 
@@ -114,33 +107,82 @@ void * Overlord::serve(void * data){
         
         cout << "Overlord:: New controller connected - Thread No: " << pthread_self() << endl;
         
-        char test[2000];
-        bool loop = false;
-        char *jsonStr;
-        while(!loop)
-        {    
-            bzero(test, 2000);
-            if(read(connFd, test, 500) == -1)
-                break;
+        char buffer[2000],strCmd[2000];
+        char c,*jsonStr,*cmdend;
+        bool loop = true;
+        int strLen = 0;
+        
+        c = ' ';
+        strCmd[0] = 0;    
+        while(loop)
+        {
+            cmdend = &c;
+            while(*cmdend){
+                strLen = (int) read(connFd, buffer, 2000);
+                if( strLen < 1){
+                    loop = false;
+                    break;
+                }
+                buffer[strLen] = 0;
+                cout<<"Part str:"<<buffer<<endl;
+
+                cmdend = strchr(buffer,CMD_SEPARATOR);
+                *cmdend = 0;
+                //overflow vulnerable code
+                strcpy(strCmd,buffer);
+            }
             
-            cout<<"Processing("<<strlen(test)<<")"<<test<<endl;
-            if(base64::decode(test,strlen(test),jsonStr)) {
-                
+            if(!loop)
+                break;
+
+            if(base64::decode(strCmd,(int) strlen(strCmd),jsonStr)) {
+                cout<<"Request_JSON:"<<jsonStr<<endl;
+
                 string scommand(jsonStr);
                 command cmd(scommand);
                 Overlord::handleRequest(cmd,resp);
 
                 string r = resp.serialise();
-                cout<<"Response:"<<r<<endl;
+                cout<<"Response_JSON:"<<r<<endl;
                 const char* data = r.c_str();
-                cout<<"response len:"<<strlen(data)<<endl;
                 
                 delete[] jsonStr;
-                base64::encode(data,strlen(data),jsonStr);
-                bzero(test,2000);
-                strcpy(test,jsonStr);
-                write(connFd, test, 1450);
+                base64::encode(data,(int) strlen(data),jsonStr);
+                
+                buffer[0] = 0;
+                for(int i = 1; i < 2000; ++i )
+                    buffer[i] = CMD_SEPARATOR;
+                strcpy(buffer,jsonStr);
+                write(connFd, buffer, 1450);
             }
+            
+            strCmd[0] = 0;
+            char *start;
+            do {
+
+                strLen = (int) read(connFd, buffer, 2000);
+                if( strLen < 1){
+                    loop = false;
+                    break;
+                }
+                buffer[strLen] = 0;
+                cout<<"Scavenging:"<<buffer<<endl;
+                
+                start = 0;
+                for( int i = 0 ; i < strLen; ++i ) {
+                    if( buffer[i] != CMD_SEPARATOR ) {
+                        if(!start)
+                            start = buffer+i;
+                    } else {
+                        buffer[i] = 0;
+                        if(start)
+                            break;
+                    }
+                }
+            }while(!start);
+            //overflow vulnerable code
+            strcpy(strCmd,start);
+            cout<<"Remaining str:"<<strCmd<<endl;
         }
     }
     cout << "\nClosing thread and conn" << endl;
@@ -175,7 +217,6 @@ void handleIsolateRequest(int i, action cmd, command &response){
     if( cmd.name == "terminate" ) {//terminate the isolate
         v8::Isolate *isol = reinterpret_cast<v8::Isolate *>(isl); 
         v8::Locker l(isol);
-        //isol->Exit();
         isol->Dispose();
         v8::Unlocker u(isol);
 
@@ -217,7 +258,7 @@ void handleGlobalReuqests(command &response, action command){
         for( int i = 0; i < nrIsolates ; ++i )
             handleIsolateRequest(i,command,response);
     } else if (command.name == "execute"){
-        ArrayBufferAllocator allocator;
+        /*ArrayBufferAllocator allocator;
         v8::Isolate::CreateParams create_params;
         create_params.array_buffer_allocator = &allocator;
         v8::Isolate* isolate = v8::Isolate::New(create_params);
@@ -232,7 +273,7 @@ void handleGlobalReuqests(command &response, action command){
         //////////////////////////////////////////////////////////////////////
         v8::Local<v8::String> source = String::NewFromUtf8(isolate, command.getDetails()->path.c_str(), NewStringType::kNormal).ToLocalChecked();
         v8::Local<v8::Script> script = Script::Compile(context, source).ToLocalChecked();
-        script->Run(context).ToLocalChecked();
+        script->Run(context).ToLocalChecked();*/
         //isolate->Dispose();
     }
 }

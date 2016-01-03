@@ -52,10 +52,6 @@ class Execution final : public AllStatic {
                                      Handle<Object> argv[],
                                      MaybeHandle<Object>* exception_out = NULL);
 
-  // ECMA-262 9.8
-  MUST_USE_RESULT static MaybeHandle<Object> ToDetailString(
-      Isolate* isolate, Handle<Object> obj);
-
   // ECMA-262 9.9
   MUST_USE_RESULT static MaybeHandle<Object> ToObject(
       Isolate* isolate, Handle<Object> obj);
@@ -63,10 +59,6 @@ class Execution final : public AllStatic {
   // Create a new date object from 'time'.
   MUST_USE_RESULT static MaybeHandle<Object> NewDate(
       Isolate* isolate, double time);
-
-  // Create a new regular expression object from 'pattern' and 'flags'.
-  MUST_USE_RESULT static MaybeHandle<JSRegExp> NewJSRegExp(
-      Handle<String> pattern, Handle<String> flags);
 
   static Handle<String> GetStackTraceLine(Handle<Object> recv,
                                           Handle<JSFunction> fun,

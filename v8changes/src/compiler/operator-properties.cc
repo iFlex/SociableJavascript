@@ -35,12 +35,10 @@ int OperatorProperties::GetFrameStateInputCount(const Operator* op) {
       return 0;
 
     // We record the frame state immediately before and immediately after every
-    // function call.
+    // construct/function call.
+    case IrOpcode::kJSCallConstruct:
     case IrOpcode::kJSCallFunction:
       return 2;
-
-    // Construct calls
-    case IrOpcode::kJSCallConstruct:
 
     // Compare operations
     case IrOpcode::kJSEqual:
@@ -51,13 +49,14 @@ int OperatorProperties::GetFrameStateInputCount(const Operator* op) {
     // Object operations
     case IrOpcode::kJSCreate:
     case IrOpcode::kJSCreateArguments:
+    case IrOpcode::kJSCreateArray:
     case IrOpcode::kJSCreateLiteralArray:
     case IrOpcode::kJSCreateLiteralObject:
+    case IrOpcode::kJSCreateLiteralRegExp:
 
     // Context operations
     case IrOpcode::kJSLoadDynamic:
     case IrOpcode::kJSCreateScriptContext:
-    case IrOpcode::kJSCreateWithContext:
 
     // Conversions
     case IrOpcode::kJSToName:

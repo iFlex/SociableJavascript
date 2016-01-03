@@ -79,13 +79,8 @@ StaticVisitorBase::VisitorId StaticVisitorBase::GetVisitorId(
     case WEAK_CELL_TYPE:
       return kVisitWeakCell;
 
-    case JS_SET_TYPE:
-      return GetVisitorIdForSize(kVisitStruct, kVisitStructGeneric,
-                                 JSSet::kSize, has_unboxed_fields);
-
-    case JS_MAP_TYPE:
-      return GetVisitorIdForSize(kVisitStruct, kVisitStructGeneric,
-                                 JSMap::kSize, has_unboxed_fields);
+    case TRANSITION_ARRAY_TYPE:
+      return kVisitTransitionArray;
 
     case JS_WEAK_MAP_TYPE:
     case JS_WEAK_SET_TYPE:
@@ -99,30 +94,13 @@ StaticVisitorBase::VisitorId StaticVisitorBase::GetVisitorId(
 
     case JS_PROXY_TYPE:
       return GetVisitorIdForSize(kVisitStruct, kVisitStructGeneric,
-                                 JSProxy::kSize, has_unboxed_fields);
-
-    case JS_FUNCTION_PROXY_TYPE:
-      return GetVisitorIdForSize(kVisitStruct, kVisitStructGeneric,
-                                 JSFunctionProxy::kSize, has_unboxed_fields);
-
-    case FOREIGN_TYPE:
-      return GetVisitorIdForSize(kVisitDataObject, kVisitDataObjectGeneric,
-                                 Foreign::kSize, has_unboxed_fields);
+                                 instance_size, has_unboxed_fields);
 
     case SYMBOL_TYPE:
       return kVisitSymbol;
 
-    case FILLER_TYPE:
-      return kVisitDataObjectGeneric;
-
     case JS_ARRAY_BUFFER_TYPE:
       return kVisitJSArrayBuffer;
-
-    case JS_TYPED_ARRAY_TYPE:
-      return kVisitJSTypedArray;
-
-    case JS_DATA_VIEW_TYPE:
-      return kVisitJSDataView;
 
     case JS_OBJECT_TYPE:
     case JS_CONTEXT_EXTENSION_OBJECT_TYPE:
@@ -134,15 +112,25 @@ StaticVisitorBase::VisitorId StaticVisitorBase::GetVisitorId(
     case JS_GLOBAL_PROXY_TYPE:
     case JS_GLOBAL_OBJECT_TYPE:
     case JS_MESSAGE_OBJECT_TYPE:
+    case JS_TYPED_ARRAY_TYPE:
+    case JS_DATA_VIEW_TYPE:
+    case JS_SET_TYPE:
+    case JS_MAP_TYPE:
     case JS_SET_ITERATOR_TYPE:
     case JS_MAP_ITERATOR_TYPE:
     case JS_ITERATOR_RESULT_TYPE:
+    case JS_PROMISE_TYPE:
+    case JS_BOUND_FUNCTION_TYPE:
       return GetVisitorIdForSize(kVisitJSObject, kVisitJSObjectGeneric,
                                  instance_size, has_unboxed_fields);
 
     case JS_FUNCTION_TYPE:
       return kVisitJSFunction;
 
+    case FILLER_TYPE:
+      if (instance_size == kPointerSize) return kVisitDataObjectGeneric;
+    // Fall through.
+    case FOREIGN_TYPE:
     case HEAP_NUMBER_TYPE:
     case MUTABLE_HEAP_NUMBER_TYPE:
     case SIMD128_VALUE_TYPE:
@@ -307,9 +295,17 @@ struct WeakListVisitor<Context> {
     DoWeakList<JSFunction>(heap, context, retainer,
                            Context::OPTIMIZED_FUNCTIONS_LIST);
 
-    // Code objects are always allocated in Code space, we do not have to visit
-    // them during scavenges.
     if (heap->gc_state() == Heap::MARK_COMPACT) {
+      // Record the slots of the weak entries in the native context.
+      MarkCompactCollector* collector = heap->mark_compact_collector();
+      for (int idx = Context::FIRST_WEAK_SLOT;
+           idx < Context::NATIVE_CONTEXT_SLOTS; ++idx) {
+        Object** slot = Context::cast(context)->RawFieldOfElementAt(idx);
+        collector->RecordSlot(context, slot, *slot);
+      }
+      // Code objects are always allocated in Code space, we do not have to
+      // visit
+      // them during scavenges.
       DoWeakList<Code>(heap, context, retainer, Context::OPTIMIZED_CODE_LIST);
       DoWeakList<Code>(heap, context, retainer, Context::DEOPTIMIZED_CODE_LIST);
     }

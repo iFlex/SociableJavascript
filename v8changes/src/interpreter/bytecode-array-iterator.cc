@@ -32,6 +32,11 @@ Bytecode BytecodeArrayIterator::current_bytecode() const {
 }
 
 
+int BytecodeArrayIterator::current_bytecode_size() const {
+  return Bytecodes::Size(current_bytecode());
+}
+
+
 uint32_t BytecodeArrayIterator::GetRawOperand(int operand_index,
                                               OperandType operand_type) const {
   DCHECK_GE(operand_index, 0);
@@ -60,7 +65,11 @@ int8_t BytecodeArrayIterator::GetImmediateOperand(int operand_index) const {
 
 
 int BytecodeArrayIterator::GetCountOperand(int operand_index) const {
-  uint32_t operand = GetRawOperand(operand_index, OperandType::kCount8);
+  OperandSize size =
+      Bytecodes::GetOperandSize(current_bytecode(), operand_index);
+  OperandType type = (size == OperandSize::kByte) ? OperandType::kCount8
+                                                  : OperandType::kCount16;
+  uint32_t operand = GetRawOperand(operand_index, type);
   return static_cast<int>(operand);
 }
 
@@ -89,6 +98,21 @@ Handle<Object> BytecodeArrayIterator::GetConstantForIndexOperand(
     int operand_index) const {
   Handle<FixedArray> constants = handle(bytecode_array()->constant_pool());
   return FixedArray::get(constants, GetIndexOperand(operand_index));
+}
+
+
+int BytecodeArrayIterator::GetJumpTargetOffset() const {
+  Bytecode bytecode = current_bytecode();
+  if (interpreter::Bytecodes::IsJumpImmediate(bytecode)) {
+    int relative_offset = GetImmediateOperand(0);
+    return current_offset() + relative_offset;
+  } else if (interpreter::Bytecodes::IsJumpConstant(bytecode)) {
+    Smi* smi = Smi::cast(*GetConstantForIndexOperand(0));
+    return current_offset() + smi->value();
+  } else {
+    UNREACHABLE();
+    return kMinInt;
+  }
 }
 
 }  // namespace interpreter

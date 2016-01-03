@@ -10,6 +10,8 @@
 #include "src/utils.h"
 #include "src/v8.h"
 
+#include <iostream>
+
 namespace v8 {
 namespace internal {
 
@@ -24,7 +26,7 @@ MemoryReducer::TimerTask::TimerTask(MemoryReducer* memory_reducer)
 
 
 void MemoryReducer::TimerTask::RunInternal() {
-  const double kJsCallsPerMsThreshold = 0.25;
+  const double kJsCallsPerMsThreshold = 0.5;
   Heap* heap = memory_reducer_->heap();
   Event event;
   double time_ms = heap->MonotonicallyIncreasingTimeInMs();
@@ -67,6 +69,8 @@ void MemoryReducer::NotifyTimer(const Event& event) {
   DCHECK_EQ(kWait, state_.action);
   state_ = Step(state_, event);
   if (state_.action == kRun) {
+    std::cout<<"Mem Reducer: should reduce memory:"<<heap()->ShouldOptimizeForMemoryUsage()<<std::endl;
+    
     DCHECK(heap()->incremental_marking()->IsStopped());
     DCHECK(FLAG_incremental_marking);
     if (FLAG_trace_gc_verbose) {

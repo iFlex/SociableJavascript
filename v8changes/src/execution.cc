@@ -95,7 +95,8 @@ MUST_USE_RESULT MaybeHandle<Object> Invoke(Isolate* isolate, bool is_construct,
     if (FLAG_profile_deserialization && target->IsJSFunction()) {
       PrintDeserializedCodeInfo(Handle<JSFunction>::cast(target));
     }
-    value = CALL_GENERATED_CODE(stub_entry, orig_func, func, recv, argc, argv);
+    value = CALL_GENERATED_CODE(isolate, stub_entry, orig_func, func, recv,
+                                argc, argv);
   }
 
 #ifdef VERIFY_HEAP
@@ -109,10 +110,6 @@ MUST_USE_RESULT MaybeHandle<Object> Invoke(Isolate* isolate, bool is_construct,
   DCHECK(has_exception == isolate->has_pending_exception());
   if (has_exception) {
     isolate->ReportPendingMessages();
-    // Reset stepping state when script exits with uncaught exception.
-    if (isolate->debug()->is_active()) {
-      isolate->debug()->ClearStepping();
-    }
     return MaybeHandle<Object>();
   } else {
     isolate->clear_pending_message();
@@ -432,12 +429,6 @@ void StackGuard::InitThread(const ExecutionAccess& lock) {
   } while (false)
 
 
-MaybeHandle<Object> Execution::ToDetailString(
-    Isolate* isolate, Handle<Object> obj) {
-  RETURN_NATIVE_CALL(to_detail_string, { obj });
-}
-
-
 MaybeHandle<Object> Execution::NewDate(Isolate* isolate, double time) {
   Handle<Object> time_obj = isolate->factory()->NewNumber(time);
   RETURN_NATIVE_CALL(create_date, { time_obj });
@@ -454,20 +445,6 @@ MaybeHandle<Object> Execution::ToObject(Isolate* isolate, Handle<Object> obj) {
   }
   THROW_NEW_ERROR(
       isolate, NewTypeError(MessageTemplate::kUndefinedOrNullToObject), Object);
-}
-
-
-MaybeHandle<JSRegExp> Execution::NewJSRegExp(Handle<String> pattern,
-                                             Handle<String> flags) {
-  Isolate* isolate = pattern->GetIsolate();
-  Handle<JSFunction> function = Handle<JSFunction>(
-      isolate->native_context()->regexp_function());
-  Handle<Object> re_obj;
-  ASSIGN_RETURN_ON_EXCEPTION(
-      isolate, re_obj,
-      RegExpImpl::CreateRegExpLiteral(function, pattern, flags),
-      JSRegExp);
-  return Handle<JSRegExp>::cast(re_obj);
 }
 
 
