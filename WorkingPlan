@@ -32,6 +32,7 @@ DONE_FAILED >> adjustHeapSize() - brings the heap size closer to the target heap
 |DONE >>	setValue
 |DONE_NOT_WORKING >>	Integrate Locker for safe execution
 |Use a separate fresh context so that running scripts are not impacted
+|taking away execution time from an Isolate - not good
 | * using jsoncpp embedded in v8  >>
 
 DONE >> Implement protocol change to accommodate the limitations of v8JSON

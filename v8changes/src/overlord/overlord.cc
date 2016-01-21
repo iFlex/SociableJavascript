@@ -1,4 +1,6 @@
 #include "overlord.h"
+#include "instance.h"
+
 #include <string.h>
 #include <iostream>
 
@@ -9,14 +11,17 @@ using namespace v8;
 #define CMD_SEPARATOR ';'
 
 void handleIsolateRequest(int, action, command &);
+void handleGlobalRequests(command &response, action command);
 
 void overlordTestCli(){
     command rsp;
     while(1){
         action a;
         details *d = a.getDetails();
-        action *ast = new action[1];
-        rsp.setNrIsolates(1);
+
+        int nris = v8::internal::Isolate::getActiveIsolatesCount();
+        action *ast = new action[nris];
+        rsp.setNrIsolates(nris);
         rsp.setIsolateActions(ast);
 
         string s;
@@ -25,7 +30,12 @@ void overlordTestCli(){
 
         if(s == "stats"){
             a.name = "status";
+            handleGlobalRequests(rsp,a);
+            cout<<"R:"<<rsp.serialise()<<endl;
+            delete[] ast;
+            continue;
         }
+
         if(s == "kill"){
             a.name = "terminate";
         }
@@ -39,8 +49,20 @@ void overlordTestCli(){
             cout<<"Heap size(MB):"<<endl;
             cin>>d->heap;    
         }
+        if(s == "exec"){
+            string script;
+            cout<<"Input path to script:";
+            cin>>script;
+            cout<<endl;
+
+            instance::parallelExec(script.c_str());
+            delete[] ast;
+            continue;
+        }
+
         if(s == "exit")
             return;
+
         handleIsolateRequest(0,a,rsp);
         cout<<"R:"<<rsp.serialise()<<endl;
         delete[] ast;
@@ -201,7 +223,7 @@ Overlord::Overlord(int portNo, bool synchronous) {
 }
 
 void handleIsolateRequest(int i, action cmd, command &response){
-    cout<<"NrIsolates:"<<(int)response.getNrIsolates();
+    cout<<"NrIsolates:"<<(int)response.getNrIsolates()<<endl;
     if(i >= (int)response.getNrIsolates())
         return;
 
@@ -251,30 +273,14 @@ void handleIsolateRequest(int i, action cmd, command &response){
     }
 }
 
-void handleGlobalReuqests(command &response, action command){
+void handleGlobalRequests(command &response, action command){
     if(command.name == "status"){
 
         int nrIsolates = (int) response.getNrIsolates();
         for( int i = 0; i < nrIsolates ; ++i )
             handleIsolateRequest(i,command,response);
     } else if (command.name == "execute"){
-        /*ArrayBufferAllocator allocator;
-        v8::Isolate::CreateParams create_params;
-        create_params.array_buffer_allocator = &allocator;
-        v8::Isolate* isolate = v8::Isolate::New(create_params);
-        v8::Isolate::Scope isolate_scope(isolate);
-        // Create a stack-allocated handle scope.
-        v8::HandleScope handle_scope(isolate);
-        v8::Handle<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
-        // Create a new context.
-        v8::Local<v8::Context> context = v8::Context::New(isolate, NULL, global);
-        // Enter the context for compiling and running the hello world script.
-        v8::Context::Scope context_scope(context);
-        //////////////////////////////////////////////////////////////////////
-        v8::Local<v8::String> source = String::NewFromUtf8(isolate, command.getDetails()->path.c_str(), NewStringType::kNormal).ToLocalChecked();
-        v8::Local<v8::Script> script = Script::Compile(context, source).ToLocalChecked();
-        script->Run(context).ToLocalChecked();*/
-        //isolate->Dispose();
+        instance::parallelExec(command.getDetails()->path.c_str());
     }
 }
 
@@ -292,7 +298,7 @@ void Overlord::handleRequest(command &cmd, command &response){
             cout<<"Global action error:"<<cmd.getGlobal().getError().getMessage()<<endl;
         else {
             cout<<"Global Command "<<cmd.getGlobal().name<<endl;
-            handleGlobalReuqests(response,cmd.getGlobal());    
+            handleGlobalRequests(response,cmd.getGlobal());    
         }
 
         cout<<"Nr isolates:"<<cmd.getNrIsolates()<<endl;

@@ -608,7 +608,8 @@ void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
   avgExec = (double)executionAverageTime / (gcIndex-1);
   avgGC   = (double)garbageAverageTime   / gcIndex;
 
-  commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
+  if(ISOLATE_ID == 1) //prevent parallel access to same files
+    commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
   
   gcIndex %= sampleLength;
   if( gcIndex % 500 ==  0) {
@@ -1986,8 +1987,8 @@ Isolate::Isolate(bool enable_serializer)
   debug_ = new Debug(this);
 
   //store pointer to islate
-  cout<<"Isolate created"<<endl;
   Isolate::addNewIsolate(this);
+  cout<<"Isolate created:"<<this->getIsolateId()<<endl;
 }
 
 

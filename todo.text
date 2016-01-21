@@ -66,11 +66,36 @@ D8 - generates plottable information but goes deep into program stack and heap n
 DONE >> 28) Integrate JSON protocol in Overlord + make CLI controller
 DONE >> 29) Draft progress report by next Monday
 26) Unit tests for good SE practices + dissertation talk
-27) Use GC hooks to measure GC pauses and do data analysis. Pause time vs exec time, + distribution analysis with bins
+DONE >> 27) Use GC hooks to measure GC pauses and do data analysis. Pause time vs exec time, + distribution analysis with bins
 * use to decide how to supply metrics to the overlord thread
 max, median, avg
-28)
+28) Look at benchmarks from Phd Student
+29) Raspberry Pi install script and testing if the framwework works
 
+30) Write up a draft of the first 3 dissertation chapters	
+-Introduction
+ 
+-Background chapter
+	JS
+	GC
+	why control resource alloc
+
+-Requirements
+	functional / nonfunctional
+
+Design
+Implementation
+Evaluation
+Conclusion
+Future Work
+
+
+31) Determine the nature of the evaluation. Read through Blair's dissertation evaluation.
+32)
+
+*1Lt) Use the python monitor to control a cluster of V8 instances on a Distributed Raspberry Pi Cluster
+
+* Norm for Garbage Collection aware OS norm
 
 * Keep security in mind
 

@@ -13,6 +13,8 @@
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 #include "src/api.h"
+#include "src/overlord/instance.h"
+
 ///////
 //#include "src/libplatform/default-platform.h"
 
@@ -30,6 +32,7 @@ bool ExecuteString(v8::Isolate* isolate,
 v8::Handle<v8::String> ReadFile(v8::Isolate*, const char*);
 void _load(char *, v8::Isolate*);
 void Load(const v8::FunctionCallbackInfo<v8::Value>& args);
+void Read(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 // functions to expose to JS environment for testing
 void GetHeapAvailable(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -81,7 +84,7 @@ int main(int argc, char* argv[]) {
   int heapSize = atoi(argv[1]);
   printf("Running with heap size:%d\n",heapSize);
   // Create a new Isolate and make it the current one.
-  ArrayBufferAllocator allocator;
+  /*ArrayBufferAllocator allocator;
   Isolate::CreateParams create_params;
   create_params.array_buffer_allocator = &allocator;
   //configure head size to a total of 2M
@@ -103,6 +106,10 @@ int main(int argc, char* argv[]) {
     // Bind the global 'print' function to the C++ Print callback.
     global->Set(v8::String::NewFromUtf8(isolate, "print"),
                 v8::FunctionTemplate::New(isolate, Print));
+    
+    // Bind the global 'read' function to the C++ Read callback.
+    global->Set(v8::String::NewFromUtf8(isolate, "read"),
+              v8::FunctionTemplate::New(isolate, Read));
 
     // Bind a global '_getHeapSize' function to the C++ GetHeapSize callback.
     global->Set(v8::String::NewFromUtf8(isolate, "_getHeapSize"),
@@ -143,6 +150,8 @@ int main(int argc, char* argv[]) {
   cout << ">>Before Dispose" <<endl; 
   // Dispose the isolate and tear down V8.
   isolate->Dispose();
+  */  
+  instance::executor(heapSize,argc-2,(const char**)argv+2);
   V8::Dispose();
   V8::ShutdownPlatform();
   delete platform;
@@ -299,6 +308,30 @@ void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
   }
   printf("\n");
   fflush(stdout);
+}
+
+// The callback that is invoked by v8 whenever the JavaScript 'read'
+// function is called.  This function loads the content of the file named in
+// the argument into a JavaScript string.
+void Read(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  if (args.Length() != 1) {
+    args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(), "Bad parameters"));
+    return;
+  }
+  v8::String::Utf8Value file(args[0]);
+  if (*file == NULL) {
+    args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(), "Error loading file"));
+    return;
+  }
+  v8::Handle<v8::String> source = ReadFile(args.GetIsolate(), *file);
+  if (source.IsEmpty()) {
+    args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(), "Error loading file"));
+    return;
+  }
+  args.GetReturnValue().Set(source);
 }
 
 ///TESTER FUNCTIONS

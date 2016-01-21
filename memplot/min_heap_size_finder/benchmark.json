@@ -1,0 +1,54 @@
+{
+    "binary": "v8wrapper.bin", 
+    "location": "../../v8runner/", 
+    "tests": [
+        {
+            "alias": "BinaryTrees", 
+            "heapSize": 9.0, 
+            "resolution": "0", 
+            "script": [
+                "../benchmarks/a_BinaryTrees.js"
+            ]
+        }, 
+        {
+            "alias": "RegexDNA", 
+            "heapSize": 5.0, 
+            "resolution": "0", 
+            "script": [
+                "../benchmarks/a_RegexDNA.js"
+            ]
+        }, 
+        {
+            "alias": "Fasta", 
+            "heapSize": 14.0, 
+            "resolution": "0", 
+            "script": [
+                "../benchmarks/a_Fasta.js"
+            ]
+        }, 
+        {
+            "alias": "KNucleotide", 
+            "heapSize": 27.0, 
+            "resolution": "0", 
+            "script": [
+                "../benchmarks/a_KNucleotide.js"
+            ]
+        }, 
+        {
+            "alias": "DeltaBlue", 
+            "heapSize": 5.0, 
+            "resolution": "0", 
+            "script": [
+                "../benchmarks/c_DeltaBlue.js"
+            ]
+        }, 
+        {
+            "alias": "Richards", 
+            "heapSize": 5.0, 
+            "resolution": "0", 
+            "script": [
+                "../benchmarks/c_Richards.js"
+            ]
+        }
+    ]
+}
