@@ -44,6 +44,8 @@
 //////////////////////temporary plotting mechanism
 #include <iostream>
 #include <fstream>
+#include <pthread.h>
+//TODO: check for recursive lock calls on mutex
 using namespace std;
 
 ofstream exec,gc,hpsz,thrpt,ithrpt;
@@ -81,6 +83,8 @@ namespace internal {
 int ISOLATE_INDEX = 1;
 std::map<int,Isolate *> allIsolates;
 std::list<int> freeIDs;
+
+pthread_mutex_t count_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 base::Atomic32 ThreadId::highest_thread_id_ = 0;
 
@@ -506,10 +510,15 @@ Handle<JSArray> Isolate::GetDetailedStackTrace(Handle<JSObject> error_object) {
 }
 ////////////////////////////////////////////////////////////////
 int Isolate::getActiveIsolatesCount(){
-  return static_cast<int>(allIsolates.size());
+  pthread_mutex_lock(&count_mutex);
+  int nri = static_cast<int>(allIsolates.size());
+  pthread_mutex_unlock(&count_mutex);
+  return nri;
 }
 
 void Isolate::addNewIsolate(Isolate * i){
+  pthread_mutex_lock(&count_mutex);
+
   int id = 0;
   
   if(freeIDs.empty()){
@@ -521,21 +530,31 @@ void Isolate::addNewIsolate(Isolate * i){
 
   i->setIsolateId(id);
   allIsolates[id] = i;
+
+  pthread_mutex_unlock(&count_mutex);
 }
 
 void Isolate::removeIsolate(Isolate *i){
+  pthread_mutex_lock(&count_mutex);
+  
   int id = i->getIsolateId();
   if(allIsolates.erase(id))
     freeIDs.push_front(id);
+  
+  pthread_mutex_unlock(&count_mutex);
 }
 
 Isolate* Isolate::getIsolate(int id){
+  pthread_mutex_lock(&count_mutex);
+  cout<<"Searching for isolate:"<<id<<endl;
   auto search = allIsolates.find(id);
   
+  Isolate *ret = NULL;
   if(search != allIsolates.end())
-    return search->second;
+    ret = search->second;
   
-  return NULL;
+  pthread_mutex_unlock(&count_mutex);
+  return ret;
 }
 
 void Isolate::adjustHeapSize(){
@@ -612,9 +631,9 @@ void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
     commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
   
   gcIndex %= sampleLength;
-  if( gcIndex % 500 ==  0) {
-    cout<<"AvgGC:"<<avgGC<<" AvgExec:"<<avgExec<<" TP:"<<getThroughput()<<" size:"<<getHeapSize()<<" target:"<<targetHeapSize<<endl;
-  }
+  //if( gcIndex % 500 ==  0) {
+  //  cout<<"AvgGC:"<<avgGC<<" AvgExec:"<<avgExec<<" TP:"<<getThroughput()<<" size:"<<getHeapSize()<<" target:"<<targetHeapSize<<endl;
+  //}
   adjustHeapSize();
 }
 

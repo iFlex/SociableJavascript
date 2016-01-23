@@ -17,7 +17,7 @@ class RequestBuilder:
             if(isolate == 0):
                 break;
             else:
-                result["isolates"][str(index)] = {"action":""};
+                result["isolates"][str(isolate-1)] = {"action":""};
             index += 1
 
         index -= 1;
@@ -64,16 +64,6 @@ class RequestBuilder:
             return result;
         return 0;
 
-    def startScript(self,machineId,script):
-        result = self.makeDefaultRequest(machineId);
-        if result == 0:
-            return 0;
-
-        result["global"]["action"] = "execute";
-        result["global"]["path"]   = script;
-        return result;
-
-    #DO NOT USE, causes segfault in v8wrapper
     def terminate(self,machineId,isolateId,result):
         if result == 0:
             result = self.makeDefaultRequest(machineId);

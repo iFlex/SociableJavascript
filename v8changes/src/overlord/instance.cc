@@ -61,6 +61,7 @@ namespace instance {
 
     Isolate* isolate = Isolate::New(create_params);
     {
+      v8::Locker locker{isolate};
       //////////////////////////////////////////////
       Isolate::Scope isolate_scope(isolate);
 
@@ -119,12 +120,9 @@ namespace instance {
       }
     }
     cout << ">>Before Dispose" <<endl; 
+    
     // Dispose the isolate and tear down V8.
     isolate->Dispose();
-    
-    //V8::Dispose();
-    //V8::ShutdownPlatform();
-    //delete platform;
     printf("\n :) Done (: \n");
   }
 

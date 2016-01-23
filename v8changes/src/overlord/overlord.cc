@@ -14,6 +14,7 @@ void handleIsolateRequest(int, action, command &);
 void handleGlobalRequests(command &response, action command);
 
 void overlordTestCli(){
+    cout<<"Overlord cli tester"<<endl;
     command rsp;
     while(1){
         action a;
@@ -25,33 +26,36 @@ void overlordTestCli(){
         rsp.setIsolateActions(ast);
 
         string s;
-        cout<<">";
+        cout<<"*>";
         cin>>s;
 
         if(s == "stats"){
             a.name = "status";
             handleGlobalRequests(rsp,a);
-            cout<<"R:"<<rsp.serialise()<<endl;
+            cout<<"*R:"<<rsp.serialise()<<endl;
             delete[] ast;
             continue;
         }
 
-        if(s == "kill"){
+        else if(s == "kill"){
             a.name = "terminate";
         }
-        if(s == "set"){
+
+        else if(s == "set"){
             a.name = "set_heap_size";
-            cout<<"Heap size:"<<endl;
+            cout<<"*Heap size:"<<endl;
             cin>>d->heap;    
         }
-        if(s == "setm"){
+        
+        else if(s == "setm"){
             a.name = "set_max_heap_size";
-            cout<<"Heap size(MB):"<<endl;
+            cout<<"*Heap size(MB):"<<endl;
             cin>>d->heap;    
         }
-        if(s == "exec"){
+        
+        else if(s == "exec"){
             string script;
-            cout<<"Input path to script:";
+            cout<<"*Input path to script:";
             cin>>script;
             cout<<endl;
 
@@ -60,11 +64,12 @@ void overlordTestCli(){
             continue;
         }
 
-        if(s == "exit")
+        else if(s == "exit")
             return;
-
+        else 
+            cout<<"*Unknown command!";
         handleIsolateRequest(0,a,rsp);
-        cout<<"R:"<<rsp.serialise()<<endl;
+        cout<<"*R:"<<rsp.serialise()<<endl;
         delete[] ast;
     }
 }
@@ -80,7 +85,7 @@ class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
 };
 
 void * Overlord::serve(void * data){
-    overlordTestCli();
+    //overlordTestCli();
 
     int portNo = 15000;//*((int *)data);
     int connFd,listenFd;
@@ -146,7 +151,7 @@ void * Overlord::serve(void * data){
                     break;
                 }
                 buffer[strLen] = 0;
-                cout<<"Part str:"<<buffer<<endl;
+                //cout<<"Part str:"<<buffer<<endl;
 
                 cmdend = strchr(buffer,CMD_SEPARATOR);
                 *cmdend = 0;
@@ -163,7 +168,7 @@ void * Overlord::serve(void * data){
                 string scommand(jsonStr);
                 command cmd(scommand);
                 Overlord::handleRequest(cmd,resp);
-
+                cout<<"Responding..."<<endl;
                 string r = resp.serialise();
                 cout<<"Response_JSON:"<<r<<endl;
                 const char* data = r.c_str();
@@ -175,6 +180,7 @@ void * Overlord::serve(void * data){
                 for(int i = 1; i < 2000; ++i )
                     buffer[i] = CMD_SEPARATOR;
                 strcpy(buffer,jsonStr);
+                buffer[strlen(jsonStr)] = CMD_SEPARATOR;
                 write(connFd, buffer, 1450);
             }
             
@@ -188,7 +194,7 @@ void * Overlord::serve(void * data){
                     break;
                 }
                 buffer[strLen] = 0;
-                cout<<"Scavenging:"<<buffer<<endl;
+                //cout<<"Scavenging:"<<buffer<<endl;
                 
                 start = 0;
                 for( int i = 0 ; i < strLen; ++i ) {
@@ -204,7 +210,7 @@ void * Overlord::serve(void * data){
             }while(!start);
             //overflow vulnerable code
             strcpy(strCmd,start);
-            cout<<"Remaining str:"<<strCmd<<endl;
+            //cout<<"Remaining str:"<<strCmd<<endl;
         }
     }
     cout << "\nClosing thread and conn" << endl;
@@ -223,9 +229,11 @@ Overlord::Overlord(int portNo, bool synchronous) {
 }
 
 void handleIsolateRequest(int i, action cmd, command &response){
-    cout<<"NrIsolates:"<<(int)response.getNrIsolates()<<endl;
-    if(i >= (int)response.getNrIsolates())
+    cout<<"Working on isolate:"<<i<<endl;
+    if(i >= (int)response.getNrIsolates()){
+        cout<<"Invalid isolate ID"<<endl;
         return;
+    }
 
     v8::internal::Isolate *isl = v8::internal::Isolate::getIsolate(i+1);
     if( isl == NULL ){//no such isolate
@@ -233,25 +241,24 @@ void handleIsolateRequest(int i, action cmd, command &response){
         return;
     }
     
-    action *actions = response.getIsolateActions();
+    v8::Isolate *isol = reinterpret_cast<v8::Isolate *>(isl); 
+
+    action *actions    = response.getIsolateActions();
     details *detail    = actions[i].getDetails();
     details *param     = cmd.getDetails();
-    if( cmd.name == "terminate" ) {//terminate the isolate
-        v8::Isolate *isol = reinterpret_cast<v8::Isolate *>(isl); 
-        v8::Locker l(isol);
-        isol->Dispose();
-        v8::Unlocker u(isol);
 
-        actions[i].name = "terminated";
-    }
+    //unsupported command
+    //if( cmd.name == "terminate" ) {//terminate the isolate      
+    //}
 
     if( cmd.name == "status" ){ //status report on idividual isolate 
+        //v8::Locker l{isol}; - causes deadlock ...
+        
         detail->heap       = (int) isl->getHeapSize();
         detail->throughput = isl->getThroughput();   
-        actions[i].name    = "update";     
+        actions[i].name    = "update";
     }
 
-    //TODO: lock if necessary
     if( cmd.name == "set_max_heap_size" ){
         isl->heap()->setMaxOldGenerationSize(param->heap);
         actions[i].name    = "max_heap_size_set";
@@ -277,8 +284,10 @@ void handleGlobalRequests(command &response, action command){
     if(command.name == "status"){
 
         int nrIsolates = (int) response.getNrIsolates();
+        cout<<"Performing request on "<<nrIsolates<<" isolates"<<endl;
         for( int i = 0; i < nrIsolates ; ++i )
             handleIsolateRequest(i,command,response);
+
     } else if (command.name == "execute"){
         instance::parallelExec(command.getDetails()->path.c_str());
     }
@@ -286,7 +295,7 @@ void handleGlobalRequests(command &response, action command){
 
 void Overlord::handleRequest(command &cmd, command &response){
     int nrIsolates = v8::internal::Isolate::getActiveIsolatesCount();
-    cout<<"Active isolates:"<<nrIsolates<<endl;
+    //cout<<"Active isolates:"<<nrIsolates<<endl;
     response.setNrIsolates(nrIsolates);
     action *actions = new action[nrIsolates];
     response.setIsolateActions(actions);
@@ -301,7 +310,6 @@ void Overlord::handleRequest(command &cmd, command &response){
             handleGlobalRequests(response,cmd.getGlobal());    
         }
 
-        cout<<"Nr isolates:"<<cmd.getNrIsolates()<<endl;
         int len = (int) cmd.getNrIsolates();
         action * actions = cmd.getIsolateActions();
         for( int i = 0; i < len; ++i )
