@@ -43,6 +43,5 @@ namespace ControlProtocol {
     
     if(path.length())
       obj["path"] = path;
-    
   }
 }

@@ -36,21 +36,33 @@ namespace instance {
   }
 
   void * synchronousExec(void * path){
-    const char *scriptP[1];
-    scriptP[0] = (const char*)path; 
-    executor(1024,1,scriptP);
+    const char *pth = (const char*) path;
+    char **scriptP = new char*[5000];
+    scriptP[0] = new char[5000];//(const char*)path; 
+    int i;
+    for(i=0; pth[i]; ++i ){
+      scriptP[0][i] = pth[i];
+      cout<<pth[i];
+    }
+    scriptP[0][i] = 0;
+    cout<<endl<<"Final:"<<scriptP[0]<<endl;
+    executor(1024,1,(const char**)scriptP);
 
+    delete[] scriptP;
     return NULL;
   }
 
   void parallelExec(const char *path){
     pthread_t tid;
-    pthread_create(&tid,NULL,synchronousExec,((void *)path));
+    pthread_create(&tid,NULL,synchronousExec,(void *)path);
   }
 
-  void executor(int max_heap, int nrScripts, const char* argv[]) {
+  void executor(int max_heap, int nrScripts, const char** argv) {
     //todo: check if v8 is initialised and if not:
-    
+    char before[10] = "load('";
+    char command[5000];
+    char after[5] = "');";
+        
     // Create a new Isolate and make it the current one.
     ArrayBufferAllocator allocator;
     Isolate::CreateParams create_params;
@@ -102,11 +114,10 @@ namespace instance {
       Context::Scope context_scope(context);
 
       for( int i = 0; i < nrScripts; ++i ){
-        char before[10] = "load('";
-        char command[255];
-        char after[5] = "');";
+        cout<<"Loading scritp:"<<argv[i]<<endl;
+        command[0] = 0;
         sprintf(command,"%s%s%s",before,argv[i],after);
-        printf("commands:%s\n",command);
+        printf("Preoading new Isolate JS with:%s\n",command);
         // Create a string containing the JavaScript source code.
         Local<String> source =
             String::NewFromUtf8(isolate, command,

@@ -1,6 +1,8 @@
 #include "base64.h"
 #include <stdio.h>
 
+using namespace std;
+
 namespace base64{
 	char _6to8(unsigned val){
 		if( val < 26 )
@@ -30,8 +32,41 @@ namespace base64{
 		 return 0;	
 	}
 
-	char* encode(const char *in, int in_len){
-		char *out = new char[(in_len*8/6*8) + (in_len % 3)+ 1];
+	void encode(string in,char out[]){
+		int in_len = (int) in.size();
+		unsigned buffer = 0,mask;
+		int index = 0;
+		char bufferedBits = 0,shiftDist = 0;
+		for ( std::string::iterator it=in.begin(); it!=in.end(); ++it){
+			buffer <<= 8;
+			buffer |= *it;
+			bufferedBits += 8;
+			
+			while(bufferedBits > 6){
+				shiftDist = bufferedBits - 6;
+				mask = (1 << shiftDist) - 1;
+				out[index++] = _6to8( buffer >> (shiftDist) );
+				
+				buffer &= mask;
+				bufferedBits -= 6;
+			}
+		}
+		//remaining bits to encode
+		if( buffer )
+			out[index++] = _6to8( buffer << ( 6 - bufferedBits ) );
+		//padd
+		in_len = (in_len*8)%3;
+		if(in_len){
+			out[index++] = '=';
+			if( in_len > 1 )
+				out[index++] = '=';
+		}
+
+		out[index] = 0;
+	}
+
+	void encode(const char *in, int in_len,char out[]){
+		//char *out = new char[(in_len*8/6*8) + (in_len % 3)+ 1];
 		unsigned buffer = 0,mask;
 		int index = 0;
 		char bufferedBits = 0,shiftDist = 0;
@@ -61,18 +96,14 @@ namespace base64{
 		}
 
 		out[index] = 0;
-		return out;
 	}
 	
-	void encode(const char *in, int in_len, char* &out){
-		out = encode(in,in_len);
-	}
 
-	bool decode(const char *in, int in_len, char* &out){
+	bool decode(const char *in, int in_len, char out[]){
 		if( (in_len*6) % 8)
 			return false;
 
-		out = new char[ in_len*6/8 + 1 ];
+		//out = new char[ in_len*6/8 + 1 ];
 		unsigned buffer = 0,mask;
 		int index = 0;
 		char bufferedBits = 0,shiftDist = 0;

@@ -36,7 +36,7 @@ namespace instance {
 	void GetHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args);
 	void SetMaxHeapSize(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-	void executor(int max_heap, int nrScipts, const char *script[]);
+	void executor(int max_heap, int nrScipts, const char **scripts);
 	void * synchronousExec(void *);
 	void parallelExec(const char *);
 

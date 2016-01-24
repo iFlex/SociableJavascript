@@ -2,14 +2,16 @@ import json
 import sys, traceback
 from base64 import *
 from threading import Thread
+from threading import RLock
 
 class communicator:
 
     def __init__(self,socket,monitor):
         global id;
+        self.lock = RLock();
         self.socket = socket;
         self.monitor = monitor;
-        self.packetSize = 2000;
+        self.packetSize = 1450;
         self.id = monitor.addMachine(socket);
         self.monitor.addV8(self.id);
         self.separator = ";"    
@@ -26,7 +28,7 @@ class communicator:
     def handleResponse(self,response):
         try:
             response = b64decode(response);
-            print response;
+            #print "R:"+response;
             message = json.loads(response);
             self.monitor.update(self.id,1,message);
         except Exception as e:
@@ -39,6 +41,7 @@ class communicator:
             buff = "";
             try:
                 buff = self.socket.recv(self.packetSize);
+                #print buff;
             except Exception as e:
                 self.socket = 0;
                 break;
@@ -61,17 +64,19 @@ class communicator:
             return 0;
 
         toSend = json.dumps(request);
-        print "snd:"+toSend;
+        #print "snd:"+toSend;
 
         toSend = b64encode(toSend);
         padding = self.separator*(self.packetSize - len(toSend));
         
+        self.lock.acquire();
+        
         try:
             self.socket.send(toSend+padding);                    
-            return 1;
         except Exception as e:
             print "Machine disconnected:"+str(e)
             self.monitor.removeMachine(self.id);
             self.id = 0;
             self.socket = 0;
-            return 0;
+
+        self.lock.release();

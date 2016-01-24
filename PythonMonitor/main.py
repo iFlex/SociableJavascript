@@ -47,8 +47,8 @@ while True:
     except Exception as e:
         continue; #print "Could not connect "+str(e);    
 
-print("Starting in 5 seconds...");
-time.sleep(5);
+print("Starting ...");
+time.sleep(1);
 print "Initialising communicator";
 comm = communicator(soc,mon);
 print "Initialising policy...";

@@ -119,7 +119,6 @@ void * Overlord::serve(void * data){
     
     len = sizeof(clntAdd);
         
-    command resp;
     while(true){
         cout << "Overlord::Listening on port "<< portNo << endl;
         //this is where client connects. svr will hang in this mode until client conn
@@ -134,83 +133,46 @@ void * Overlord::serve(void * data){
         
         cout << "Overlord:: New controller connected - Thread No: " << pthread_self() << endl;
         
-        char buffer[2000],strCmd[2000];
-        char c,*jsonStr,*cmdend;
+        char jsonStr[5005],buffer[2002],strCmd[2002];
         bool loop = true;
-        int strLen = 0;
+        int strLen = 0,index = 0;
         
-        c = ' ';
         strCmd[0] = 0;    
         while(loop)
         {
-            cmdend = &c;
-            while(*cmdend){
-                strLen = (int) read(connFd, buffer, 2000);
-                if( strLen < 1){
-                    loop = false;
-                    break;
-                }
-                buffer[strLen] = 0;
-                //cout<<"Part str:"<<buffer<<endl;
-
-                cmdend = strchr(buffer,CMD_SEPARATOR);
-                *cmdend = 0;
-                //overflow vulnerable code
-                strcpy(strCmd,buffer);
-            }
-            
-            if(!loop)
+            strLen = (int) read(connFd, buffer, 1450);
+            if( strLen < 1){
+                loop = false;
                 break;
-
-            if(base64::decode(strCmd,(int) strlen(strCmd),jsonStr)) {
-                cout<<"Request_JSON:"<<jsonStr<<endl;
-
-                string scommand(jsonStr);
-                command cmd(scommand);
-                Overlord::handleRequest(cmd,resp);
-                cout<<"Responding..."<<endl;
-                string r = resp.serialise();
-                cout<<"Response_JSON:"<<r<<endl;
-                const char* data = r.c_str();
-                
-                delete[] jsonStr;
-                base64::encode(data,(int) strlen(data),jsonStr);
-                
-                buffer[0] = 0;
-                for(int i = 1; i < 2000; ++i )
-                    buffer[i] = CMD_SEPARATOR;
-                strcpy(buffer,jsonStr);
-                buffer[strlen(jsonStr)] = CMD_SEPARATOR;
-                write(connFd, buffer, 1450);
             }
-            
-            strCmd[0] = 0;
-            char *start;
-            do {
+            for( int i = 0; i < strLen; ++i ) {
+                if(buffer[i] != CMD_SEPARATOR) {
+                    if(index < 2000)
+                        strCmd[index++] = buffer[i];
+                    else
+                        cout<<"#PACKET TOO LARGE, len > 2000. Will truncate at 2000 and will not likely decode."<<endl;
+                } else {
+                    strCmd[index] = 0;
+                    if(index != 0 && base64::decode(strCmd,(int) strlen(strCmd),jsonStr)) {
+                        cout<<"Request_JSON:"<<jsonStr<<endl;
 
-                strLen = (int) read(connFd, buffer, 2000);
-                if( strLen < 1){
-                    loop = false;
-                    break;
-                }
-                buffer[strLen] = 0;
-                //cout<<"Scavenging:"<<buffer<<endl;
-                
-                start = 0;
-                for( int i = 0 ; i < strLen; ++i ) {
-                    if( buffer[i] != CMD_SEPARATOR ) {
-                        if(!start)
-                            start = buffer+i;
-                    } else {
-                        buffer[i] = 0;
-                        if(start)
-                            break;
+                        string scommand(jsonStr);
+                        command cmd(scommand);
+                        command resp;
+                        Overlord::handleRequest(cmd,resp);
+                        string r = resp.serialise();
+                        cout<<"Response_JSON:"<<r<<endl;
+                        
+                        base64::encode(r,jsonStr);
+                        int j=0;
+                        for( j = (int) strlen(jsonStr); j < 2000 ; ++j )
+                            jsonStr[j] = CMD_SEPARATOR;
+                            
+                        write(connFd, jsonStr, 1450);
                     }
+                    index = 0;    
                 }
-            }while(!start);
-            //overflow vulnerable code
-            strcpy(strCmd,start);
-            //cout<<"Remaining str:"<<strCmd<<endl;
+            }
         }
     }
     cout << "\nClosing thread and conn" << endl;
@@ -241,12 +203,14 @@ void handleIsolateRequest(int i, action cmd, command &response){
         return;
     }
     
-    v8::Isolate *isol = reinterpret_cast<v8::Isolate *>(isl); 
+    //v8::Isolate *isol = reinterpret_cast<v8::Isolate *>(isl); 
 
-    action *actions    = response.getIsolateActions();
-    details *detail    = actions[i].getDetails();
-    details *param     = cmd.getDetails();
+    action  *actions    = response.getIsolateActions();
+    details *detail     = actions[i].getDetails();
+    details *param      = cmd.getDetails();
 
+    if(actions == NULL)
+        return;
     //unsupported command
     //if( cmd.name == "terminate" ) {//terminate the isolate      
     //}
@@ -268,16 +232,6 @@ void handleIsolateRequest(int i, action cmd, command &response){
         isl->setTargetHeapSize(param->heap);
         actions[i].name    = "target_heap_size_set";
     }
-
-    //TODO: execute
-    if( cmd.name == "execute"){
-        //using parameter path
-    }
-
-    //TODO: load
-    if(cmd.name == "load"){
-        //using path parameter
-    }
 }
 
 void handleGlobalRequests(command &response, action command){
@@ -289,13 +243,15 @@ void handleGlobalRequests(command &response, action command){
             handleIsolateRequest(i,command,response);
 
     } else if (command.name == "execute"){
+        cout<<"Executing script:"<<command.getDetails()->path.c_str()<<endl;
         instance::parallelExec(command.getDetails()->path.c_str());
     }
 }
 
 void Overlord::handleRequest(command &cmd, command &response){
     int nrIsolates = v8::internal::Isolate::getActiveIsolatesCount();
-    //cout<<"Active isolates:"<<nrIsolates<<endl;
+    cout<<"Active isolates:"<<nrIsolates<<endl;
+    
     response.setNrIsolates(nrIsolates);
     action *actions = new action[nrIsolates];
     response.setIsolateActions(actions);
@@ -311,8 +267,9 @@ void Overlord::handleRequest(command &cmd, command &response){
         }
 
         int len = (int) cmd.getNrIsolates();
-        action * actions = cmd.getIsolateActions();
-        for( int i = 0; i < len; ++i )
-            handleIsolateRequest(i,actions[i],response);
+        action * iactions = cmd.getIsolateActions();
+        if(iactions != NULL)
+            for( int i = 0; i < len; ++i )
+                handleIsolateRequest(i,iactions[i],response);
     }
 }

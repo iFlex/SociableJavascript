@@ -1790,6 +1790,8 @@
       ],
       'sources': [
         '../../include/libplatform/libplatform.h',
+        '../../src/overlord/instance.h',
+        '../../src/overlord/instance.cc',
         '../../src/overlord/overlord.h',
         '../../src/overlord/overlord.cc',
         '../../src/overlord/base64/base64.h',

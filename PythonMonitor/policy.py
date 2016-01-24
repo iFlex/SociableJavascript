@@ -19,17 +19,21 @@ class Policy:
         #starting cli
         print "Starting default policy...";
         self.thread = Thread(target = self.run)
-        #self.thread.start();
+        self.thread.start();
         print "Starting cli...";
         self.cli.run();
         print "Stopping policy...";
+
+        self.keepRunning = False;
         self.thread.join();
         print "Closing connection...";
         communicator.close();
         print "Cleanup finished. Exiting...";
 
+    #at the moment this deadlocks, somehow
     def run(self):
         #keep calculating
         while(self.keepRunning):
             time.sleep(self.interval);
+            print "Polling..."
             self.comm.send(self.requestBldr.statusReport(1));   

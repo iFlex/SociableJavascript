@@ -5,9 +5,12 @@ namespace ControlProtocol {
 
   command::command(){
     nrIsolates = 0;
+    isolates = NULL;
   }
 
   command::command(string info){
+    nrIsolates = 0;
+    isolates = NULL;
     deserialise(info);
   }
 
@@ -42,7 +45,6 @@ namespace ControlProtocol {
     return writer.write( root );
   }
 
-
   void command::deserialise(string info){
     Json::Value root;   // will contains the root value after parsing.
     Json::Reader reader;
@@ -53,8 +55,8 @@ namespace ControlProtocol {
       if(!root["global"].empty())
         global.deserialise(root["global"]);
         
-      if(this->nrIsolates > 0)
-        delete this->isolates;
+      //if(this->nrIsolates > 0 && this->isolates != NULL)
+      //  delete this->isolates;
       
       this->nrIsolates = root["TotalIsolates"].asInt();
       if(this->nrIsolates > 0) {

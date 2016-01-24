@@ -133,7 +133,6 @@ class monitor:
         return retval;
 
     def removeIsolate(self,machineId,v8Id,isolateId):
-        isolateId -= 1
         v8 = self.getV8(self.getMachine(machineId),v8Id)
         if v8 == 0:
             return 0;
@@ -165,7 +164,6 @@ class monitor:
 
         self.lock.acquire();
         if info["action"] == "update":
-            print str(isolateId)+">"+str(info)
             for key in info:
                 isolate[key] = info[key];
         self.lock.release();
@@ -185,10 +183,8 @@ class monitor:
             recordedIsolateCount -= 1;
             self.removeIsolate(machineId,v8Id,recordedIsolateCount);
 
-        self.debug();
         #update isolate status
         for i in range(0,nris):
-            print "Updanig isolate:"+str(i);
             info = response["isolates"][str(i)];
             self.isolateUpdate(machineId,v8Id,i+1,info)
 

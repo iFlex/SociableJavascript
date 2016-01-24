@@ -9,9 +9,15 @@ function fastaRepeat(n, seq) {
     str = Array(len*60+1).join(seq), lines = Array(i=j=len*len);
   while (--j>-1) { lines[j] = str.substr(60*j, 60) }
   block = lines.join("\n");
-  for (j=0, k=Math.floor((l=Math.floor(n/60))/i); j<k; ++j) { print(block) }
-  for (j = 0, k = l % i; j < k; ++j) { print(lines[j]) }
-  if (n % 60 > 0) { print(lines[k].substr(0, n % 60)) }
+  for (j=0, k=Math.floor((l=Math.floor(n/60))/i); j<k; ++j) { 
+    print(block) 
+  }
+  for (j = 0, k = l % i; j < k; ++j) { 
+    print(lines[j]) 
+  }
+  if (n % 60 > 0) { 
+    print(lines[k].substr(0, n % 60)) 
+  }
 }
 
 var rand;

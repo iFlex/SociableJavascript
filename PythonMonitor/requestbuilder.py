@@ -6,7 +6,7 @@ from monitor import *
 class RequestBuilder:
     def __init__(self, monitor):
         self.monitor = monitor;
-
+                
     def makeDefaultRequest(self,machineId):
         v8id = 1;
 
