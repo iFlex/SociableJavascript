@@ -4,17 +4,16 @@ from threading import Thread
 import time;
 
 class Policy:
-    def __init__(self,communicator,monitor,preloadScripts):
-        self.comm = communicator;
+    def __init__(self,monitor,preloadScripts):
         self.monitor = monitor;
         self.interval = 1;#seconds
         self.requestBldr = RequestBuilder(monitor);
         self.keepRunning = True;
         self.cli = CommandLine(self);
         #preloading scripts
-        for script in preloadScripts:
-          print "Preloading:"+script;
-          communicator.send(self.requestBldr.startScript(1,script));
+        #for script in preloadScripts:
+        #  print "Preloading:"+script;
+        #  communicator.send(self.requestBldr.startScript(1,script));
         
         #starting cli
         print "Starting default policy...";
@@ -26,8 +25,12 @@ class Policy:
 
         self.keepRunning = False;
         self.thread.join();
-        print "Closing connection...";
-        communicator.close();
+        print "Closing communicators...";
+        comms = self.monitor.getCommunicators();
+        for id in comms:
+            machine = comms[id];
+            for v8 in machine:
+                machine[v8].close();
         print "Cleanup finished. Exiting...";
 
     #at the moment this deadlocks, somehow
@@ -36,4 +39,8 @@ class Policy:
         while(self.keepRunning):
             time.sleep(self.interval);
             print "Polling..."
-            self.comm.send(self.requestBldr.statusReport(1));   
+            comms = self.monitor.getCommunicators();
+            for id in comms:
+                machine = comms[id];
+                for v8 in machine:
+                    machine[v8].send(self.requestBldr.statusReport(id));

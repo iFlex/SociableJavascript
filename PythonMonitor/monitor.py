@@ -58,7 +58,7 @@ class monitor:
 
         return retval;
 
-    def addV8(self,machineId):
+    def addV8(self,machineId,communicator):
         machine = self.getMachine(machineId);
         if machine == 0:
             return 0;
@@ -68,10 +68,12 @@ class monitor:
         v8 = {"FreeList":list(),"isolates":dict(),"id":0};
 
         id = self.getAppropriateId(freeIDs,len(machine["v8s"].keys()));
+    
         v8["id"] = id;
+        v8["comm"] = communicator;
         machine["v8s"][id] = v8;
+        
         self.lock.release();
-
         return id;
 
     def getV8(self,machine,v8id):
@@ -86,6 +88,12 @@ class monitor:
 
         return retval;
 
+    def getV8Comm(self,machineId,v8Id):
+        v8 = self.getV8(self.getMachine(machineId),v8Id);
+        if v8 == 0:
+            return 0;
+
+        return v8["comm"];
 
     def removeV8(self,machineId,v8Id):
         machine = self.getMachine(machineId);
@@ -188,24 +196,46 @@ class monitor:
             info = response["isolates"][str(i)];
             self.isolateUpdate(machineId,v8Id,i+1,info)
 
-    def prettyPrint(self):
+    def prettyPrintV8(self,machineId,v8Id,spaces):
         self.lock.acquire();
-        v8 = self.getV8(self.getMachine(1),1);
+        v8 = self.getV8(self.getMachine(machineId),v8Id);
         if(v8 == 0):
-            print "Could not find v8 instance";
+            print spaces+"Could not find v8 instance";
             return;
 
-        print "ISOLATES "+"_"*35
         for i in v8["isolates"]:
             isolate = v8["isolates"][i];
             items = "("+str(isolate["id"])+") ";
             for item in isolate:
                 if item != "action" and item != "id":
                     items += str(item)+":"+str(isolate[item])+" "
-            print items;
+            print spaces+items;
             print "_"*45
 
         self.lock.release();
+    
+    def prettyPrint(self):
+        self.lock.acquire();
+        for id in self.STATUS["machines"]:
+            machine = self.STATUS["machines"][id]["v8s"];
+            print "MACHINE_"+str(id);
+            for v8 in machine:
+                print " V8_"+str(v8);
+                self.prettyPrintV8(id,v8," "*2);
 
+        self.lock.release();
     def debug(self):
         print self.STATUS;
+
+    def getCommunicators(self):
+        comm = dict()
+        self.lock.acquire();
+        
+        for idd in self.STATUS["machines"]:
+            machine = self.STATUS["machines"][idd]['v8s'];
+            comm[idd] = dict()
+            for key in machine:
+                comm[idd][key] = machine[key]["comm"];
+
+        self.lock.release();
+        return comm;

@@ -1,7 +1,7 @@
 #!/bin/src/python
 from communicator import *
 from monitor import *
-from socket import *
+from server import *
 from policy import *
 import time
 import subprocess
@@ -12,7 +12,7 @@ print "V8 Manager CLI"
 #v8instance = subprocess.Popen(["../v8runner/v8wrapper.bin","1024","../v8runner/jsplayg/endless.js"],0,close_fds=True,stdout=file("/dev/null"));
 raw_input("press any key after you start a v8 instance");
 
-print "Reading preloading configuration...";
+print "Reading preload configuration...";
 #read initial configuration
 preloadScripts = [];
 with open("preload.txt") as f:
@@ -32,27 +32,18 @@ print "_"*80
 #flags
 DEBUG = True
 #Defaults
-address = "127.0.0.1"
-port = 15000
-#network
 mon = monitor();
+srv = server(mon);
 
-soc = socket(AF_INET,SOCK_STREAM);
-print "Connecting to local V8 instance:"+str(address)+":"+str(port)
-while True:
-    try:
-        soc.connect((address,port));
-        print "Success";
-        break;
-    except Exception as e:
-        continue; #print "Could not connect "+str(e);    
-
-print("Starting ...");
-time.sleep(1);
-print "Initialising communicator";
-comm = communicator(soc,mon);
-print "Initialising policy...";
-policy = Policy(comm,mon,preloadScripts);
-
-#print "Terminating V8 instance...";
-#v8instance.kill();
+if srv.start() == False:
+    print "Error starting registry server - "+srv.getError();
+else:
+    print("Starting ...");
+    time.sleep(1);
+    print "Initialising policy...";
+    Policy(mon,preloadScripts);
+    srv.close();
+    
+print "ktnxbai";
+    #print "Terminating V8 instance...";
+    #v8instance.kill();

@@ -6,31 +6,43 @@ from threading import RLock
 
 class communicator:
 
-    def __init__(self,socket,monitor):
+    def __init__(self,socket,monitor,machineId):
         global id;
         self.lock = RLock();
-        self.socket = socket;
-        self.monitor = monitor;
         self.packetSize = 1450;
-        self.id = monitor.addMachine(socket);
-        self.monitor.addV8(self.id);
-        self.separator = ";"    
+        self.socket = socket;
+        self.separator = ";"
 
+        self.monitor = monitor;
+        self.mid = machineId;
+        self.v8id = monitor.addV8(machineId,self);
+        
         #start listener thread
-        print "Starting communicator listener...";
+        print "New V8_"+str(self.v8id)+" @ machine_"+str(machineId);
         self.thread = Thread(target = self.listen)
         self.thread.start();
 
     def close(self):
-        if self.socket != 0:
-            self.socket.close();
+        if self.socket == 0:
+            return;
+
+        self.lock.acquire();
+
+        self.socket.close();
+        self.socket = 0;
+        print "Disconnected V8("+str(self.v8id)+") @ machine"+str(self.mid);
+
+        self.lock.release();
+
+        monitor.removeV8(self.mid,self.v8id);
+        self.thread.join();
 
     def handleResponse(self,response):
         try:
             response = b64decode(response);
             #print "R:"+response;
             message = json.loads(response);
-            self.monitor.update(self.id,1,message);
+            self.monitor.update(self.mid,self.v8id,message);
         except Exception as e:
             print "Error parsing response from V8 instance:"+str(e);
             traceback.print_exc(file=sys.stdout)
@@ -43,7 +55,7 @@ class communicator:
                 buff = self.socket.recv(self.packetSize);
                 #print buff;
             except Exception as e:
-                self.socket = 0;
+                self.close();
                 break;
 
             i = 0
@@ -60,7 +72,7 @@ class communicator:
                     i += 1
 
     def send(self,request):
-        if(self.id == 0 or request == 0 or self.socket == 0):
+        if(request == 0 or self.socket == 0):
             return 0;
 
         toSend = json.dumps(request);
@@ -69,14 +81,15 @@ class communicator:
         toSend = b64encode(toSend);
         padding = self.separator*(self.packetSize - len(toSend));
         
+        doKill = False
         self.lock.acquire();
         
         try:
             self.socket.send(toSend+padding);                    
         except Exception as e:
             print "Machine disconnected:"+str(e)
-            self.monitor.removeMachine(self.id);
-            self.id = 0;
-            self.socket = 0;
+            doKill = True;
 
         self.lock.release();
+        if doKill:
+            self.close();

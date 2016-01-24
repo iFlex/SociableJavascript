@@ -23,6 +23,6 @@ class Overlord {
 	int port;
 public:
 	Overlord(int,bool);
-	static void * serve(void *);
+	static void * run(void *);
 	static void handleRequest(ControlProtocol::command &, ControlProtocol::command &);
 };

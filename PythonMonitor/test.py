@@ -2,10 +2,12 @@ from monitor import *
 from requestbuilder import *
 
 m = monitor();
-m.addMachine(0);
-m.addV8(1);
-m.addIsolate(1,1);
-m.addIsolate(1,1);
+id = m.addMachine("addr");
+v8 = m.addV8(id,"a");
+m.addIsolate(id,v8);
+m.addIsolate(id,v8);
+v8 = m.addV8(id,"b");
+m.getCommunicators();
 
 r = RequestBuilder(m);
 print r.makeDefaultRequest(1);

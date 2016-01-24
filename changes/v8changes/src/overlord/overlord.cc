@@ -84,55 +84,47 @@ class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   virtual void Free(void* data, size_t) { free(data); }
 };
 
-void * Overlord::serve(void * data){
+void * Overlord::run(void * data){
     //overlordTestCli();
-
-    int portNo = 15000;//*((int *)data);
-    int connFd,listenFd;
-    socklen_t len; //store size of the address
-  
-    struct sockaddr_in svrAdd, clntAdd;
-  
-    //create socket
-    listenFd = socket(AF_INET, SOCK_STREAM, 0);
+    int connFd;
     
-    if(listenFd < 0)
+    int portNo = 15000;//*((int *)data);
+    struct sockaddr_in svrAdd;
+    struct hostent *serverId;
+
+    //create socket
+    connFd = socket(AF_INET, SOCK_STREAM, 0);
+    
+    if(connFd < 0)
     {
         cerr << "Overlord:: Cannot open socket" << endl;
         return 0;
     }
     
+    serverId = gethostbyname("127.0.0.1");
+    if( serverId == NULL ){
+        cerr <<"Overlord:: Could not resolve server address" << endl;
+        return 0;
+    }
+
     bzero((char*) &svrAdd, sizeof(svrAdd));
     
     svrAdd.sin_family = AF_INET;
-    svrAdd.sin_addr.s_addr = INADDR_ANY;
+    bcopy((char *)serverId->h_addr, 
+         (char *)&svrAdd.sin_addr.s_addr,
+         serverId->h_length);
     svrAdd.sin_port = htons(portNo);
     
-    //bind socket
-    if(bind(listenFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0)
-    {
-        cerr << "Overlord::Cannot bind" << endl;
-        return 0;
-    }
-    
-    listen(listenFd, 5);
-    
-    len = sizeof(clntAdd);
-        
+    //serve
     while(true){
-        cout << "Overlord::Listening on port "<< portNo << endl;
-        //this is where client connects. svr will hang in this mode until client conn
-        connFd = accept(listenFd, (struct sockaddr *)&clntAdd, &len);
-
-        if (connFd < 0) {
-          cerr << "Overlord::Cannot accept connection" << endl;
-          return 0;
-        } else {
-          cout << "Overlord::Connection successful" << endl;
+        //Keep trying to connect to Monitor
+        while(connect(connFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0){
+            cerr << "Overlord::Could not connect to Monitor" << endl;
         }
-        
-        cout << "Overlord:: New controller connected - Thread No: " << pthread_self() << endl;
-        
+
+        cout << "Overlord::connection successful. Awaiting commands..." << endl;
+        //this is where client connects. svr will hang in this mode until client conn
+   
         char jsonStr[5005],buffer[2002],strCmd[2002];
         bool loop = true;
         int strLen = 0,index = 0;
@@ -185,9 +177,9 @@ Overlord::Overlord(int portNo, bool synchronous) {
     port = portNo;
 
     if(synchronous)
-        Overlord::serve((void *)(&port));
+        Overlord::run((void *)(&port));
     else
-        pthread_create(&tid,NULL,Overlord::serve,((void *)(&port)));
+        pthread_create(&tid,NULL,Overlord::run,((void *)(&port)));
 }
 
 void handleIsolateRequest(int i, action cmd, command &response){
