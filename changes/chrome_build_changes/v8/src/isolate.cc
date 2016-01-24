@@ -41,15 +41,15 @@
 #include "src/version.h"
 #include "src/vm-state-inl.h"
 #include "src/overlord/overlord.h"
-#define SINGLE_ISOLATE_MODEL true
-
 //////////////////////temporary plotting mechanism
 #include <iostream>
 #include <fstream>
 #include <pthread.h>
-
 //TODO: check for recursive lock calls on mutex
+#define SINGLE_ISOLATE_MODEL false
+
 using namespace std;
+using namespace std::chrono;
 
 ofstream exec,gc,hpsz,thrpt,ithrpt;
 int opened = 0;
