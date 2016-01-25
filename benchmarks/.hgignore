@@ -1,0 +1,7 @@
+syntax: glob
+
+*.class
+*~
+150000.txt
+500.bmp
+
