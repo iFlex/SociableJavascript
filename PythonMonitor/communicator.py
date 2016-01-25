@@ -30,11 +30,11 @@ class communicator:
 
         self.socket.close();
         self.socket = 0;
-        print "Disconnected V8("+str(self.v8id)+") @ machine"+str(self.mid);
+        print "Disconnected V8_"+str(self.v8id)+" @ machine_"+str(self.mid);
 
         self.lock.release();
 
-        monitor.removeV8(self.mid,self.v8id);
+        self.monitor.removeV8(self.mid,self.v8id);
         self.thread.join();
 
     def handleResponse(self,response):
@@ -73,10 +73,11 @@ class communicator:
 
     def send(self,request):
         if(request == 0 or self.socket == 0):
+            print "#SEND_ERR:Bad request or empty socket!";
             return 0;
 
         toSend = json.dumps(request);
-        #print "snd:"+toSend;
+        print "snd:"+toSend;
 
         toSend = b64encode(toSend);
         padding = self.separator*(self.packetSize - len(toSend));

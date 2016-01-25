@@ -38,9 +38,9 @@ class Policy:
         #keep calculating
         while(self.keepRunning):
             time.sleep(self.interval);
-            print "Polling..."
+            #print "Polling..."
             comms = self.monitor.getCommunicators();
             for id in comms:
                 machine = comms[id];
                 for v8 in machine:
-                    machine[v8].send(self.requestBldr.statusReport(id));
+                    machine[v8].send(self.requestBldr.statusReport(id,v8));

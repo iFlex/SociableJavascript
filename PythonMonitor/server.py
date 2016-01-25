@@ -28,15 +28,18 @@ class server:
 		while self.keepRunning:
 			try:
 				soc,addr = self.soc.accept()
-				addr = str(addr)
+				addr = str(addr[0])
+				print "Incoming "+addr;
 				machineId = self.monitor.getMachine(addr);
 				if machineId == 0:
 					machineId = self.monitor.addMachine(addr); 
-		 		
+		 		else:
+		 			machineId = machineId["id"];
+
 		 		communicator(soc,self.monitor,machineId)
 			except Exception as e:
 				self.error = "Accept error:"+str(e);
-				print "#ACCEPT ERROR:"+e;
+				print self.error;
 				traceback.print_exc(file=sys.stdout)
 
 	def start(self):

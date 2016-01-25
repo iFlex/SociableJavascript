@@ -21,14 +21,16 @@ class monitor:
         self.lock.release();
         return id;
 
-    def addMachine(self,socket):
-        machine = {"FreeList":list(),"v8s":dict(),"id":0};
-
-        id = self.getAppropriateId(self.FreeMachineIDS,len(self.STATUS["machines"].keys()));
+    def addMachine(self,id):
+        id = str(id)
+        machine = {"FreeList":list(),"v8s":dict(),"id":"0"};
         machine["id"] = id;
         
         self.lock.acquire();
-        self.STATUS["machines"][id] = machine;
+        if id in self.STATUS["machines"].keys():
+            id = 0;
+        else:
+            self.STATUS["machines"][id] = machine;
         self.lock.release();
 
         return id;
@@ -47,6 +49,8 @@ class monitor:
         return mid;
 
     def getMachine(self,machineId):
+        machineId = str(machineId)
+
         retval = 0;
         
         self.lock.acquire();
@@ -100,7 +104,7 @@ class monitor:
         if machine == 0:
             return 0;
 
-        v8 = self.getV8(self.getMachine(machineId),v8id)
+        v8 = self.getV8(self.getMachine(machineId),v8Id)
         if v8 == 0:
             return 0;
 

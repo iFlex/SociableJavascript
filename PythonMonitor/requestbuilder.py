@@ -7,65 +7,70 @@ class RequestBuilder:
     def __init__(self, monitor):
         self.monitor = monitor;
                 
-    def makeDefaultRequest(self,machineId):
-        v8id = 1;
-
+    def makeDefaultRequest(self,machineId,v8Id):
+        
         result = {"global":{"action":""},"TotalIsolates":0,"isolates":{}};
-        index = 1;
-        while(True):
-            isolate = self.monitor.getIsolate(machineId,v8id,index);
-            if(isolate == 0):
-                break;
-            else:
-                result["isolates"][str(index)] = {"action":""};
-            index += 1
+        v8 = self.monitor.getV8(self.monitor.getMachine(machineId),v8Id);
+        if v8 == 0:
+            print "Generic Request Builder: Invalid Machine, V8 pair:"+str(machineId)+":"+str(v8Id);
+            return result;
 
-        index -= 1;
-        result["TotalIsolates"] = index;
+        isolates = v8["isolates"].keys();
+        for i in isolates:
+            result["isolates"][i] = {"action":""};
+        
+        result["TotalIsolates"] = len(isolates);
         return result;
 
-    def statusReport(self,machineId):
-        result = self.makeDefaultRequest(machineId);
+    def statusReport(self,machineId,v8Id):
+        result = self.makeDefaultRequest(machineId,v8Id);
         if result == 0:
             return 0;
 
         result["global"]["action"] = "status";
         return result;
 
-    def isolateStatusReport(self,machineId,isolateId,result):
+    def isolateStatusReport(self,machineId,v8Id,isolateId,result):
         if result == 0:
-            result = self.makeDefaultRequest(machineId);
+            result = self.makeDefaultRequest(machineId,v8Id);
             if result == 0:
                 return 0;
-
-        result["isolates"][str(isolateId)]["action"] = "status";
+        
+        if  isolateId in result["isolates"]:
+            result["isolates"][isolateId]["action"] = "status";
+        
         return result;
 
-    def recommendHeapSize(self,machineId,isolateId,size,result):
+    def recommendHeapSize(self,machineId,v8Id,isolateId,size,result):
         if result == 0:
-            result = self.makeDefaultRequest(machineId);
-            if result == 0:
-                return 0;
-        if "isolates" in result and str(isolateId) in result["isolates"]:
-            result["isolates"][str(isolateId)]["action"] = "set_heap_size";
-            result["isolates"][str(isolateId)]["heap"] = size;
-            return result;
-        return 0;
-
-    def setMaxHeapSize(self,machineId,isolateId,size,result):
-        if result == 0:
-            result = self.makeDefaultRequest(machineId);
+            result = self.makeDefaultRequest(machineId,v8Id);
             if result == 0:
                 return 0;
 
-        if "isolates" in result and str(isolateId) in result["isolates"]:
-            result["isolates"][str(isolateId)]["action"] = "set_max_heap_size";
-            result["isolates"][str(isolateId)]["heap"] = size;
+        if  isolateId in result["isolates"]:
+            result["isolates"][isolateId]["action"] = "set_heap_size";
+            result["isolates"][isolateId]["heap"] = size;
             return result;
         return 0;
 
-    def startScript(self,machineId,script):
-        result = self.makeDefaultRequest(machineId);
+    def setMaxHeapSize(self,machineId,v8Id,isolateId,size,result):
+        if result == 0:
+            result = self.makeDefaultRequest(machineId,v8Id);
+            if result == 0:
+                return 0;
+
+        if isolateId in result["isolates"]:
+            result["isolates"][isolateId]["action"] = "set_max_heap_size";
+            result["isolates"][isolateId]["heap"] = size;
+            return result;
+        else:
+            print "The V8 you want to control does not have an isolate_"+str(isolateId);
+            print result["isolates"]
+        return 0;
+
+
+    def startScript(self,machineId,v8Id,script):
+        result = self.makeDefaultRequest(machineId,v8Id);
         if result == 0:
             return 0;
 
@@ -74,12 +79,13 @@ class RequestBuilder:
         return result;
 
     #DO NOT USE, causes segfault in v8wrapper
-    def terminate(self,machineId,isolateId,result):
+    def terminate(self,machineId,v8Id,isolateId,result):
         if result == 0:
-            result = self.makeDefaultRequest(machineId);
+            result = self.makeDefaultRequest(machineId,v8Id);
             if result == 0:
                 return 0;
-        if "isolates" in result and str(isolateId) in result["isolates"]:
-            result["isolates"][str(isolateId)]["action"] = "terminate";
+
+        if  isolateId in result["isolates"]:
+            result["isolates"][isolateId]["action"] = "terminate";
             return result;
         return 0;
