@@ -10,7 +10,8 @@ def sendTo(soc,data):
 		print "Could not encode to JSON:"+str(e)
 		return 1;
 
-	data = data + separator*(packet_size - len(data));
+	#data = data + separator*(packet_size - len(data));
+	data += ";"
 	
 	try:
 		soc.send(data);
