@@ -1,5 +1,5 @@
 from threading import *
-
+from PlotService import *
 #threadsafe
 
 class monitor:
@@ -7,6 +7,13 @@ class monitor:
         self.STATUS = {"machines":{}};
         self.FreeMachineIDS = list();
         self.lock = RLock();
+        
+        self.MonitoredMachine = "";
+        self.MonitoredV8 = 0;
+        self.MonitoredIsolate = 0;
+
+        self.plotter = PlotService(["heap"]);
+        self.plotter.init();
 
     def getAppropriateId(self,FreeList,alternate):
         self.lock.acquire();
@@ -31,6 +38,10 @@ class monitor:
             id = 0;
         else:
             self.STATUS["machines"][id] = machine;
+            
+            if len(self.MonitoredMachine) == 0:
+                self.MonitoredMachine = id;
+        
         self.lock.release();
 
         return id;
@@ -76,6 +87,9 @@ class monitor:
         v8["id"] = id;
         v8["comm"] = communicator;
         machine["v8s"][id] = v8;
+        
+        if machineId == self.MonitoredMachine and self.MonitoredV8 == 0:
+            self.MonitoredV8 = id;
         
         self.lock.release();
         return id;
@@ -127,6 +141,10 @@ class monitor:
         id = self.getAppropriateId(freeIDs,len(v8["isolates"].keys()));
         isolate["id"] = id;
         v8["isolates"][id] = isolate;
+        
+        if machineId == self.MonitoredMachine and v8Id == self.MonitoredV8 and self.MonitoredIsolate == 0:
+            self.MonitoredIsolate = id;
+                
         self.lock.release();
 
         return id;
@@ -178,6 +196,10 @@ class monitor:
         if info["action"] == "update":
             for key in info:
                 isolate[key] = info[key];
+        
+        if self.MonitoredMachine == machineId and self.MonitoredV8 == v8Id and self.MonitoredIsolate == isolateId:
+            self.plotter.plot(info);
+                
         self.lock.release();
 
 #        if info["action"] == "terminated":

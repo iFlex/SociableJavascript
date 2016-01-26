@@ -9,6 +9,7 @@ server = Server(14000);
 print "Starting plotter server...";
 if server.start():
 	print "Plotter server started";
+	instance = Popen(["python","IpcPlotWrapper.py","127.0.0.1:14000","none"],0,close_fds=True,stdout=file("/dev/null"));
 	soc = server.acquirePlotter();
 	print "Yay got a plotter socket:"+str(soc);
 	sendTo(soc,{"action":"setTitle","title":"Super Test"});
