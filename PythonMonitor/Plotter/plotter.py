@@ -65,3 +65,8 @@ class Plotter:
     def close(self):
         self.save(self.title+"png");
         plt.close();
+
+    def setTitle(self,title):
+        fig = pylab.gcf()
+        fig.canvas.set_window_title(title)
+        self.title = title;

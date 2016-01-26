@@ -1,17 +1,32 @@
 from subprocess import *
+from server import *
+from sender import *
+import time
 import json
-#TODO: need to use pipes for plotting
+import random
 
-plotter1 = Popen(["python","-u","plotter.py"],stdin=PIPE,stdout=PIPE,stderr=PIPE);
-
-plotter1.stdin.write('Title');
-print plotter1.stdout.read();
-data = {"values":[0,1,2],"labels":["heap","suggest","mega"]}
-while True:
-	plotter1.stdin.write(json.dumps(data));
-	print plotter1.stdout.read();
-	#w = raw_input("EXIT?")
-	#if len(w)>1:
-	#	break
-
-print plotter1.stdin.write("close");
+server = Server(14000);
+print "Starting plotter server...";
+if server.start():
+	print "Plotter server started";
+	soc = server.acquirePlotter();
+	print "Yay got a plotter socket:"+str(soc);
+	sendTo(soc,{"action":"setTitle","title":"Super Test"});
+	
+	i = 0;
+	data = {"values":[0,0,0],"labels":["heap","suggested","throughput"]}
+	while i < 100:
+		data["values"][0] = random.randint(0,500);
+		data["values"][1] = random.randint(0,500);
+		data["values"][2] = random.randint(0,500);
+		
+		sendTo(soc,data);
+		time.sleep(0.02);
+		i += 1
+	print "Done sendint stuff";
+	sendTo(soc,{"action":"close"});	
+	soc.close();
+	server.close();
+else:
+	print "Error starting server:"+server.getError();
+print "ktnxbay";
