@@ -22,10 +22,21 @@ class Plotter:
         for i in range(0,width):
             self.defaultY[i] = 0;
 
-        fig = pylab.gcf()
+        xpixels = 1499
+        ypixels = 900
+        # get the size in inches
+        dpi = 85
+        xinch = xpixels / dpi
+        yinch = ypixels / dpi
+
+        #fig = pylab.gcf()
+
+        fig = plt.figure(figsize=(xinch,yinch))
         fig.canvas.set_window_title(title)
         plt.ion()
+        
         pylab.ylim([0,1000])
+        pylab.xlim([0,width])
 
     def plot(self,elements,tlabels):
         index = 0;
