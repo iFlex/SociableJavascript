@@ -10,12 +10,12 @@ period = 1
 last_measurement = 0;
 
 if len(sys.argv) < 3:
-	print "Usage: python IpcPlotWrapper.py 127.0.0.1:14000 Title";
+	print "IPC::Usage: python IpcPlotWrapper.py 127.0.0.1:14000 Title";
 	sys.exit(1);
 
-print "Connecting to controller...";
+print "IPC::Connecting to controller...";
 addr = sys.argv[1].split(":");
-print "Connecting:"+str(addr)
+print "IPC::Connecting:"+str(addr)
 soc = socket(AF_INET,SOCK_STREAM);
 
 #try to connect untill success
@@ -24,13 +24,13 @@ while True:
 		soc.connect((addr[0], int(addr[1])))
 		break;
 	except Exception as e:
-		print "Connection failed, retrying..."
+		print "IPC::Connection failed, retrying..."
 		time.sleep(1);
 
 plotter = Plotter(1024,sys.argv[2]);
 last = 0
 
-print "Connected, waiting for plot commands"
+print "IPC::Connected, waiting for plot commands"
 
 def handleResponse(cmd):
 	global plotter,last
@@ -39,7 +39,7 @@ def handleResponse(cmd):
 		cmd = json.loads(cmd);
 		now = time.time()
 	except Exception as e:
-		print "Json Error:"+str(e);
+		print "IPC::Json Error:"+str(e);
 		return False;
 	
 	try:
@@ -52,7 +52,7 @@ def handleResponse(cmd):
 				return False;
 			if cmd["action"] == "snapshot":
 				localtime = time.asctime( time.localtime(time.time()) )
-				print "Snapshot:"+str(localtime);
+				print "IPC::Snapshot:"+str(localtime);
 				plotter.save(str(localtime));
 				return False;
 
@@ -67,7 +67,7 @@ def handleResponse(cmd):
 
 		last = now;
 	except Exception as e:
-		print "Plot Error:"+str(e)
+		print "IPC::Plot Error:"+str(e)
 	return False;
 
 response = "";
@@ -90,14 +90,18 @@ while not doExit:
             response = ""
         
         if doExit:
-        	print "Exiting at:"+response;
+        	print "IPC::Exiting at:"+response;
         	break;
 
         while i < len(buff) and buff[i] != separator:
             response += buff[i]
             i += 1
-print "Closing down the shop...";
+print "IPC::Closing down the shop...";
 plotter.close();
-soc.shutdown(SHUT_RDWR);
+try:
+	soc.shutdown(SHUT_RDWR);
+except Exception as e:
+	print "IPC::IpcPlotWrapper socket shutdown error:"+str(e);
+
 soc.close();
-print "ktnxbay"
+print "IPC::ktnxbay"

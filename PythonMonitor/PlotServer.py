@@ -22,7 +22,8 @@ class Server:
 			self.soc.listen(self.maxConcurrentInstances);
 		except Exception as e:
 			self.error = "PlotServer::Listen error:"+str(e);
-			self.keepRunning = False;
+			return;
+
 		while self.keepRunning:
 			try:
 				soc,addr = self.soc.accept()
@@ -40,6 +41,7 @@ class Server:
 			self.soc.bind((self.address,self.port));
 		except Exception as e:
 			self.error = "PlotServer::Bind error:"+str(e);
+			self.keepRunning = False;
 			return False;
 
 		print "Starting PlotServer registry server...";
@@ -51,9 +53,12 @@ class Server:
 
 	def close(self):
 		self.keepRunning = False;
-		self.soc.shutdown(SHUT_RDWR);
+		try:
+			self.soc.shutdown(SHUT_RDWR);
+		except Exception as e:
+			print "PlotServer socket shutdown error:"+str(e);
 		self.soc.close();
-		self.thread.join();
+		#self.thread.join();
 
 	def getError(self):
 		return self.error;

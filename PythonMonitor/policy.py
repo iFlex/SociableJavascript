@@ -6,10 +6,11 @@ import time;
 class Policy:
     def __init__(self,monitor,preloadScripts):
         self.monitor = monitor;
-        self.interval = 1;#seconds
+        self.interval = 0.1;#every 1/100 of a second - realtime plotting
         self.requestBldr = RequestBuilder(monitor);
         self.keepRunning = True;
         self.cli = CommandLine(self);
+        
         #preloading scripts
         #for script in preloadScripts:
         #  print "Preloading:"+script;
@@ -45,3 +46,4 @@ class Policy:
                 machine = comms[id];
                 for v8 in machine:
                     machine[v8].send(self.requestBldr.statusReport(id,v8));
+        print "#POLICY POLLER EXITING...";

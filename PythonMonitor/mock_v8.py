@@ -4,37 +4,34 @@ from monitor import *
 from socket import *
 from base64 import *
 import json
+import time
 
 #Defaults
+address = "127.0.0.1"
 port = 15000
 #network
 m = monitor();
-id = m.addMachine(1);
+id = m.addMachine("127.0.0.1");
 print id;
-idv = m.addV8(id);
+idv = m.addV8(id,"no comm");
 print idv;
 print m.addIsolate(id,idv);
 r = RequestBuilder(m);
 
 print "V8 Mock Overlod"
 soc = socket(AF_INET,SOCK_STREAM);
-print "Binding to port "+str(port)
-soc.bind(("localhost",port));
-print "Listening...";
-soc.listen(1);
-while True:
-    skt = 0;
-    address = 0;
-    print "Listening..."
-    try:
-        skt,address = soc.accept()
-    except Exception as e:
-        print "error while accepting connection";
-        break;
 
-    while True:
+while True:
+    connected = True;
+    try:
+        print "Connecting...";
+        soc.connect((address,port));
+    except Exception as e:
+        connected = False;
+
+    while connected:
         try:
-            data = skt.recv(1450);
+            data = soc.recv(1450);
             if len(data) == 0:
                 print "Broken connection, going back to listening";
                 break;
@@ -58,6 +55,8 @@ while True:
 
             resp = json.dumps(enc);
             padding = ";"*(1450 - len(resp))
-            skt.send(b64encode(resp)+padding);
+            soc.send(b64encode(resp)+padding);
         except Exception as e:
             print "Error while processing request:"+str(e);
+
+    time.sleep(3);

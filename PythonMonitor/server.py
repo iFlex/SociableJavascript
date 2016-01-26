@@ -23,7 +23,7 @@ class server:
 			self.soc.listen(self.maxConcurrentInstances);
 		except Exception as e:
 			self.error = "Listen error:"+str(e);
-			self.keepRunning = False;
+			return;
 
 		while self.keepRunning:
 			try:
@@ -48,6 +48,7 @@ class server:
 			self.soc.bind((self.address,self.port));
 		except Exception as e:
 			self.error = "Bind error:"+str(e);
+			self.keepRunning = False;
 			return False;
 
 		print "Starting V8 registry server...";
@@ -59,9 +60,15 @@ class server:
 
 	def close(self):
 		self.keepRunning = False;
-		self.soc.shutdown(SHUT_RDWR);
+		
+		try:
+			self.soc.shutdown(SHUT_RDWR);
+		except Exception as e:
+			print "Server socket shutdown failed:"+str(e);
+		
 		self.soc.close();
-		self.thread.join();
+		print "Server joinig listener thread..."
+		#self.thread.join();
 
 	def getError(self):
 		return self.error;
