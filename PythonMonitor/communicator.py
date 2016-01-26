@@ -3,6 +3,7 @@ import sys, traceback
 from base64 import *
 from threading import Thread
 from threading import RLock
+from socket import *
 
 class communicator:
 
@@ -20,6 +21,7 @@ class communicator:
         #start listener thread
         print "New V8_"+str(self.v8id)+" @ machine_"+str(machineId);
         self.thread = Thread(target = self.listen)
+        self.thread.daemon = True
         self.thread.start();
 
     def close(self):
@@ -27,7 +29,7 @@ class communicator:
             return;
 
         self.lock.acquire();
-
+        self.socket.shutdown(SHUT_RDWR);
         self.socket.close();
         self.socket = 0;
         print "Disconnected V8_"+str(self.v8id)+" @ machine_"+str(self.mid);

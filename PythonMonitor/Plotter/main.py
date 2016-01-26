@@ -1,6 +1,7 @@
 from subprocess import *
 from server import *
 from sender import *
+from socket import *
 import time
 import json
 import random
@@ -26,6 +27,7 @@ if server.start():
 		i += 1
 	print "Done sendint stuff";
 	sendTo(soc,{"action":"close"});	
+	soc.shutdown(SHUT_RDWR);
 	soc.close();
 	server.close();
 else:

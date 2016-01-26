@@ -18,6 +18,7 @@ class Policy:
         #starting cli
         print "Starting default policy...";
         self.thread = Thread(target = self.run)
+        self.thread.daemon = True
         self.thread.start();
         print "Starting cli...";
         self.cli.run();

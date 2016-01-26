@@ -50,6 +50,11 @@ def handleResponse(cmd):
 			if cmd["action"] == "setTitle":
 				plotter.setTitle( cmd["title"] );
 				return False;
+			if cmd["action"] == "snapshot":
+				localtime = time.asctime( time.localtime(time.time()) )
+				print "Snapshot:"+str(localtime);
+				plotter.save(str(localtime));
+				return False;
 
 		#handle data
 		#rpt = 1
@@ -93,5 +98,6 @@ while not doExit:
             i += 1
 print "Closing down the shop...";
 plotter.close();
+soc.shutdown(SHUT_RDWR);
 soc.close();
 print "ktnxbay"

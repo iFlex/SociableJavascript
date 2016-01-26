@@ -43,7 +43,7 @@ else:
     print "Initialising policy...";
     Policy(mon,preloadScripts);
     srv.close();
-    
+    mon.close();    
 print "ktnxbai";
     #print "Terminating V8 instance...";
     #v8instance.kill();

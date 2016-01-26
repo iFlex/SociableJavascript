@@ -15,6 +15,18 @@ class monitor:
         self.plotter = PlotService(["heap"]);
         self.plotter.init();
 
+    def close(self):
+        self.plotter.stop();
+
+    def takeSnapshot(self):
+        self.plotter.takeSnapshot();
+
+    def changeMonitoredIsolate(self, machineId,v8Id,isolateId):
+        self.MonitoredMachine = machineId;
+        self.MonitoredV8 = v8Id;
+        self.MonitoredIsolate = isolateId;
+        self.plotter.setTitle("Machine_"+str(self.MonitoredMachine+"_V8_"+str(self.MonitoredV8)+"_"+str(self.MonitoredIsolate)));
+
     def getAppropriateId(self,FreeList,alternate):
         self.lock.acquire();
 
@@ -144,9 +156,9 @@ class monitor:
         
         if machineId == self.MonitoredMachine and v8Id == self.MonitoredV8 and self.MonitoredIsolate == 0:
             self.MonitoredIsolate = id;
-                
+            self.changeMonitoredIsolate(self.MonitoredMachine,self.MonitoredV8,self.MonitoredIsolate)
+        
         self.lock.release();
-
         return id;
 
     def getIsolate(self,machineId,v8Id,isolateId):
@@ -198,6 +210,7 @@ class monitor:
                 isolate[key] = info[key];
         
         if self.MonitoredMachine == machineId and self.MonitoredV8 == v8Id and self.MonitoredIsolate == isolateId:
+            info["heap"] /= 1000000.0
             self.plotter.plot(info);
                 
         self.lock.release();

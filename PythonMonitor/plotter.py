@@ -70,11 +70,12 @@ class Plotter:
             print "CAN'T PLOT - ISSUES WITH DATA MOST LIKELY"
             print e;
 
-    def save(self):
-        plt.savefig(self.title);
+    def save(self,prepend):
+        name = prepend + self.title
+        plt.savefig(name+".png");
 
     def close(self):
-        self.save();
+        self.save("");
         plt.close();
 
     def setTitle(self,title):

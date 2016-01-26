@@ -37,6 +37,16 @@ class CommandLine:
 						machine_id = cmd[1];
 						v8_id      = int(cmd[2]);
 
+				elif cmd[0] == "changePlotFocus" or cmd[0] == "cpf":
+					if len(cmd) < 2:
+						print "Usage: changePlotFocus isolateId"
+					else:
+						isl = int(cmd[1]);
+						self.monitor.changeMonitoredIsolate(machine_id,v8_id,isl);
+				
+				elif cmd[0] == "snapshot":
+					self.monitor.takeSnapshot();
+
 				elif cmd[0] == "poll":
 					comms = self.monitor.getCommunicators();
 					for id in comms:

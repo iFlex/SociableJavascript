@@ -44,12 +44,14 @@ class Server:
 
 		print "Starting PlotServer registry server...";
 		self.thread = Thread(target = self.listen)
+		self.thread.daemon = True
 		self.thread.start();
 
 		return True;
 
 	def close(self):
 		self.keepRunning = False;
+		self.soc.shutdown(SHUT_RDWR);
 		self.soc.close();
 		self.thread.join();
 
