@@ -11,11 +11,13 @@ address = "127.0.0.1"
 port = 15000
 #network
 m = monitor();
-id = m.addMachine("127.0.0.1");
+id = m.addMachine(address);
 print id;
 idv = m.addV8(id,"no comm");
 print idv;
-print m.addIsolate(id,idv);
+isl = m.addIsolate(id,idv);
+print isl
+
 r = RequestBuilder(m);
 
 print "V8 Mock Overlod"
@@ -41,7 +43,7 @@ while True:
                 if index == -1:
                     print "not designed for large packets";
                     continue;
-                print ">>"+str(index)
+
                 data = data[0:index];
                 data = b64decode(data)
                 print "Received:"+data+"|";
@@ -50,9 +52,13 @@ while True:
             except Exception as e:
                 print "Invalid request, json parser has failed to process request:"+str(e);
 
-            enc = r.statusReport(1);
+            enc = r.statusReport(address,idv);
+            for i in enc["isolates"].keys():
+                enc["isolates"][i]["heap"] = 1024012;
+                enc["isolates"][i-1] = enc["isolates"][i];
+                del enc["isolates"][i]
+                
             print  "R:"+str(enc);
-
             resp = json.dumps(enc);
             padding = ";"*(1450 - len(resp))
             soc.send(b64encode(resp)+padding);

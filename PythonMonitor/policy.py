@@ -6,7 +6,7 @@ import time;
 class Policy:
     def __init__(self,monitor,preloadScripts):
         self.monitor = monitor;
-        self.interval = 0.1;#every 1/100 of a second - realtime plotting
+        self.interval = 1;#0.1;#every 1/100 of a second - realtime plotting
         self.requestBldr = RequestBuilder(monitor);
         self.keepRunning = True;
         self.cli = CommandLine(self);
