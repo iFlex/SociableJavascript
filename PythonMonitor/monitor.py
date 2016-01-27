@@ -134,10 +134,12 @@ class monitor:
         if v8 == 0:
             return 0;
 
-        self.lock.acquire();
-        id = v8["id"]
-        del machine["v8s"][id];
-        self.lock.release();
+        with self.lock:
+            id = v8["id"]
+            del machine["v8s"][id];
+            #no more V8s for this machine, delete machine
+            if len(machine["v8s"].keys()) == 0:
+                self.removeMachine(machineId);
 
         return id;
 

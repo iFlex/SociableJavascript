@@ -89,5 +89,5 @@ class CommandLine:
 				print "* CLI ERROR:"+str(e);
 				traceback.print_exc(file=sys.stdout)
 
-			self.p.keepRunning = False	
+		self.p.keepRunning = False	
 			
