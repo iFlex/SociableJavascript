@@ -1,6 +1,7 @@
 from socket import *
 from threading import Thread
 from threading import Condition
+from subprocess import *
 import sys, traceback
 
 class Server:
@@ -11,10 +12,12 @@ class Server:
 		self.address = ""
 		self.port = port
 		self.error = "";
-		
+
 		self.keepRunning = True;
 		self.lock = Condition();
 
+		self.maxPlotters = 50;
+		self.startedPlotters = [];
 		self.freeSocks = [];
 
 	def listen(self):
@@ -69,7 +72,15 @@ class Server:
 		self.freeSocks.append(soc);
 		self.lock.notify();
 		self.lock.release();
-		
+	
+	def getAvailablePlottersCount(self):
+		ln = 0;
+		self.lock.acquire();
+		ln = len(self.freeSocks);
+		self.lock.release();
+
+		return ln;	
+			
 	def acquirePlotter(self):
 		ret = 0;
 		
@@ -79,3 +90,10 @@ class Server:
 		self.lock.release();
 
 		return ret;
+
+	def startNewPlotterProcess(self,key):
+		if(len(self.startedPlotters) > self.maxPlotters):
+			return False;
+		
+		self.startedPlotters.append(Popen(["python","IpcPlotWrapper.py","127.0.0.1:14000",key],0,close_fds=True,stdout=file("/dev/null")));
+		return True;	

@@ -8,10 +8,6 @@ class monitor:
         self.FreeMachineIDS = list();
         self.lock = RLock();
         
-        self.MonitoredMachine = "";
-        self.MonitoredV8 = 0;
-        self.MonitoredIsolate = 0;
-
         self.plotter = PlotService(["heap"]);
         self.plotter.init();
 
@@ -20,12 +16,6 @@ class monitor:
 
     def takeSnapshot(self):
         self.plotter.takeSnapshot();
-
-    def changeMonitoredIsolate(self, machineId,v8Id,isolateId):
-        self.MonitoredMachine = machineId;
-        self.MonitoredV8 = v8Id;
-        self.MonitoredIsolate = isolateId;
-        self.plotter.setTitle("Machine_"+str(self.MonitoredMachine+"_V8_"+str(self.MonitoredV8)+"_"+str(self.MonitoredIsolate)));
 
     def getAppropriateId(self,FreeList,alternate):
         self.lock.acquire();
@@ -51,9 +41,6 @@ class monitor:
         else:
             self.STATUS["machines"][id] = machine;
             
-            if len(self.MonitoredMachine) == 0:
-                self.MonitoredMachine = id;
-        
         self.lock.release();
 
         return id;
@@ -99,9 +86,6 @@ class monitor:
         v8["id"] = id;
         v8["comm"] = communicator;
         machine["v8s"][id] = v8;
-        
-        if machineId == self.MonitoredMachine and self.MonitoredV8 == 0:
-            self.MonitoredV8 = id;
         
         self.lock.release();
         return id;
@@ -156,10 +140,6 @@ class monitor:
         isolate["id"] = id;
         v8["isolates"][id] = isolate;
         
-        if machineId == self.MonitoredMachine and v8Id == self.MonitoredV8 and self.MonitoredIsolate == 0:
-            self.MonitoredIsolate = id;
-            self.changeMonitoredIsolate(self.MonitoredMachine,self.MonitoredV8,self.MonitoredIsolate)
-        
         self.lock.release();
         return id;
 
@@ -211,9 +191,7 @@ class monitor:
             for key in info:
                 isolate[key] = info[key];
         
-        if self.MonitoredMachine == machineId and self.MonitoredV8 == v8Id and self.MonitoredIsolate == isolateId:
-            info["heap"] /= 1000000.0
-            self.plotter.plot(info);
+        self.plotter.plot("Machine_"+machineId+"_V8_"+str(v8Id)+"_"+str(isolateId),info);
                 
         self.lock.release();
 
