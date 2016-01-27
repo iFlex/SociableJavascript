@@ -23,7 +23,7 @@ def run_test(k,d,ttr):
 	elapsed = 0.0;
 	while elapsed < ttr:
 		for t in k:
-			plotter.plot(t,{"heap":random.randint(0,200)});
+			plotter.update(t,{"heap":random.randint(0,200)});
 		time.sleep(d);
 		elapsed += d;
 
@@ -56,10 +56,20 @@ while True:
 		break;
 
 	if cmd[0] == "s":
-		if len(cmd) > 3:
-			plotter.plot(cmd[1],{"heap":int(cmd[2])})
+		if len(cmd) > 2:
+			plotter.update(cmd[1],{"heap":int(cmd[2])})
 		else:
-			print "Usage: r key size";
+			print "Usage: s key size";
+
+	if cmd[0] == "raw":
+		if len(cmd) > 2 and len(cmd) % 2 == 0:
+			data = {}
+			for i in range(2,len(cmd)-1):
+				data[cmd[i]] = cmd[i+1];
+
+			plotter.update(cmd[1],data)
+		else:
+			print "Usage: r key k value";
 
 run_test(keys,delay,60);
 plotter.stop();

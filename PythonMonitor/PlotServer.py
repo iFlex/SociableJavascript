@@ -70,7 +70,8 @@ class Server:
 	def releasePlotter(self,soc):
 		self.lock.acquire();
 		self.freeSocks.append(soc);
-		self.lock.notify();
+		if len(self.freeSocks) - 1 == 0:
+			self.lock.notify();
 		self.lock.release();
 	
 	def getAvailablePlottersCount(self):
@@ -85,8 +86,9 @@ class Server:
 		ret = 0;
 		
 		self.lock.acquire();
-		self.lock.wait();
-		ret = self.freeSocks.pop(0);
+		if len(self.freeSocks) == 0:
+			self.lock.wait();
+		ret = self.freeSocks.pop();
 		self.lock.release();
 
 		return ret;

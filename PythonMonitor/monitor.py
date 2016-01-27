@@ -54,7 +54,7 @@ class monitor:
             del machines[machineId];
             self.FreeMachineIDS.append(machineId);
             mid = machineId;
-
+            
         self.lock.release();
         return mid;
 
@@ -121,10 +121,12 @@ class monitor:
         with self.lock:
             id = v8["id"]
             del machine["v8s"][id];
+            
             #no more V8s for this machine, delete machine
             if len(machine["v8s"].keys()) == 0:
                 self.removeMachine(machineId);
 
+        self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id),{"action":"died"});
         return id;
 
     def addIsolate(self,machineId,v8Id):
@@ -169,6 +171,7 @@ class monitor:
             retval = isolateId;
         self.lock.release();
 
+        self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),{"action":"died"});
         return retval;
 
     def getIsolateCount(self,machineId,v8Id):
@@ -191,7 +194,7 @@ class monitor:
             for key in info:
                 isolate[key] = info[key];
         
-        self.plotter.plot("Machine_"+machineId+"_V8_"+str(v8Id)+"_"+str(isolateId),info);
+        self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
                 
         self.lock.release();
 
