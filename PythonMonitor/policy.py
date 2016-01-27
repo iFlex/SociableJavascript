@@ -6,7 +6,7 @@ import time;
 class Policy:
     def __init__(self,monitor,preloadScripts):
         self.monitor = monitor;
-        self.interval = 1;#seconds
+        self.interval = 0.1;#seconds
         self.requestBldr = RequestBuilder(monitor);
         self.keepRunning = True;
         self.cli = CommandLine(self);
