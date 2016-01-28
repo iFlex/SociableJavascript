@@ -46,6 +46,7 @@ def handleResponse(cmd):
 		#handle commands
 		if "action" in cmd:
 			if cmd["action"] == "close":
+				plotter.save(str(time.asctime( time.localtime(time.time()) )));
 				return True;
 			if cmd["action"] == "setTitle":
 				plotter.setTitle( cmd["title"] );

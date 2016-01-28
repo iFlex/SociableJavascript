@@ -1,0 +1,182 @@
+This is JSBench-NG. It is a benchmarking tool designed to create JavaScript
+benchmarks by means of recording and replaying existing JavaScript web
+applications. To run it with Node.js, use:
+
+$ node proxy.js
+
+JSBench-NG uses Node.js (http://nodejs.org) for filesystem access, server
+capabilities, etc. The only file that directly depends on Node is proxy.js, but
+I acknowledge that Node-like behavior may have seeped into other files.
+jsbenchng.js depends on the require() function, which is part of CommonJS, and
+does not depend on any other part of Node.
+
+This software is released under the Simplified BSD license, except for the
+narcissus directory which is the implementation of JavaScript in JavaScript
+from Mozilla.  It is released under the MPL/GPL/LGPL license disjunct. The
+version of narcissus used is specified in the file narcisuss/VERSION.
+
+
+===============================================================================
+Basic usage:
+===============================================================================
+
+To create a benchmark, you must first record an interaction with a web page,
+then access a web page generated from that recording. That replay page may be
+accessed through the proxy as well, or a permanent and distributable JavaScript
+file generated from it.
+
+-------------------------------------------------------------------------------
+Record
+-------------------------------------------------------------------------------
+
+To record a webpage, first run the proxy in record mode, writing out the log to
+some file:
+
+$ node proxy.js -c -o log
+
+Then access the page you wish to record, with your HTTP proxy set to
+http://localhost:8888/. Perform any interaction, close the browser, and end the
+proxy process.
+
+If you do not want to or cannot use the cache, use the -n option to proxy all
+requests, even if they are available in the cache:
+
+$ node proxy.js -n -c -o log
+
+Contrarily, if you want to force /all/ requests to use the cache, and never
+perform an actual web request, use the --cache-only option:
+
+$ node proxy.js --cache-only -c -o log
+
+-------------------------------------------------------------------------------
+Replay (General Information and Proxy Replays)
+-------------------------------------------------------------------------------
+
+In principle, replay is as simple as running the proxy with the log generated
+by record as input:
+
+$ node proxy.js -p -i log
+
+and accessing the web page again, through the proxy. However, certain
+optimizations or transformations may be /required/ for pages to function
+properly. Other transformations are optional or recommended. To use replay
+optimizations, provide the -O option to the proxy, e.g.:
+
+$ node proxy.js -p -i log -O urem
+
+Each character represents a replay optimization or transformation. At some
+point, I will consolidate common replay optimization options into easier-to-use
+mnemonics, but for now you have to specify each transformation to use. The
+replay optimizations, listed in the order they should be applied:
+
+u: Remove unused global objects. Should almost always be on.
+
+s: Instead of loading scripts during the actual measured replay, load them
+   before the replay has begun, running only browser events during replay.
+
+r: Remove redundant events before generating code. This substantially reduces
+   the size and overhead of the generated code, and should never break anything
+   (if it does, it's a bug), so it should almost always be on.
+
+v: Perform replay verification. That is, check that all recorded sets have been
+   performed as expected, and all recorded calls are performed.
+
+x: Present a sed command to remove exception-throwing events from the replay.
+
+E: Only call the actual events during the replay, do all object setup
+   beforehand. This breaks many replays but can reduce replay overhead
+   drastically.
+
+e: Similar to 'E', but tries harder to leave in vital object setup, and only
+   move the object setup for first-reads to the beginning.
+
+m: Minimize number of variables, which reduces stack space but can increase GC
+   behavior by dropping references to replay objects early. Usually a good idea
+   to include this.
+
+d: Attempt to strip the DOM out of the replay. This means that the browser's
+   DOM will be used, instead of the mock DOM. Degree of success is quite
+   variable.
+
+þ: (Name and implementation temporary) Use event dispatch with setTimeout.
+
+
+Some common combinations:
+
+urv:    Standard verification replay. 'v' is incompatible with both 'e' and
+        'm', so can only be used with 'u' and 'r'.
+
+urem:   A good basic replay, with all object setup moved pre-replay.
+
+urm:    Similar, but, with object setup interspersed.
+
+usrem:  Similar to urem, but with script load time moved pre-replay. This
+        implies not measuring the parsing and compilation time as part of the
+        replay.
+
+uremd:  urem with DOM exposed.
+
+usremd: usrem with DOM exposed.
+
+-------------------------------------------------------------------------------
+Replay (Distributable)
+-------------------------------------------------------------------------------
+
+The program genreplay.js generates redistributable replays. Its invocation is
+similar to proxy.js, but the -p option is implied, and it requires a -o option
+to specify the JS file to write to:
+
+$ node genreplay.js -i log -O urem -o replay.js
+
+The generated replay.js may be run directly in a JavaScript shell (so long as
+it doesn't require the DOM):
+
+$ node replay.js
+
+It may also be run in a web browser, by loading it in a simple HTML file such
+as the following:
+
+<!doctype html><html><head><title></title></head><body>
+<script type="text/javascript" src="replay.js"></script>
+</body></html>
+
+-------------------------------------------------------------------------------
+Replay Harness
+-------------------------------------------------------------------------------
+
+In order to turn individual benchmarks into a statistically sound benchmark
+suite, a replay harness is provided. Each benchmark is expected to have a
+number of different replay modes, including at least one verification mode. To
+create a group of replays for a given log, use genreplaygroup.js like so:
+
+$ node genreplaygroup.js log harness/<benchmark name> urv urem usrem ...
+
+The benchmark and modes must be added to both harness/harness.js and
+harness/harness.py. harness.js is used by the web interface
+(harness/index.html) to run the benchmarks, harness.py is for use in JavaScript
+shells.
+
+
+===============================================================================
+Troubleshooting:
+===============================================================================
+
+-------------------------------------------------------------------------------
+ERROR: members of window uninstrumented!
+-------------------------------------------------------------------------------
+
+Because JSBench relies on a simple renaming strategy to intervene in global
+objects, it has a list of objects which will and will not be instrumented. Any
+objects found in the global scope which are on neither of these lists will
+trigger an error, so that an appropriate action may be taken.
+
+The typical way to handle this error is to do the following:
+
+1) Find the log entry of type "error" with message "uninstrumented". Its data
+   field is a JSON array with two object literals.
+2) Open instrumentation/objects.js in your favorite editor.
+3) Copy entries from the first object in the JSON array into the doInstrument
+   object, and copy entries from the second object in the JSON array into the
+   dontInstrument object.
+4) Check that the entries make sense: Generally, sources of nondeterminism must
+   be instrumented. Event handlers (e.g. onclick) must never be instrumented.

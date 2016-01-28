@@ -64,8 +64,7 @@ class Plotter:
                 self.graphs[index].set_ydata(self.Ydata[index]);
 
         try:
-            plt.show() # update the plot
-            plt.pause(0.01);
+            plt.draw() # update the plot
         except Exception as e:
             print "CAN'T PLOT - ISSUES WITH DATA MOST LIKELY"
             print e;

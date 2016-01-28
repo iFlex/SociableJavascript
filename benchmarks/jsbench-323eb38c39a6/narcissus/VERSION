@@ -1,0 +1,9 @@
+Site:       https://github.com/GregorR/narcissus/
+Repository: https://github.com/GregorR/narcissus.git
+
+commit e64ea78ff7ed60b7a4f3aeea836de8594f3e4421
+Merge: 55fe0e6 fac34bf
+Author: Gregor Richards <Richards@codu.org>
+Date:   Wed Jun 1 19:30:06 2011 -0400
+
+    Merged weirdCharacters.

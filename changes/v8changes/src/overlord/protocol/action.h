@@ -25,7 +25,6 @@ namespace ControlProtocol{
     Json::Value serialise();
     void deserialise(Json::Value v);
   };
-
 }
 
 #endif

@@ -14,8 +14,8 @@ class monitor:
     def close(self):
         self.plotter.stop();
 
-    def takeSnapshot(self):
-        self.plotter.takeSnapshot();
+    def takeSnapshot(self,m,v,i):
+        self.plotter.takeSnapshot("Machine_"+m+"_V8_"+str(v)+"_isl_"+str(i));
 
     def getAppropriateId(self,FreeList,alternate):
         self.lock.acquire();
@@ -214,9 +214,9 @@ class monitor:
             self.removeIsolate(machineId,v8Id,recordedIsolateCount);
 
         #update isolate status
-        for i in range(0,nris):
+        for i in range(1,nris+1):
             info = response["isolates"][str(i)];
-            self.isolateUpdate(machineId,v8Id,i+1,info)
+            self.isolateUpdate(machineId,v8Id,i,info)
 
     def prettyPrintV8(self,machineId,v8Id,spaces):
         self.lock.acquire();

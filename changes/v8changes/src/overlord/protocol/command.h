@@ -6,7 +6,6 @@
 #include "../json/json.h"
 #include <string>
 
-using namespace std;
 namespace ControlProtocol {
   class command {
 
@@ -27,11 +26,11 @@ namespace ControlProtocol {
     ControlProtocol::action getGlobal() { return global; }
     ControlProtocol::error getError(){ return overallError; }
 
-    string serialise();
-    void deserialise(string);
+    std::string serialise();
+    void deserialise(std::string);
 
     command();
-    command(string);
+    command(std::string);
   };
 
 }

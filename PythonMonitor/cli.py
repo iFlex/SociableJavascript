@@ -6,8 +6,8 @@ class CommandLine:
 		self.monitor = self.p.monitor;
 
 	def run(self):
-		machine_id = "not_set";
-		v8_id      = "not_set";
+		machine_id = "127.0.0.1";
+		v8_id      = 1;
 		while True:
 			cmd = raw_input(">");
 			cmd = cmd.split(" ");
@@ -45,7 +45,10 @@ class CommandLine:
 						self.monitor.changeMonitoredIsolate(machine_id,v8_id,isl);
 				
 				elif cmd[0] == "snapshot":
-					self.monitor.takeSnapshot();
+					if len(cmd) < 2:
+						print "Usage: snapshot isolateId"
+					else:
+						self.monitor.takeSnapshot(machine_id,v8_id,int(cmd[1]));
 
 				elif cmd[0] == "poll":
 					comms = self.monitor.getCommunicators();

@@ -1,0 +1,4 @@
+#!/bin/bash
+cp -f Arora.conf ~/.config/arora-browser.org/
+rm -rf ~/.cache/Arora/ ~/.local/share/data/Arora/
+exec arora "$@"

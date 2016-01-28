@@ -40,7 +40,10 @@ class PlotService:
 		data = [];
 		for i in self.labels:
 			if i in info:
-				data.append(info[i])
+				if i == "heap":
+					data.append(info[i]/100000);
+				else:
+					data.append(info[i])
 
 		return data;
 	
@@ -92,6 +95,7 @@ class PlotService:
 								self.takeSnapshot(active_key);
 								self.setTitle(active_key,"Idle");
 								self.server.releasePlotter(self.currentPlotData[active_key][0]);
+								#sendTo(key,{"action":"close"})
 								print self.server.getAvailablePlottersCount();
 								toDel.append(active_key);
 						

@@ -26,23 +26,22 @@ if isl == 0:
 else:
 	print "SUCCESS: new isolate added:"+str(isl);
 
-v8 = m.addV8(id,"b");
 m.getCommunicators();
 
 r = RequestBuilder(m);
-print r.makeDefaultRequest(id);
-print r.statusReport(id)
-print r.isolateStatusReport(id,v8,0)
+print r.makeDefaultRequest(id,v8);
+print r.statusReport(id,v8)
+print r.isolateStatusReport(id,v8,isl,0)
 
-base = r.isolateStatusReport(id,2,0)
+base = r.isolateStatusReport(id,v8,isl,0)
 print base;
 print ""
 #
-base = r.recommendHeapSize(id,1,1231,base);
+base = r.recommendHeapSize(id,v8,1,1231,base);
 print base;
-base = r.recommendHeapSize(id,2,1231,base);
+base = r.recommendHeapSize(id,v8,2,1231,base);
 print base;
-base = r.setMaxHeapSize(id,1,1231,base);
+base = r.setMaxHeapSize(id,v8,1,1231,base);
 print base;
-base = r.setMaxHeapSize(id,2,1231,base);
+base = r.setMaxHeapSize(id,v8,2,1231,base);
 print base;

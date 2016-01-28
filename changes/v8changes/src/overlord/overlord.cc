@@ -68,7 +68,7 @@ void overlordTestCli(){
             return;
         else 
             cout<<"*Unknown command!";
-        handleIsolateRequest(0,a,rsp);
+        handleIsolateRequest(1,a,rsp);
         cout<<"*R:"<<rsp.serialise()<<endl;
         delete[] ast;
     }
@@ -146,14 +146,14 @@ void * Overlord::run(void * data){
                 } else {
                     strCmd[index] = 0;
                     if(index != 0 && base64::decode(strCmd,(int) strlen(strCmd),jsonStr)) {
-                        cout<<"Request_JSON:"<<jsonStr<<endl;
+                        //cout<<"Request_JSON:"<<jsonStr<<endl;
 
                         string scommand(jsonStr);
                         command cmd(scommand);
                         command resp;
                         Overlord::handleRequest(cmd,resp);
                         string r = resp.serialise();
-                        cout<<"Response_JSON:"<<r<<endl;
+                        //cout<<"Response_JSON:"<<r<<endl;
                         
                         base64::encode(r,jsonStr);
                         int j=0;
@@ -183,22 +183,21 @@ Overlord::Overlord(int portNo, bool synchronous) {
 }
 
 void handleIsolateRequest(int i, action cmd, command &response){
-    cout<<"Working on isolate:"<<i<<endl;
-    if(i >= (int)response.getNrIsolates()){
+    if(i > (int)response.getNrIsolates() || i < 1){
         cout<<"Invalid isolate ID"<<endl;
         return;
     }
 
-    v8::internal::Isolate *isl = v8::internal::Isolate::getIsolate(i+1);
+    v8::internal::Isolate *isl = v8::internal::Isolate::getIsolate(i);
     if( isl == NULL ){//no such isolate
         cout<<"Isolate not found:"<<i<<endl;
         return;
     }
     
     //v8::Isolate *isol = reinterpret_cast<v8::Isolate *>(isl); 
-
+    int actIndex = i-1;
     action  *actions    = response.getIsolateActions();
-    details *detail     = actions[i].getDetails();
+    details *detail     = actions[actIndex].getDetails();
     details *param      = cmd.getDetails();
 
     if(actions == NULL)
@@ -212,17 +211,17 @@ void handleIsolateRequest(int i, action cmd, command &response){
         
         detail->heap       = (int) isl->getHeapSize();
         detail->throughput = isl->getThroughput();   
-        actions[i].name    = "update";
+        actions[actIndex].name    = "update";
     }
 
     if( cmd.name == "set_max_heap_size" ){
         isl->heap()->setMaxOldGenerationSize(param->heap);
-        actions[i].name    = "max_heap_size_set";
+        actions[actIndex].name    = "max_heap_size_set";
     }
 
     if( cmd.name == "set_heap_size"){
         isl->setTargetHeapSize(param->heap);
-        actions[i].name    = "target_heap_size_set";
+        actions[actIndex].name    = "target_heap_size_set";
     }
 }
 
@@ -230,9 +229,9 @@ void handleGlobalRequests(command &response, action command){
     if(command.name == "status"){
 
         int nrIsolates = (int) response.getNrIsolates();
-        cout<<"Performing request on "<<nrIsolates<<" isolates"<<endl;
+        //cout<<"Performing request on "<<nrIsolates<<" isolates"<<endl;
         for( int i = 0; i < nrIsolates ; ++i )
-            handleIsolateRequest(i,command,response);
+            handleIsolateRequest(i+1,command,response);
 
     } else if (command.name == "execute"){
         cout<<"Executing script:"<<command.getDetails()->path.c_str()<<endl;
@@ -242,7 +241,7 @@ void handleGlobalRequests(command &response, action command){
 
 void Overlord::handleRequest(command &cmd, command &response){
     int nrIsolates = v8::internal::Isolate::getActiveIsolatesCount();
-    cout<<"Active isolates:"<<nrIsolates<<endl;
+    //cout<<"Active isolates:"<<nrIsolates<<endl;
     
     response.setNrIsolates(nrIsolates);
     action *actions = new action[nrIsolates];
@@ -254,14 +253,16 @@ void Overlord::handleRequest(command &cmd, command &response){
         if(cmd.getGlobal().getError().exists())
             cout<<"Global action error:"<<cmd.getGlobal().getError().getMessage()<<endl;
         else {
-            cout<<"Global Command "<<cmd.getGlobal().name<<endl;
+            //cout<<"Global Command "<<cmd.getGlobal().name<<endl;
             handleGlobalRequests(response,cmd.getGlobal());    
         }
 
         int len = (int) cmd.getNrIsolates();
         action * iactions = cmd.getIsolateActions();
-        if(iactions != NULL)
-            for( int i = 0; i < len; ++i )
-                handleIsolateRequest(i,iactions[i],response);
+        if(iactions != NULL){
+            for( int i = 0; i < len; ++i ){
+                handleIsolateRequest(i+1,iactions[i],response);
+            }
+        }
     }
 }

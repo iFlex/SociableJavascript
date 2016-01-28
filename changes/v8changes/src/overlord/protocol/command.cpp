@@ -1,6 +1,9 @@
 #include "command.h"
 #include "action.h"
 #include <string.h>
+
+using namespace std;
+
 namespace ControlProtocol {
 
   command::command(){
@@ -34,7 +37,7 @@ namespace ControlProtocol {
       Json::Value inner;
       char index[25]; 
       for( int i = 0; i < this->nrIsolates; ++i ) {
-        sprintf(index,"%d",i); 
+        sprintf(index,"%d",i+1); 
         inner[index] = this->isolates[i].serialise();
       }
       root["TotalIsolates"] = this->nrIsolates;
@@ -65,7 +68,7 @@ namespace ControlProtocol {
         this->isolates = new action[nrIsolates];
         char index[25];
         for( int i = 0; i < this->nrIsolates; ++i ) {
-          sprintf(index,"%d",i);
+          sprintf(index,"%d",i+1);
           this->isolates[i].deserialise(inner[index]);
         }
       }
