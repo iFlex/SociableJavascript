@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pylab
 import numpy 
 import copy
+import os
 
 SINGLETON = 0
 class Plotter:
@@ -11,14 +12,23 @@ class Plotter:
         if SINGLETON != 0:
             print "#ERROR: Plotter is a singleton class, can't instantiate more than one instance of it! It is because of the way matplotlib was built"
             return;
+        SINGLETON = 1;
+
+        self.imgWritePath = "./plots/"
+        self.rawWritePath = "./plotdata/"
         
-        SINGLETON = 1;       
+        if not os.path.exists(self.imgWritePath):
+            os.makedirs(self.imgWritePath)
+        if not os.path.exists(self.rawWritePath):
+            os.makedirs(self.rawWritePath)
+
         self.title = title;
         self.graphs   = [];
         self.Xdata    = numpy.arange(0,width);
         self.Ydata    = [];
         self.defaultY = numpy.arange(0,width);
-        self.labels   = []
+        self.labels   = [];
+        self.maxY = 0;
         for i in range(0,width):
             self.defaultY[i] = 0;
 
@@ -35,7 +45,7 @@ class Plotter:
         fig.canvas.set_window_title(title)
         plt.ion()
         
-        pylab.ylim([0,1000])
+        pylab.ylim([0,800])
         pylab.xlim([0,width])
 
     def plot(self,elements,tlabels):
@@ -46,6 +56,11 @@ class Plotter:
             
             self.Ydata[index] = numpy.roll(self.Ydata[index],-1);
             self.Ydata[index][len(self.Ydata[index]) - 1] = e;
+            
+            #if self.maxY < e:
+            #    self.maxY = 0;
+            #    pylab.ylim([0,self.maxY]);
+
             index += 1
 
         ln = len(self.Ydata)
@@ -71,7 +86,7 @@ class Plotter:
 
     def save(self,prepend):
         name = prepend + self.title
-        plt.savefig(name+".png");
+        plt.savefig(self.imgWritePath+name+".png");
 
     def close(self):
         self.save("");

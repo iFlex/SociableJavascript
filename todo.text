@@ -41,7 +41,6 @@ NO_NEED >> 11) try GDB with V8 to debug JS
 DONE >> 12) Look for debug funcitonality for JS
 DONE >> 13) V8 memory profiler reasearch
 
-14) Get the getter working properly - update in real time
 15) Get external C process comm. with V8 to change the heap size
 DONE >> 16) Read paper Heap Sizing
 nonessential_17) Consider how DOS may occur & consider mitigation
@@ -69,7 +68,7 @@ DONE >> 29) Draft progress report by next Monday
 DONE >> 27) Use GC hooks to measure GC pauses and do data analysis. Pause time vs exec time, + distribution analysis with bins
 * use to decide how to supply metrics to the overlord thread
 max, median, avg
-28) Look at benchmarks from Phd Student
+DONE >> 28) Look at benchmarks from Phd Student
 29) Raspberry Pi install script and testing if the framwework works
 
 30) Write up a draft of the first 3 dissertation chapters	
@@ -91,22 +90,26 @@ Future Work
 
 
 31) Determine the nature of the evaluation. Read through Blair's dissertation evaluation.
-32)
+32) Explore d8, Visual VM, Intel Vtune, GCspy
+33) Implement policy
+34) Timing, HeapSize, UsedMemory - factor into policy
+35) Aggregator per machine - total memory used
+36) Pluggability of Ploicy - descriptor file that can be interpreted by the policy.py so that any policy can be used
+
+
+*D* evaluation of the monitor
+*D* talk about testing
 
 *1Lt) Use the python monitor to control a cluster of V8 instances on a Distributed Raspberry Pi Cluster
 
 * Norm for Garbage Collection aware OS norm
-
 * Keep security in mind
 
-Monday 12:30 - email the report before
-
+*D*
 Dissertation - >
  * Tech overview of V8
  * Mem management
  * controlling heap size
  * Unit Testing...
 
-Questions for Google Empl:
-> What IDE and other tools they use to program V8
-xCode & Eclipse
+find -name "*.cc" -or -name "*.cpp" -or -name "*.h" | xargs wc -l
