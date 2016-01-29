@@ -7,15 +7,16 @@ class monitor:
         self.STATUS = {"machines":{}};
         self.FreeMachineIDS = list();
         self.lock = RLock();
-        
+
         #PLOT MODES: 0 - NO PLOTTING, 1 - PLOT PER MACHINE ONLY, 2 - PLOT PER ISOLATE ONLY, 3 - PLOT PER ISOLATE AND PER MACHINE
         self.plotMode = 0;
         self.setPlotMode(plotMode);
 
-        self.plotter = PlotService(["heap"]);
+        self.plotter = PlotService(["heap","available","maxHeapSize"]);
+
         self.plotter.init();
 
-    def setPlotMode(mode):
+    def setPlotMode(self,mode):
         if mode == "NONE":
             self.plotMode = 0;
         

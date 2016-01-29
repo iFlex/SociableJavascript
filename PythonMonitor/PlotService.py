@@ -40,7 +40,7 @@ class PlotService:
 		data = [];
 		for i in self.labels:
 			if i in info:
-				if i == "heap":
+				if i == "heap" or i == "maxHeapSize":
 					data.append(info[i]/1000000);
 				else:
 					data.append(info[i])
