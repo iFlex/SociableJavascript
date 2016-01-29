@@ -8,7 +8,7 @@ class monitor:
         self.FreeMachineIDS = list();
         self.lock = RLock();
         
-        self.plotter = PlotService(["heap"]);
+        self.plotter = PlotService(["heap","available","maxHeapSize"]);
         self.plotter.init();
 
     def close(self):
