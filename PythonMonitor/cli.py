@@ -24,6 +24,12 @@ class CommandLine:
 				elif cmd[0] == "where":
 					print "@ Machine_"+str(machine_id)+" V8_"+str(v8_id);
 				
+				elif cmd[0] == "loadpolicy" or cmd[0] == "ldp":
+					if len(cmd) < 2:
+						print "Usage: loadpolicy name"
+					else:
+						self.p.loadPolicy(cmd[1]);
+
 				elif cmd[0] == "chv8":
 					if len(cmd) < 2:
 						print "Usage: chv8 V8_id"

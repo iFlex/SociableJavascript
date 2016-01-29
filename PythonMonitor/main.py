@@ -32,7 +32,7 @@ print "_"*80
 #flags
 DEBUG = True
 #Defaults
-mon = monitor();
+mon = monitor("ALL");
 srv = server(mon);
 
 if srv.start() == False:
@@ -41,7 +41,8 @@ else:
     print("Starting ...");
     time.sleep(1);
     print "Initialising policy...";
-    Policy(mon,preloadScripts);
+    policy = Policy(mon);
+    
     srv.close();
     mon.close();    
 print "ktnxbai";

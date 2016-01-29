@@ -29,6 +29,8 @@ class Plotter:
         self.defaultY = numpy.arange(0,width);
         self.labels   = [];
         self.maxY = 0;
+        self.fullHistory = 0;
+
         for i in range(0,width):
             self.defaultY[i] = 0;
 
@@ -48,21 +50,41 @@ class Plotter:
         pylab.ylim([0,800])
         pylab.xlim([0,width])
 
+    #TODO
+    def reset(self):
+        pass
+
+    def startFullHistoryLog(self,lebels):
+        self.fullHistory = open(self.str(time.asctime( time.localtime(time.time()) ))+self.title+".csv","r");
+        for label in labels:
+            self.fullHistory.write(label);
+    
+    def endFullHistoryLog(self):
+        if self.fullHistory == 0:
+            return
+        self.fullHistory.close();
+
     def plot(self,elements,tlabels):
         index = 0;
+        
+        if self.fullHistory == 0:
+            startFullHistoryLog(tlables);
+
         for e in elements:
             if index == len(self.Ydata):
                 self.Ydata.append(copy.deepcopy(self.defaultY))
             
             self.Ydata[index] = numpy.roll(self.Ydata[index],-1);
             self.Ydata[index][len(self.Ydata[index]) - 1] = e;
-            
-            #if self.maxY < e:
-            #    self.maxY = 0;
-            #    pylab.ylim([0,self.maxY]);
+        
+            if self.fullHistory:
+                self.fullHistory.write(str(e)+",");    
 
             index += 1
 
+        if self.fullHistory:
+            self.fullHistory.write("\n");
+        
         ln = len(self.Ydata)
         for index in range(0,ln):
             if index == len(self.graphs):

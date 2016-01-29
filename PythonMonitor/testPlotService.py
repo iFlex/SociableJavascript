@@ -2,7 +2,8 @@ from PlotService import *
 import time
 import random
 
-plotter = PlotService(["heap"]);
+labels = ["heap","line","3rd"]
+plotter = PlotService(labels);
 plotter.init();
 
 keys = [];
@@ -23,7 +24,7 @@ def run_test(k,d,ttr):
 	elapsed = 0.0;
 	while elapsed < ttr:
 		for t in k:
-			plotter.update(t,{"heap":random.randint(0,200)});
+			plotter.update(t,{"values":[random.randint(100,200),random.randint(0,50),random.randint(50,100)],"labels":labels});
 		time.sleep(d);
 		elapsed += d;
 
@@ -71,5 +72,5 @@ while True:
 		else:
 			print "Usage: r key k value";
 
-run_test(keys,delay,60);
+run_test(keys,delay,duration);
 plotter.stop();

@@ -3,13 +3,30 @@ from PlotService import *
 #threadsafe
 
 class monitor:
-    def __init__(self):
+    def __init__(self,plotMode):
         self.STATUS = {"machines":{}};
         self.FreeMachineIDS = list();
         self.lock = RLock();
         
+        #PLOT MODES: 0 - NO PLOTTING, 1 - PLOT PER MACHINE ONLY, 2 - PLOT PER ISOLATE ONLY, 3 - PLOT PER ISOLATE AND PER MACHINE
+        self.plotMode = 0;
+        self.setPlotMode(plotMode);
+
         self.plotter = PlotService(["heap"]);
         self.plotter.init();
+
+    def setPlotMode(mode):
+        if mode == "NONE":
+            self.plotMode = 0;
+        
+        if mode == "MACHINE":
+            self.plotMode = 1;
+        
+        if mode == "ISOLATE":
+            self.plotMode = 2;
+
+        if mode == "ALL":
+            self.plotMode = 3;
 
     def close(self):
         self.plotter.stop();
@@ -126,7 +143,9 @@ class monitor:
             if len(machine["v8s"].keys()) == 0:
                 self.removeMachine(machineId);
 
-        self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id),{"action":"died"});
+        if self.plotMode > 0:
+            self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id),{"action":"died"});
+        
         return id;
 
     def addIsolate(self,machineId,v8Id):
@@ -171,7 +190,9 @@ class monitor:
             retval = isolateId;
         self.lock.release();
 
-        self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),{"action":"died"});
+        if self.plotMode > 1:
+            self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),{"action":"died"});
+        
         return retval;
 
     def getIsolateCount(self,machineId,v8Id):
@@ -184,6 +205,31 @@ class monitor:
             self.lock.release();
             return ln;
 
+    def aggregateMachineInfo(self,machineId):
+        if self.plotMode == 0 or self.plotMode == 2:
+            return;
+
+        with self.lock:
+            aggregateFields = [];
+            aggregateValues = {};
+
+            machine = self.getMachine(machineId);
+            if machine == 0:
+                return;
+
+            for v8 in machine:
+                for i in v8["isolates"]:
+                    isolate = v8["isolates"][i];
+                    items = "("+str(isolate["id"])+") ";
+                    firstTime = (len(aggregateFields) == 0)
+                    for item in isolate:
+                        if firstTime and isinstance( x, int ):
+                            aggregateFields.append(item);
+                        elif item in aggregateFields:
+                            aggregateValues[item] = aggregateValues[item] + isolate[item]; 
+        
+        self.plotter.update("Machine_"+machineId+"_aggregate",{"values":aggregateValues,"labels":aggregateFields});
+
     def isolateUpdate(self,machineId,v8Id,isolateId,info):
         isolate = self.getIsolate(machineId,v8Id,isolateId);
         if isolate == 0:
@@ -194,12 +240,12 @@ class monitor:
             for key in info:
                 isolate[key] = info[key];
         
-        self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
-                
+        if self.plotMode == 3:
+            self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
+        
         self.lock.release();
 
-#        if info["action"] == "terminated":
-#            self.removeIsolate(machineId,v8Id,isolateId);
+        self.aggregateMachineInfo(machineId)
 
     def update(self,machineId,v8Id,response):
         nris = response["TotalIsolates"];
@@ -246,18 +292,25 @@ class monitor:
                 self.prettyPrintV8(id,v8," "*2);
 
         self.lock.release();
+
     def debug(self):
         print self.STATUS;
 
-    def getCommunicators(self):
-        comm = dict()
+    def acquire(self):
         self.lock.acquire();
-        
+    def release(self):
+        self.lock.release();
+    #WARNING, you must lock the mutex before calling this and while using the result
+    def getRegistry(self):
+        return self.STATUS["machines"];
+
+    def listCommunicators(self):
+        self.lock.acquire();
+        comm = []
         for idd in self.STATUS["machines"]:
             machine = self.STATUS["machines"][idd]['v8s'];
-            comm[idd] = dict()
             for key in machine:
-                comm[idd][key] = machine[key]["comm"];
-
+                #returns communicator, machineId, v8Id
+                comm.append([machine[key]["comm"],idd,key]);
         self.lock.release();
         return comm;
