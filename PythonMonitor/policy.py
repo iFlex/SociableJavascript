@@ -7,10 +7,11 @@ import os
 import sys, traceback
 
 class Policy:
-    def __init__(self,monitor):
+    def __init__(self,monitor,frequency):
         self.monitor = monitor;
-        self.interval = 0.25;#every 1/4 of a second - realtime plotting
-        self.requestBldr = RequestBuilder(monitor);
+        self.interval = 1;
+        self.changeSamplingFrequency(frequency)
+        self.requestBldr = RequestBuilder(monitor)
         self.keepRunning = True;
         self.cli = CommandLine(self);
         
@@ -39,6 +40,17 @@ class Policy:
         for comm in comms:
             comm[0].close();
         print "Cleanup finished. Exiting...";
+
+    def changeSamplingFrequency(self,hz):
+        if hz <= 0:
+            hz = -hz
+
+        intvl = 1.0/hz;
+        if intvl < 0.05:
+            return False;
+        
+        self.interval = intvl
+        return True;
 
     def __loadModule(self,filepath):
         mod_name,file_ext = os.path.splitext(os.path.split(filepath)[-1])

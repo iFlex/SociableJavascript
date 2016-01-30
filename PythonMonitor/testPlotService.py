@@ -56,13 +56,20 @@ while True:
 			print "Usage: set_parallel nr_of_parallel_plots";
 
 	if cmd[0] == "start":
+		if len(keys) == 0:
+			keys = generateKeys(1);
 		break;
 
 	if cmd[0] == "s":
 		if len(cmd) > 2:
-			plotter.update(cmd[1],{"heap":int(cmd[2])})
+			labels = generateKeys(len(cmd) - 2);
+			plotter.labels = labels;
+			data = {};
+			for i in range(0,len(labels)):
+				data[labels[i]] = int(cmd[i+2])
+			plotter.update(cmd[1],data)
 		else:
-			print "Usage: s key size";
+			print "Usage: s key size size ...";
 
 	if cmd[0] == "raw":
 		if len(cmd) > 2 and len(cmd) % 2 == 0:
@@ -73,6 +80,6 @@ while True:
 			plotter.update(cmd[1],data)
 		else:
 			print "Usage: r key k value";
-
+plotter.labels = keys
 run_test(keys,delay,duration);
 plotter.stop();

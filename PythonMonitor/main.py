@@ -41,7 +41,7 @@ else:
     print("Starting ...");
     time.sleep(1);
     print "Initialising policy...";
-    policy = Policy(mon);
+    policy = Policy(mon,4);
     
     srv.close();
     mon.close();    

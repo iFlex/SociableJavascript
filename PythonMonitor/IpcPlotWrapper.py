@@ -50,6 +50,7 @@ def handleResponse(cmd):
 				return True;
 			if cmd["action"] == "setTitle":
 				plotter.setTitle( cmd["title"] );
+				plotter.reset();
 				return False;
 			if cmd["action"] == "snapshot":
 				localtime = time.asctime( time.localtime(time.time()) )

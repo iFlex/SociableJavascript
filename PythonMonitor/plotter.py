@@ -56,7 +56,7 @@ class Plotter:
     #TODO
     def reset(self):
         self.endFullHistoryLog();
-        pass
+        self.Ydata = []
 
     def startFullHistoryLog(self,labels):
         self.fullHistory = open(self.rawWritePath+str(time.asctime( time.localtime(time.time()) ))+self.title+".csv","w")

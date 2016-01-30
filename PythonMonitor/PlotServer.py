@@ -36,6 +36,8 @@ class Server:
 				self.error = "PlotServer::Accept error:"+str(e);
 				print self.error;
 				traceback.print_exc(file=sys.stdout)
+				print "###PlotServer shutting down!";
+				return;
 
 
 	def start(self):

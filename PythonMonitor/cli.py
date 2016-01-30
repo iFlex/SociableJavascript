@@ -15,6 +15,12 @@ class CommandLine:
 				if cmd[0] == "exit":
 				   break;
 				
+				elif cmd[0] == "chhz":
+					if len(cmd) < 2:
+						print "Usage: chhz frequency"
+					else:
+						print "Changed frequency:"+str(self.p.changeSamplingFrequency(int(cmd[1])));
+
 				elif cmd[0] == "stats" or len(cmd[0]) == 0:
 				   self.monitor.prettyPrint();
 				
