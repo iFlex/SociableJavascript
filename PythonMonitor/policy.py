@@ -4,11 +4,12 @@ from threading import Thread
 import time;
 import imp
 import os
+import sys, traceback
 
 class Policy:
     def __init__(self,monitor):
         self.monitor = monitor;
-        self.interval = 1;#every 1/100 of a second - realtime plotting
+        self.interval = 0.25;#every 1/4 of a second - realtime plotting
         self.requestBldr = RequestBuilder(monitor);
         self.keepRunning = True;
         self.cli = CommandLine(self);
@@ -84,15 +85,27 @@ class Policy:
                     for v8 in v8s:
                         comm = v8s[v8]["comm"];
                         requestQ.append((comm,self.requestBldr.statusReport(idd,v8)))
-                        isolates = v8s[v8]["isolates"];
+                        
                         #apply policy
-                        #if not (self.policy == 0):
-                        #    suggestions = self.policy.calculate(machine,isolates);
-                        #    for suggestion in suggestions:
-                        #        request = self.requestbuilder.setMaxHeapSize(idd,v8,suggestion["id"],suggestion["hardHeapLimit"]);
-                        #        comm.send(request);
-                        #        comm.send(self.requestbuilder.recommendHeapSize(idd,v8,suggestion["id"],suggestedHeapSize,suggestion["softHeapLimit"]));
+                        if not (self.policy == 0):
+                            isolates = v8s[v8]["isolates"];
+                            
+                            suggestions = []
+                            try:
+                                suggestions = self.policy.calculate(1024,isolates);
+                                if len(suggestions) == 0:
+                                    continue
+                            except Exception as e:
+                                print "Ploicy error:"+str(e)
+                                traceback.print_exc(file=sys.stdout)
+                                continue
 
+                            for suggestion in suggestions:
+                                request  = self.requestbuilder.setMaxHeapSize(idd,v8,suggestion["id"],suggestion["hardHeapLimit"]);
+                                request2 = self.requestbuilder.recommendHeapSize(idd,v8,suggestion["id"],suggestedHeapSize,suggestion["softHeapLimit"])
+                                requestQ.append((comm,request))
+                                requestQ.append((comm,request2))
+                                
             while len(requestQ) > 0:
                 comm,request = requestQ.pop()
                 comm.send(request);

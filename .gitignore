@@ -4,3 +4,9 @@
 /memplot/out
 /memplot/measurements
 *.png
+*.csv
+**/*_collection.txt
+**/*_instantthrpt.txt
+**/*_throughput.txt
+**/*_heapsize.txt
+**/*__execution.txt
