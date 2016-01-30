@@ -2,7 +2,7 @@ from PlotService import *
 import time
 import random
 
-labels = ["heap","line","3rd"]
+labels = ["a","b","c"]
 plotter = PlotService(labels);
 plotter.init();
 
@@ -18,13 +18,14 @@ def generateKeys(number):
 	return k;
 
 def run_test(k,d,ttr):
+	global labels;
 	if len(k) == 0:
 		return;
-
+	print "Starting plot test..."
 	elapsed = 0.0;
 	while elapsed < ttr:
 		for t in k:
-			plotter.update(t,{"values":[random.randint(100,200),random.randint(0,50),random.randint(50,100)],"labels":labels});
+			plotter.update(t,{"a":2000000+random.randint(100,200),"b":2000000+random.randint(0,50),"c":2000000+random.randint(50,100)});
 		time.sleep(d);
 		elapsed += d;
 
@@ -50,6 +51,7 @@ while True:
 	if cmd[0] == "set_parallel":
 		if len(cmd) > 1:
 			keys = generateKeys(int(cmd[1]));
+			print keys
 		else:
 			print "Usage: set_parallel nr_of_parallel_plots";
 

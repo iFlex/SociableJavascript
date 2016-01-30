@@ -8,7 +8,7 @@ import os
 class Policy:
     def __init__(self,monitor):
         self.monitor = monitor;
-        self.interval = 0.25;#every 1/100 of a second - realtime plotting
+        self.interval = 1;#every 1/100 of a second - realtime plotting
         self.requestBldr = RequestBuilder(monitor);
         self.keepRunning = True;
         self.cli = CommandLine(self);
@@ -69,32 +69,34 @@ class Policy:
 
     #at the moment this deadlocks, somehow
     def run(self):
-        comms  = {}
-
+        reg  = {}
+        requestQ = []
         #keep polling and applying policy
         while(self.keepRunning):
             time.sleep(self.interval);
             
-            self.monitor.acquire()
-            reg = self.monitor.getRegistry()    
-            for idd in reg:
-                machine = reg[idd]
-                v8s = machine['v8s'];
-                for v8 in v8s:
-                    comm = v8s[v8]["comm"];
-                    comm.send(self.requestBldr.statusReport(idd,v8));
+            with self.monitor.lock:    
+                reg = self.monitor.STATUS["machines"];
 
-                    isolates = v8s[v8]["isolates"];
-                    
-                    #apply policy
-                    if not (self.policy == 0):
-                        suggestions = self.policy.calculate(machine,isolates);
-                        for suggestion in suggestions:
-                            request = self.requestbuilder.setMaxHeapSize(idd,v8,suggestion["id"],suggestion["hardHeapLimit"]);
-                            comm.send(request);
-                            comm.send(self.requestbuilder.recommendHeapSize(idd,v8,suggestion["id"],suggestedHeapSize,suggestion["softHeapLimit"]));
+                for idd in reg:
+                    machine = reg[idd]
+                    v8s = machine["v8s"];
+                    for v8 in v8s:
+                        comm = v8s[v8]["comm"];
+                        requestQ.append((comm,self.requestBldr.statusReport(idd,v8)))
+                        isolates = v8s[v8]["isolates"];
+                        #apply policy
+                        #if not (self.policy == 0):
+                        #    suggestions = self.policy.calculate(machine,isolates);
+                        #    for suggestion in suggestions:
+                        #        request = self.requestbuilder.setMaxHeapSize(idd,v8,suggestion["id"],suggestion["hardHeapLimit"]);
+                        #        comm.send(request);
+                        #        comm.send(self.requestbuilder.recommendHeapSize(idd,v8,suggestion["id"],suggestedHeapSize,suggestion["softHeapLimit"]));
 
-            self.monitor.release();
+            while len(requestQ) > 0:
+                comm,request = requestQ.pop()
+                comm.send(request);
+
             #print "Polling..."
             '''comms = self.monitor.getCommunicators(comms);
             for id in comms:

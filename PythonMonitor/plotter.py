@@ -4,6 +4,7 @@ import numpy
 import copy
 import os
 import time
+import collections
 
 SINGLETON = 0
 class Plotter:
@@ -28,13 +29,13 @@ class Plotter:
         self.graphs   = []
         self.Xdata    = numpy.arange(0,width)
         self.Ydata    = []
-        self.defaultY = numpy.arange(0,width)
+        self.defaultY = collections.deque(maxlen=width) 
         self.labels   = []
         self.maxY = 0
         self.fullHistory = 0
 
         for i in range(0,width):
-            self.defaultY[i] = 0
+            self.defaultY.append(0)
 
         xpixels = 1499
         ypixels = 900
@@ -54,13 +55,15 @@ class Plotter:
 
     #TODO
     def reset(self):
+        self.endFullHistoryLog();
         pass
 
-    def startFullHistoryLog(self,lebels):
-        self.fullHistory = open(self.str(time.asctime( time.localtime(time.time()) ))+self.title+".csv","r")
+    def startFullHistoryLog(self,labels):
+        self.fullHistory = open(self.rawWritePath+str(time.asctime( time.localtime(time.time()) ))+self.title+".csv","w")
         for label in labels:
-            self.fullHistory.write(label)
-    
+            self.fullHistory.write(label+",")
+        self.fullHistory.write("\n");
+
     def endFullHistoryLog(self):
         if self.fullHistory == 0:
             return
@@ -70,15 +73,13 @@ class Plotter:
         index = 0
         
         if self.fullHistory == 0:
-            startFullHistoryLog(tlables)
+            self.startFullHistoryLog(tlabels)
 
         for e in elements:
             if index == len(self.Ydata):
                 self.Ydata.append(copy.deepcopy(self.defaultY))
-            
-            self.Ydata[index] = numpy.roll(self.Ydata[index],-1)
-            self.Ydata[index][len(self.Ydata[index]) - 1] = e
-        
+            self.Ydata[index].append(e)
+
             if self.fullHistory:
                 self.fullHistory.write(str(e)+",")
 
@@ -113,6 +114,7 @@ class Plotter:
         plt.savefig(self.imgWritePath+name+".png")
 
     def close(self):
+        self.endFullHistoryLog()
         self.save("")
         plt.close()
 

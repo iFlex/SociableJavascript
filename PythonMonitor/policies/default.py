@@ -9,4 +9,4 @@ def init():
 			{} one dictionary object contains id - isolate id, hardHeapLimit - the absolute maximum heap size limit, softHeapLimit - a suggested idea heap size
 '''	
 def calculate(totalAvailableMemory,isolates):
-	print "PALIVE";
+	print [];

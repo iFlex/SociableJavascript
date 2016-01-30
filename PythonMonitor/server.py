@@ -63,11 +63,10 @@ class server:
 		
 		try:
 			self.soc.shutdown(SHUT_RDWR);
+			self.soc.close();
 		except Exception as e:
 			print "Server socket shutdown failed:"+str(e);
 		
-		self.soc.close();
-		print "Server joinig listener thread..."
 		#self.thread.join();
 
 	def getError(self):

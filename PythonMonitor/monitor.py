@@ -1,7 +1,8 @@
 from threading import *
 from PlotService import *
-#threadsafe
+import copy
 
+#threadsafe
 class monitor:
     def __init__(self,plotMode):
         self.STATUS = {"machines":{}};
@@ -34,10 +35,8 @@ class monitor:
 
     def takeSnapshot(self,m,v,i):
         self.plotter.takeSnapshot("Machine_"+m+"_V8_"+str(v)+"_isl_"+str(i));
-
+    #NOT THREAD SAGFE, NEEDS TO BE CALLED WHILE LOCK IS HELD
     def getAppropriateId(self,FreeList,alternate):
-        self.lock.acquire();
-
         id = len(FreeList);
         if len(FreeList) > 0:
             id = FreeList[0];
@@ -45,35 +44,29 @@ class monitor:
         else:
             id = alternate + 1;
 
-        self.lock.release();
         return id;
 
     def addMachine(self,id):
         id = str(id)
         machine = {"FreeList":list(),"v8s":dict(),"id":"0"};
         machine["id"] = id;
-        
-        self.lock.acquire();
-        if id in self.STATUS["machines"].keys():
-            id = 0;
-        else:
-            self.STATUS["machines"][id] = machine;
-            
-        self.lock.release();
-
+        with self.lock:
+            if id in self.STATUS["machines"].keys():
+                id = 0;
+            else:
+                self.STATUS["machines"][id] = machine;
         return id;
 
     def removeMachine(self,machineId):
-        self.lock.acquire();
-        machines = self.STATUS["machines"];
+        with self.lock:
+            machines = self.STATUS["machines"];
 
-        mid = 0;
-        if machineId in machines:
-            del machines[machineId];
-            self.FreeMachineIDS.append(machineId);
-            mid = machineId;
-            
-        self.lock.release();
+            mid = 0;
+            if machineId in machines:
+                del machines[machineId];
+                self.FreeMachineIDS.append(machineId);
+                mid = machineId;
+                print "RemovedMachine"+machineId
         return mid;
 
     def getMachine(self,machineId):
@@ -81,12 +74,11 @@ class monitor:
 
         retval = 0;
         
-        self.lock.acquire();
-        try:
-            retval = self.STATUS["machines"][machineId]
-        except Exception as e:
-            retval = 0;
-        self.lock.release();
+        with self.lock:
+            try:
+                retval = self.STATUS["machines"][machineId]
+            except Exception as e:
+                retval = 0;
 
         return retval;
 
@@ -95,28 +87,26 @@ class monitor:
         if machine == 0:
             return 0;
 
-        self.lock.acquire();
-        freeIDs = machine["FreeList"];
-        v8 = {"FreeList":list(),"isolates":dict(),"id":0};
+        with self.lock:
+            freeIDs = machine["FreeList"];
+            v8 = {"FreeList":list(),"isolates":dict(),"id":0};
 
-        id = self.getAppropriateId(freeIDs,len(machine["v8s"].keys()));
-    
-        v8["id"] = id;
-        v8["comm"] = communicator;
-        machine["v8s"][id] = v8;
+            id = self.getAppropriateId(freeIDs,len(machine["v8s"].keys()));
         
-        self.lock.release();
+            v8["id"] = id;
+            v8["comm"] = communicator;
+            machine["v8s"][id] = v8;
+        
         return id;
 
     def getV8(self,machine,v8id):
         retval = 0;
 
-        self.lock.acquire();
-        try:
-            retval = machine["v8s"][v8id]
-        except Exception as e:
-            retval = 0;
-        self.lock.release();
+        with self.lock:
+            try:
+                retval = machine["v8s"][v8id]
+            except Exception as e:
+                retval = 0;
 
         return retval;
 
@@ -139,10 +129,14 @@ class monitor:
         with self.lock:
             id = v8["id"]
             del machine["v8s"][id];
+            freeIDs = machine["FreeList"]
+            freeIDs.append(v8Id);
             
+            print "removed v8:"+machineId+"_"+str(v8Id);
             #no more V8s for this machine, delete machine
             if len(machine["v8s"].keys()) == 0:
                 self.removeMachine(machineId);
+        
 
         if self.plotMode > 0:
             self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id),{"action":"died"});
@@ -154,15 +148,13 @@ class monitor:
         if v8 == 0:
             return 0;
 
-        self.lock.acquire();
-        freeIDs = v8["FreeList"];
-        isolate = {"id":0};
+        with self.lock:
+            freeIDs = v8["FreeList"];
+            isolate = {"id":0};
 
-        id = self.getAppropriateId(freeIDs,len(v8["isolates"].keys()));
-        isolate["id"] = id;
-        v8["isolates"][id] = isolate;
-        
-        self.lock.release();
+            id = self.getAppropriateId(freeIDs,len(v8["isolates"].keys()));
+            isolate["id"] = id;
+            v8["isolates"][id] = isolate;
         return id;
 
     def getIsolate(self,machineId,v8Id,isolateId):
@@ -170,11 +162,10 @@ class monitor:
         if v8 == 0:
             return 0;
 
-        self.lock.acquire();
-        retval = 0;
-        if isolateId in v8["isolates"]:
-            retval = v8["isolates"][isolateId];
-        self.lock.release();
+        with self.lock:
+            retval = 0;
+            if isolateId in v8["isolates"]:
+                retval = v8["isolates"][isolateId];
 
         return retval;
 
@@ -184,13 +175,13 @@ class monitor:
             return 0;
 
         retval = 0;
-
-        self.lock.acquire();
-        if isolateId in v8["isolates"]:
-            del v8["isolates"][isolateId];
-            retval = isolateId;
-        self.lock.release();
-
+        with self.lock:
+            if isolateId in v8["isolates"]:
+                del v8["isolates"][isolateId];
+                freeIDs = v8["FreeList"];
+                freeIDs.append(isolateId)
+                retval = isolateId;
+                print "removed isolate:"+machineId+"_"+str(v8Id)+"_"+str(isolateId)
         if self.plotMode > 1:
             self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),{"action":"died"});
         
@@ -201,72 +192,72 @@ class monitor:
         if v8 == 0:
             return 0;
         else:
-            self.lock.acquire();
-            ln = len(v8["isolates"].keys());
-            self.lock.release();
-            return ln;
+            with self.lock:
+                return len(v8["isolates"].keys());
 
-    def aggregateMachineInfo(self,machineId):
+    def __aggregateMachineInfo(self,machineId):
         if self.plotMode == 0 or self.plotMode == 2:
             return;
 
-        with self.lock:
-            aggregateFields = [];
-            aggregateValues = {};
+        aggregateFields = [];
+        aggregateValues = {};
 
-            machine = self.getMachine(machineId);
-            if machine == 0:
-                return;
+        machine = self.getMachine(machineId);
+        if machine == 0:
+            return;
 
-            for v8 in machine:
-                for i in v8["isolates"]:
-                    isolate = v8["isolates"][i];
-                    items = "("+str(isolate["id"])+") ";
-                    firstTime = (len(aggregateFields) == 0)
-                    for item in isolate:
-                        if firstTime and isinstance( x, int ):
-                            aggregateFields.append(item);
-                        elif item in aggregateFields:
-                            aggregateValues[item] = aggregateValues[item] + isolate[item]; 
-        
-        self.plotter.update("Machine_"+machineId+"_aggregate",{"values":aggregateValues,"labels":aggregateFields});
+        v8s = machine["v8s"]
+        for v8 in v8s:
+            isolates = v8s[v8]["isolates"];
+            for i in isolates:
+                isolate = isolates[i];
+                firstTime = (len(aggregateFields) == 0)
+                for item in isolate:
+                    if firstTime and isinstance( isolate[item], int ):
+                        aggregateFields.append(item);
+                        aggregateValues[item] = isolate[item]
+                    elif item in aggregateFields:
+                        aggregateValues[item] = aggregateValues[item] + isolate[item]; 
 
-    def isolateUpdate(self,machineId,v8Id,isolateId,info):
+        self.plotter.update("Machine_"+machineId+"_aggregate",aggregateValues);
+
+    #NOT THREAD SAFE, MEANT TO BE CALLED FROM WITHIN update() only
+    def __isolateUpdate(self,machineId,v8Id,isolateId,info):
         isolate = self.getIsolate(machineId,v8Id,isolateId);
         if isolate == 0:
             return;
 
-        self.lock.acquire();
         if info["action"] == "update":
             for key in info:
                 isolate[key] = info[key];
-        
+            
         if self.plotMode == 3:
             self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
-        
-        self.lock.release();
 
-        self.aggregateMachineInfo(machineId)
+        
 
     def update(self,machineId,v8Id,response):
-        nris = response["TotalIsolates"];
-        recordedIsolateCount = self.getIsolateCount(machineId,v8Id)
+        with self.lock:
+            nris = response["TotalIsolates"];
+            recordedIsolateCount = self.getIsolateCount(machineId,v8Id)
 
-        #adjust isolate count
-        while nris > recordedIsolateCount:
-            self.addIsolate(machineId,v8Id);
-            recordedIsolateCount += 1;
-        while recordedIsolateCount > nris:
-            recordedIsolateCount -= 1;
-            self.removeIsolate(machineId,v8Id,recordedIsolateCount);
+            #adjust isolate count
+            while nris > recordedIsolateCount:
+                self.addIsolate(machineId,v8Id);
+                recordedIsolateCount += 1;
+            while recordedIsolateCount > nris:
+                recordedIsolateCount -= 1;
+                self.removeIsolate(machineId,v8Id,recordedIsolateCount);
 
-        #update isolate status
-        for i in range(1,nris+1):
-            info = response["isolates"][str(i)];
-            self.isolateUpdate(machineId,v8Id,i,info)
+            #update isolate status
+            for i in range(1,nris+1):
+                info = response["isolates"][str(i)];
+                self.__isolateUpdate(machineId,v8Id,i,info)
+            
+            self.__aggregateMachineInfo(machineId)
 
-    def prettyPrintV8(self,machineId,v8Id,spaces):
-        self.lock.acquire();
+
+    def __prettyPrintV8(self,machineId,v8Id,spaces):        
         v8 = self.getV8(self.getMachine(machineId),v8Id);
         if(v8 == 0):
             print spaces+"Could not find v8 instance";
@@ -281,37 +272,25 @@ class monitor:
             print spaces+items;
             print "_"*45
 
-        self.lock.release();
-    
     def prettyPrint(self):
-        self.lock.acquire();
-        for id in self.STATUS["machines"]:
-            machine = self.STATUS["machines"][id]["v8s"];
-            print "MACHINE_"+str(id);
-            for v8 in machine:
-                print " V8_"+str(v8);
-                self.prettyPrintV8(id,v8," "*2);
-
-        self.lock.release();
+        with self.lock:
+            for id in self.STATUS["machines"]:
+                machine = self.STATUS["machines"][id]["v8s"];
+                print "MACHINE_"+str(id);
+                for v8 in machine:
+                    print " V8_"+str(v8);
+                    self.__prettyPrintV8(id,v8," "*2);
 
     def debug(self):
         print self.STATUS;
-
-    def acquire(self):
-        self.lock.acquire();
-    def release(self):
-        self.lock.release();
-    #WARNING, you must lock the mutex before calling this and while using the result
-    def getRegistry(self):
-        return self.STATUS["machines"];
-
+ 
     def listCommunicators(self):
-        self.lock.acquire();
         comm = []
-        for idd in self.STATUS["machines"]:
-            machine = self.STATUS["machines"][idd]['v8s'];
-            for key in machine:
-                #returns communicator, machineId, v8Id
-                comm.append([machine[key]["comm"],idd,key]);
-        self.lock.release();
+        with self.lock:
+            for idd in self.STATUS["machines"]:
+                v8s = self.STATUS["machines"][idd]['v8s'];
+                for key in v8s:
+                    #returns communicator, machineId, v8Id
+                    comm.append([v8s[key]["comm"],idd,key]);
+
         return comm;
