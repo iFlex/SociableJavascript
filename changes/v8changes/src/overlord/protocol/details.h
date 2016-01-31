@@ -9,7 +9,7 @@ namespace ControlProtocol {
   class details {
   public:
     //properties
-    int old_space,new_space,code_space,heap;
+    int old_space,new_space,code_space,heap,available,maxHeapSize,suggestedHeapSize;
     double throughput;
     std::string path;
     //methods

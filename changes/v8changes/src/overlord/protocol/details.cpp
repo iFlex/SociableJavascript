@@ -19,6 +19,15 @@ namespace ControlProtocol {
     if(!obj["heap"].empty())
       heap       = obj["heap"].asInt();
 
+    if(!obj["available"].empty())
+      heap       = obj["available"].asInt();
+
+    if(!obj["maxHeapSize"].empty())
+      maxHeapSize = obj["maxHeapSize"].asInt();
+
+    if(!obj["suggestedHeapSize"].empty())
+      suggestedHeapSize = obj["suggestedHeapSize"].asInt();
+
     if(!obj["throughput"].empty())
       throughput       = obj["throughput"].asDouble();
 
@@ -38,6 +47,15 @@ namespace ControlProtocol {
 
     if(heap)
       obj["heap"] = heap;
+
+    if(maxHeapSize)
+      obj["maxHeapSize"] = maxHeapSize;
+
+    if(suggestedHeapSize)
+      obj["suggestedHeapSize"] = suggestedHeapSize;
+
+    if(available)
+      obj["available"] = available;
 
     obj["throughput"] = throughput;
     

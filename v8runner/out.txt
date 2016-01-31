@@ -1,0 +1,12 @@
+Running with heap size:1024
+Overlord: Connecting... 15001:15001
+Isolate created:1
+Loading scritp:./test/binarytree.js
+Preoading new Isolate JS with:load('./test/binarytree.js');
+>>Compiled
+>>After Run
+>>Before Dispose
+
+ :) Done (: 
+
+ :) Done (: 

@@ -88,10 +88,25 @@ void * Overlord::run(void * data){
     //overlordTestCli();
     int connFd;
     
+    std::string line("127.0.0.1");
     int portNo = 15000;//*((int *)data);
     struct sockaddr_in svrAdd;
-    struct hostent *serverId;
+    struct hostent *serverId = gethostbyname(line.c_str());
+    string ipaddr = line.c_str(); 
+    //Read config file
+    ifstream config("V8RemoteControlConfig.txt");
+    if( config && config.is_open() ){
+        for(int i = 0; i < 2 && std::getline(config, line); ++i ) {
+            if(!i) {
+                serverId = gethostbyname(line.c_str()); 
+                ipaddr = line.c_str();
+            } else
+                portNo   = atoi(line.c_str());  
+        }
+        config.close();
+    }
 
+    cout << "Overlord: Connecting... "<<line<<":"<<portNo<<endl;
     //create socket
     connFd = socket(AF_INET, SOCK_STREAM, 0);
     
@@ -101,7 +116,6 @@ void * Overlord::run(void * data){
         return 0;
     }
     
-    serverId = gethostbyname("127.0.0.1");
     if( serverId == NULL ){
         cerr <<"Overlord:: Could not resolve server address" << endl;
         return 0;
@@ -119,7 +133,7 @@ void * Overlord::run(void * data){
     while(true){
         //Keep trying to connect to Monitor
         while(connect(connFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0){
-            cerr << "Overlord::Could not connect to Monitor" << endl;
+            cerr << "Overlord::Could not connect to Monitor "<<ipaddr<<":"<<portNo<<endl;
         }
 
         cout << "Overlord::connection successful. Awaiting commands..." << endl;
@@ -210,7 +224,9 @@ void handleIsolateRequest(int i, action cmd, command &response){
         //v8::Locker l{isol}; - causes deadlock ...
         
         detail->heap       = (int) isl->getHeapSize();
-        detail->throughput = isl->getThroughput();   
+        detail->throughput = isl->getThroughput();
+        detail->available  = (int) isl->getAvailableHeapSize();  
+        detail->maxHeapSize = (int) isl->getTargetHeapSize(); 
         actions[actIndex].name    = "update";
     }
 
