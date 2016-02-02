@@ -3,31 +3,15 @@ from communicator import *
 from monitor import *
 from server import *
 from policy import *
+from Configuration import *
 import time
 import subprocess
 
 print "V8 Manager CLI"
-#create a v8 instance
-#print "Starting V8 instance..."
-#v8instance = subprocess.Popen(["../v8runner/v8wrapper.bin","1024","../v8runner/jsplayg/endless.js"],0,close_fds=True,stdout=file("/dev/null"));
-raw_input("press any key after you start a v8 instance");
 
-print "Reading preload configuration...";
+print "Reading configuration...";
 #read initial configuration
-preloadScripts = [];
-with open("preload.txt") as f:
-    content = f.readlines()
-    for script in content:
-    	if script.find("\n") != -1:
-    		script = script[0:len(script)-1];
-    	preloadScripts.append(script)
-
-print ""
-print "Scripts to be pre-loaded:"
-print "_"*80
-for script in preloadScripts:
-	print script;
-print "_"*80
+#config = Configuration();
 
 #flags
 DEBUG = True
@@ -43,6 +27,11 @@ else:
     print "Initialising policy...";
     policy = Policy(mon,4);
     
+    #config.configure("server",server);
+    #config.configure("monitor",mon)
+    #config.configure("policy",policy)
+
+    policy.run();
     srv.close();
     mon.close();    
 print "ktnxbai";

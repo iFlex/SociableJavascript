@@ -3,6 +3,7 @@
 *~
 /memplot/out
 /memplot/measurements
+/PythonMonitor/plots
 *.png
 *.csv
 **/*_collection.txt

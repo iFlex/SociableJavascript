@@ -71,6 +71,7 @@ class Plotter:
         pylab.xlim([0,width])
 
     def reset(self,title):
+        self.save();
         self.endFullHistoryLog();
         self.Ydata = []
         self.plotProgress = 0
