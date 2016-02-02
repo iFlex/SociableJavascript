@@ -7,6 +7,7 @@ import os
 import sys, traceback
 
 class Policy:
+
     def __init__(self,monitor,frequency):
         self.monitor = monitor;
         self.interval = 1;
@@ -23,6 +24,9 @@ class Policy:
         else:
             self.policy.init();
 
+        #load default configuration
+        self.ldConfig("zmonitorConfig.txt");
+        
         #starting cli
         print " Starting policy & updater thred...";
         self.thread = Thread(target = self.run)
@@ -40,6 +44,19 @@ class Policy:
         for comm in comms:
             comm[0].close();
         print "Cleanup finished. Exiting...";
+
+    def ldConfig(self,fileN):
+        print "Loading configuration"+"_"*55
+        try:
+            with open(fileN) as f:
+                content = f.readlines()
+                for line in content:
+                    self.cli.execute(line)
+        except IOError as e:
+            pass
+        except Exception as e:
+            print "Error while loading configuration..."+str(e)
+        print "_"*80
 
     def changeSamplingFrequency(self,hz):
         if hz <= 0:
@@ -65,7 +82,6 @@ class Policy:
                     filepath += '.py';
                 py_mod = imp.load_source(mod_name, filepath)
 
-            print "Module functions:"+str(dir(py_mod));
         except Exception as e:
             print "Error loading policy "+filepath+" "+str(e)
             py_mod = 0;
@@ -122,17 +138,4 @@ class Policy:
                 comm,request = requestQ.pop()
                 comm.send(request);
 
-            #print "Polling..."
-            '''comms = self.monitor.getCommunicators(comms);
-            for id in comms:
-                machine = comms[id];
-                for v8 in machine:
-                    machine[v8].send(self.requestBldr.statusReport(id,v8));
-
-                    #apply policy
-                    if not (self.policy == 0):
-                        maxHeapSize,suggestedHeapSize = self.policy.calculate();
-                    #    machine[v8].send(self.requestbuilder.setMaxHeapSize(id,v8,isl,maxHeapSize));
-                    #    machine[v8].send(self.requestbuilder.recommendHeapSize(id,v8,isl,suggestedHeapSize));
-            '''
         print "#POLICY POLLER EXITING...";

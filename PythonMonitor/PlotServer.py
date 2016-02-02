@@ -58,12 +58,11 @@ class Server:
 
 	def close(self):
 		self.keepRunning = False;
-		try:
-			self.soc.shutdown(SHUT_RDWR);
-		except Exception as e:
-			print "PlotServer socket shutdown error:"+str(e);
+		#try:
+		#	self.soc.shutdown(SHUT_RDWR);
+		#except Exception as e:
+		#	print "PlotServer socket shutdown error:"+str(e);
 		self.soc.close();
-		#self.thread.join();
 
 	def getError(self):
 		return self.error;

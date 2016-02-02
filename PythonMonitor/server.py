@@ -62,7 +62,6 @@ class server:
 		self.keepRunning = False;
 		
 		try:
-			self.soc.shutdown(SHUT_RDWR);
 			self.soc.close();
 		except Exception as e:
 			print "Server socket shutdown failed:"+str(e);

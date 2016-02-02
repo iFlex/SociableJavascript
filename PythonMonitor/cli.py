@@ -68,20 +68,23 @@ class CommandLine:
 			else:
 				print "Unknown command '"+cmd[0]+"'"
 
+	def execute(self,cmd):
+		cmd = cmd.split(" ");
+		try:
+			self.matchCommand(cmd);
+		except Exception as e:
+			print "* CLI ERROR:"+str(e);
+			traceback.print_exc(file=sys.stdout)
+	
 	def run(self):
 		self.machine_id = "127.0.0.1";
 		self.v8_id      = 1;
 		while True:
 			cmd = raw_input(">");
-			cmd = cmd.split(" ");
-			try:
-				if cmd[0] == "exit":
-				   break;
-				
-				self.matchCommand(cmd);
-			except Exception as e:
-				print "* CLI ERROR:"+str(e);
-				traceback.print_exc(file=sys.stdout)
+			if cmd == "exit":
+			   break;
+			
+			self.execute(cmd);
 
 		self.p.keepRunning = False
 
@@ -183,6 +186,11 @@ class CommandLine:
 								"param":[("int","max")],
 								"method":self.monitor.setMaxPlotters,
 								"desc":"Set maximum plotter windows allowed"
+							},
+							"loadConfig":{
+								"param":[("str","configuration")],
+								"method":self.p.ldConfig,
+								"desc":"Load and apply configuration file"
 							}
 						}
-#TODO - screenshot all frames, save2file, saveall2file
+#TODO - screenshot all frames, stop plotter, stop all plotters

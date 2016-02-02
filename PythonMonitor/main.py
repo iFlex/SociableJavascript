@@ -3,7 +3,6 @@ from communicator import *
 from monitor import *
 from server import *
 from policy import *
-from Configuration import *
 import time
 import subprocess
 
@@ -26,12 +25,7 @@ else:
     time.sleep(1);
     print "Initialising policy...";
     policy = Policy(mon,4);
-    
-    #config.configure("server",server);
-    #config.configure("monitor",mon)
-    #config.configure("policy",policy)
 
-    policy.run();
     srv.close();
     mon.close();    
 print "ktnxbai";
