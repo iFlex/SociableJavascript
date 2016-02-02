@@ -6,6 +6,7 @@ import os
 import time
 import collections
 import timeit
+import time
 import math
 
 SINGLETON = 0
@@ -14,6 +15,13 @@ class Plotter:
     def setFPS(self,fps):
         self.desiredFPS = 32;
         self.period     = 1.0/self.desiredFPS;
+    
+    def resetPlotPaths(self):
+        self.startDateTime = str(time.asctime( time.localtime(time.time())))
+        self.writePath = "./plots/"+self.startDateTime+"/"+self.title+"/"
+        
+        if not os.path.exists(self.writePath):
+            os.makedirs(self.writePath)
         
     def __init__(self,width,title):
         global SINGLETON
@@ -23,16 +31,10 @@ class Plotter:
 
         SINGLETON = 1
 
+        self.width = width
+        self.plotProgress = 0
         self.setFPS(30)
         self.skipDraw   = 0;
-
-        self.imgWritePath = "./plots/"
-        self.rawWritePath = "./plotdata/"
-        
-        if not os.path.exists(self.imgWritePath):
-            os.makedirs(self.imgWritePath)
-        if not os.path.exists(self.rawWritePath):
-            os.makedirs(self.rawWritePath)
 
         self.title = title
         self.graphs   = []
@@ -45,6 +47,8 @@ class Plotter:
 
         for i in range(0,width):
             self.defaultY.append(0)
+
+        self.resetPlotPaths();
 
         xpixels = 1499
         ypixels = 900
@@ -69,9 +73,13 @@ class Plotter:
     def reset(self):
         self.endFullHistoryLog();
         self.Ydata = []
+        self.plotProgress = 0
+
+        self.resetPlotPaths()
+        self.startFullHistoryLog()
 
     def startFullHistoryLog(self,labels):
-        self.fullHistory = open(self.rawWritePath+str(time.asctime( time.localtime(time.time()) ))+self.title+".csv","w")
+        self.fullHistory = open(self.writePath+self.title+".csv","w")
         for label in labels:
             self.fullHistory.write(label+",")
         self.fullHistory.write("\n");
@@ -80,6 +88,7 @@ class Plotter:
         if self.fullHistory == 0:
             return
         self.fullHistory.close()
+        self.fullHistory = 0
 
     def plot(self,elements,tlabels):
         index = 0
@@ -95,12 +104,12 @@ class Plotter:
 
             index += 1
 
-        if self.fullHistory:
-            self.fullHistory.write("\n")
+        self.fullHistory.write("\n")
         
         time1 = time.time()
         
-        if self.skipDraw > 0:
+        self.plotProgress += 1
+        if self.skipDraw > 0 and (self.plotProgress % self.width > 0):
             self.skipDraw -=1 
             return
 
@@ -127,17 +136,19 @@ class Plotter:
             print "CAN'T PLOT - ISSUES WITH DATA MOST LIKELY"
             print e
 
+        if self.plotProgress % self.width == 0:
+            self.save();
+
         time2 = time.time()
         self.drawPeriod = time2-time1
         self.skipDraw   = math.floor(self.drawPeriod / self.period)
 
-    def save(self,prepend):
-        name = prepend + self.title
-        plt.savefig(self.imgWritePath+name+".png")
+    def save(self):
+        plt.savefig(self.writePath+str(self.plotProgress)+".png")
 
     def close(self):
         self.endFullHistoryLog()
-        self.save("")
+        self.save()
         plt.close()
 
     def setTitle(self,title):

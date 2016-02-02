@@ -1,5 +1,6 @@
 def init():
 	print "ALIVE"
+
 '''
 	Takes in:
 		totalAvailableMemory that is the absolute limit for all JS VM instances
@@ -9,4 +10,5 @@ def init():
 			{} one dictionary object contains id - isolate id, hardHeapLimit - the absolute maximum heap size limit, softHeapLimit - a suggested idea heap size
 '''	
 def calculate(totalAvailableMemory,isolates):
+	
 	return [];

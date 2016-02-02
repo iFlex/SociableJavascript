@@ -52,16 +52,14 @@ def handleResponse(cmd):
 		#handle commands
 		if "action" in cmd:
 			if cmd["action"] == "close":
-				plotter.save(str(time.asctime( time.localtime(time.time()) )));
+				plotter.save();
 				return True;
 			if cmd["action"] == "setTitle":
 				plotter.setTitle( cmd["title"] );
 				plotter.reset();
 				return False;
 			if cmd["action"] == "snapshot":
-				localtime = time.asctime( time.localtime(time.time()) )
-				print "IPC::Snapshot:"+str(localtime);
-				plotter.save(str(localtime));
+				plotter.save();
 				return False;
 
 		#handle data

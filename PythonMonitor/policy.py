@@ -45,10 +45,10 @@ class Policy:
         if hz <= 0:
             hz = -hz
 
+        if(hz > 150):
+            return False
+            
         intvl = 1.0/hz;
-        if intvl < 0.05:
-            return False;
-        
         self.interval = intvl
         return True;
 

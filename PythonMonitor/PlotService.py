@@ -47,7 +47,7 @@ class PlotService:
 		for i in self.labels:
 			if i in info:
 				if i == "heap" or i == "maxHeapSize":
-					data.append(info[i]/100000);
+					data.append(info[i]/1000000);
 				else:
 					data.append(info[i])
 
@@ -76,7 +76,7 @@ class PlotService:
 				#place the data in the structure to be updated
 				if key not in self.currentPlotData:
 
-					if len(self.currentPlotData.keys() > self.maxPlotters):
+					if len(self.currentPlotData.keys()) > self.maxPlotters:
 						continue
 
 					self.currentPlotData[key] = [0,0];
