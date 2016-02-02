@@ -80,6 +80,7 @@ while True:
 			plotter.update(cmd[1],data)
 		else:
 			print "Usage: r key k value";
-plotter.labels = keys
+			
+plotter.labels = ["a","b","c"]
 run_test(keys,delay,duration);
 plotter.stop();

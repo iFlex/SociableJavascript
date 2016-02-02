@@ -1,6 +1,5 @@
 from threading import *
 from PlotService import *
-import copy
 
 #threadsafe
 class monitor:
@@ -32,6 +31,9 @@ class monitor:
 
     def close(self):
         self.plotter.stop();
+
+    def setMaxPlotters(self,mp):
+        self.plotter.setMaxPlotters(mp);
 
     def takeSnapshot(self,m,v,i):
         self.plotter.takeSnapshot("Machine_"+m+"_V8_"+str(v)+"_isl_"+str(i));
@@ -272,13 +274,21 @@ class monitor:
             print spaces+items;
             print "_"*45
 
-    def prettyPrint(self):
+    def prettyPrint(self,currentM,currentV):
         with self.lock:
             for id in self.STATUS["machines"]:
                 machine = self.STATUS["machines"][id]["v8s"];
-                print "MACHINE_"+str(id);
+                
+                if id == currentM:
+                    print "[ MACHINE_"+str(id)+" ]";
+                else:
+                    print "MACHINE_"+str(id);
+                
                 for v8 in machine:
-                    print " V8_"+str(v8);
+                    if v8 == currentV and id == currentM:
+                        print "{ V8_"+str(v8)+" }";
+                    else:
+                        print " V8_"+str(v8);
                     self.__prettyPrintV8(id,v8," "*2);
 
     def debug(self):

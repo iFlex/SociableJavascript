@@ -1,13 +1,76 @@
 import sys, traceback
+import os
 
 class CommandLine:
+	
 	def __init__(self,policy):
 		self.p = policy;
 		self.monitor = self.p.monitor;
 
+		self.initCmds()
+	
+	def help(self):
+		print "Monitor Commands "
+		print "_"*80
+		keys = self.commands.keys()
+		keys.sort(key=str.lower);
+		for key in keys:
+			params = ""
+			types  = " " * len(key)
+			for i in range(0,len(self.commands[key]["param"])):
+				params += " ["+self.commands[key]["param"][i][1]+"("+self.commands[key]["param"][i][0]+")]"
+			print ">> "+key+params;
+			
+			if "desc" in self.commands[key]:
+				print "     "+self.commands[key]["desc"]
+				print ""
+
+		print "_"*80
+
+	def printUsage(self,cmd,params):
+		p = ""
+		for i in params:
+			p += " ["+str(i[1])+" ("+str(i[0])+")]"
+		print "Usage: "+cmd+" "+p
+
+	def matchCommand(self,cmd):
+
+		if cmd[0] in self.commands:
+			params = self.commands[cmd[0]]["param"]
+			method = self.commands[cmd[0]]["method"]
+			
+			if len(cmd) - 1 < len(params):
+				self.printUsage(cmd[0],params)
+			else:
+				actuals = []
+				for i in range(0,len(params)):
+					if params[i][0] == "int":
+						actuals.append(int(cmd[i+1]))
+					elif params[i][0] == "float":
+						actuals.append(float(cmd[i+1]))
+					elif params[i][0] == "str":
+						actuals.append(str(cmd[i+1]))
+				
+				ln = len(actuals)
+				if ln == 0:
+					method()
+				elif ln == 1:
+					method(actuals[0])
+				elif ln == 2:
+					method(actuals[0],actuals[1])
+				elif ln == 3:
+					method(actuals[0],actuals[1],actuals[2])
+				elif ln == 4:
+					method(actuals[0],actuals[1],actuals[2],actuals[3])
+		else:
+			if len(cmd[0]) == 0:
+				self.prettyPrint()
+			else:
+				print "Unknown command '"+cmd[0]+"'"
+
 	def run(self):
-		machine_id = "127.0.0.1";
-		v8_id      = 1;
+		self.machine_id = "127.0.0.1";
+		self.v8_id      = 1;
 		while True:
 			cmd = raw_input(">");
 			cmd = cmd.split(" ");
@@ -15,94 +78,111 @@ class CommandLine:
 				if cmd[0] == "exit":
 				   break;
 				
-				elif cmd[0] == "chhz":
-					if len(cmd) < 2:
-						print "Usage: chhz frequency"
-					else:
-						print "Changed frequency:"+str(self.p.changeSamplingFrequency(int(cmd[1])));
-
-				elif cmd[0] == "stats" or len(cmd[0]) == 0:
-				   self.monitor.prettyPrint();
-				
-				elif cmd[0] == "dbg":
-				   self.monitor.debug();
-				
-				elif cmd[0] == "where":
-					print "@ Machine_"+str(machine_id)+" V8_"+str(v8_id);
-				
-				elif cmd[0] == "loadpolicy" or cmd[0] == "ldp":
-					if len(cmd) < 2:
-						print "Usage: loadpolicy name"
-					else:
-						self.p.loadPolicy(cmd[1]);
-
-				elif cmd[0] == "chv8":
-					if len(cmd) < 2:
-						print "Usage: chv8 V8_id"
-					else:
-						v8_id      = int(cmd[1]);
-
-				elif cmd[0] == "switch":
-					if len(cmd) < 3:
-						print "Usage: switch machine_id V8_id"
-					else:
-						machine_id = cmd[1];
-						v8_id      = int(cmd[2]);
-
-				elif cmd[0] == "changePlotFocus" or cmd[0] == "cpf":
-					if len(cmd) < 2:
-						print "Usage: changePlotFocus isolateId"
-					else:
-						isl = int(cmd[1]);
-						self.monitor.changeMonitoredIsolate(machine_id,v8_id,isl);
-				
-				elif cmd[0] == "snapshot":
-					if len(cmd) < 2:
-						print "Usage: snapshot isolateId"
-					else:
-						self.monitor.takeSnapshot(machine_id,v8_id,int(cmd[1]));
-
-				elif cmd[0] == "poll":
-					comms = self.monitor.getCommunicators();
-					for id in comms:
-						machine = comms[id];
-						for v8 in machine:
-							machine[v8].send(self.p.requestBldr.statusReport(machine_id,v8_id));
-
-				elif cmd[0] == "suggest":
-					if len(cmd) < 3:
-						print "Usage: suggest isolateId heap_size";
-					else:
-						comm = self.monitor.getV8Comm(machine_id,v8_id);
-						comm.send(self.p.requestBldr.recommendHeapSize(machine_id,v8_id,int(cmd[1]),int(cmd[2]),0));
-				
-				elif cmd[0] == "setmax":
-					if len(cmd) < 3:
-						print "Usage: setmax isolateId max_heap_size";
-					else:
-						comm = self.monitor.getV8Comm(machine_id,v8_id);
-						comm.send(self.p.requestBldr.setMaxHeapSize(machine_id,v8_id,int(cmd[1]),int(cmd[2]),0));
-
-				elif cmd[0] == "kill":
-					if len(cmd) < 2:
-						print "Usage: kill isolateId";
-					else:
-						comm = self.monitor.getV8Comm(machine_id,v8_id);
-						comm.send(self.p.requestBldr.terminate(machine_id,v8_id,int(cmd[1]),0));
-
-				elif cmd[0] == "run":
-					if len(cmd) < 2:
-						print "Usage: run script_path";
-					else:
-						comm = self.monitor.getV8Comm(machine_id,v8_id);
-						comm.send(self.p.requestBldr.startScript(machine_id,v8_id,cmd[1]));
-
-				elif len(cmd[0]) > 0:
-					print "Unknown command '"+cmd[0]+"'";
-			
+				self.matchCommand(cmd);
 			except Exception as e:
 				print "* CLI ERROR:"+str(e);
 				traceback.print_exc(file=sys.stdout)
 
-		self.p.keepRunning = False	
-			
+		self.p.keepRunning = False
+
+	def prettyPrint(self):
+		os.system('cls')
+		os.system('clear');
+		self.monitor.prettyPrint(self.machine_id,self.v8_id)
+
+	def chhz(self,hz):
+		print "Changed frequency:"+str(self.p.changeSamplingFrequency(hz));
+
+	def where(self):
+		print "@ Machine_"+str(self.machine_id)+" V8_"+str(self.v8_id);
+
+	def chv8(self,id):
+		self.v8_id = id;
+
+	def switch(self,m,v):
+		self.machine_id = m;
+		self.v8_id = v;
+		self.where()
+
+	def takeSnapshot(self,iid):
+		self.monitor.takeSnapshot(self.monitor_id,self.v8_id,iid);
+
+	def suggest(self,id,size):
+		comm = self.monitor.getV8Comm(self.machine_id,self.v8_id);
+		comm.send(self.p.requestBldr.recommendHeapSize(self.machine_id,self.v8_id,id,size,0));
+
+	def setmax(self,id,size):
+		comm = self.monitor.getV8Comm(self.machine_id,self.v8_id);
+		comm.send(self.p.requestBldr.setMaxHeapSize(self.machine_id,self.v8_id,id,size,0));
+	
+	def runscript(self,script):
+		comm = self.monitor.getV8Comm(self.machine_id,self.v8_id);
+		comm.send(self.p.requestBldr.startScript(self.machine_id,self.v8_id,script));
+
+	def initCmds(self):
+		self.commands = {
+							"help":{
+								"param":[],
+								"method":self.help,
+							},
+							"chhz":{
+								"param":[("int","frequency in Hz")],
+								"method":self.chhz,
+								"desc":"Change the machine polling frequency."
+							},
+							"stats":{
+								"param":[],
+								"method":self.prettyPrint,
+								"desc":"Status report of all machines, V8 and isolates."
+							},
+							"dbg":{
+								"param":[],
+								"method":self.monitor.debug
+							},
+							"where":{
+								"param":[],
+								"method":self.where,
+								"desc":"What V8 from what machine the shell is set to at the moment."
+							},
+							"loadpolicy":{
+								"param":[("str","policy name")],
+								"method":self.p.loadPolicy,
+								"desc":"Load a difference memory management ploicy."
+							},
+							"chv8":{
+								"param":[("int","V8Id")],
+								"method":self.chv8,
+								"desc":"Change the V8 that the shell is set to."
+							},
+							"switch":{
+								"param":[("str","machineId"),("int","V8Id")],
+								"method":self.switch,
+								"desc":"Change the machine and V8 that the shell is set to."
+							},
+							"snapshot":{
+								"param":[("int","isolateId")],
+								"method":self.takeSnapshot,
+								"desc":"Take a snapshot of an isolate form the V8 the shell is set to."
+							},
+							"suggest":{
+								"param":[("int","isolateId"),("int","heap size in bytes")],
+								"method":self.suggest,
+								"desc":"Send hard limmit reccomendation to the isolate from the V8 the shell is set to."
+							},
+							"setmax":{
+								"param":[("int","isolateId"),("int","heap size in bytes")],
+								"method":self.setmax,
+								"desc":"Set hard limit reccodendation to the isolate from the V8 the shell is set to."	
+							},
+							"run":{
+								"param":[("str","script")],
+								"method":self.runscript,
+								"desc":"Run a JS script on the V8 the shell is set to."
+							},
+							"setMaxPlotters":{
+								"param":[("int","max")],
+								"method":self.monitor.setMaxPlotters,
+								"desc":"Set maximum plotter windows allowed"
+							}
+						}
+#TODO - screenshot all frames, save2file, saveall2file

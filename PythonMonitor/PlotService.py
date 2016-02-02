@@ -12,6 +12,7 @@ class PlotService:
 	def __init__(self,labels):
 		self.ready = False;
 		self.labels = labels;
+		self.maxPlotters = 10
 
 		#heavy parallel plotting
 		self.cond = Condition()
@@ -36,8 +37,13 @@ class PlotService:
 			print "Error starting server:"+self.server.getError();
 		return False;
 	
+	def setMaxPlotters(self,_max):
+		if _max > -1:
+			self.maxPlotters = _max
+
 	def extractUsefulData(self,info):
 		data = [];
+		
 		for i in self.labels:
 			if i in info:
 				if i == "heap" or i == "maxHeapSize":
@@ -55,17 +61,24 @@ class PlotService:
 
 		while True:
 			self.cond.acquire();
-			self.cond.wait();
+			if len(self.updateQ) == 0:
+				self.cond.wait();
+			
 			key = self.updateQ[0][0];
 			info = self.updateQ[0][1];
 			self.updateQ.pop(0);
+			
 			self.cond.release();
 			
 			data = self.extractUsefulData(info);
-
+			
 			if len(data) > 0:
 				#place the data in the structure to be updated
 				if key not in self.currentPlotData:
+
+					if len(self.currentPlotData.keys() > self.maxPlotters):
+						continue
+
 					self.currentPlotData[key] = [0,0];
 
 					if self.server.getAvailablePlottersCount() == 0:
@@ -96,7 +109,7 @@ class PlotService:
 								self.setTitle(active_key,"Idle");
 								self.server.releasePlotter(self.currentPlotData[active_key][0]);
 								#sendTo(key,{"action":"close"})
-								print self.server.getAvailablePlottersCount();
+								#print self.server.getAvailablePlottersCount();
 								toDel.append(active_key);
 						
 						for active_key in toDel:
@@ -106,7 +119,8 @@ class PlotService:
 	def update(self,key,data):
 		self.cond.acquire();
 		self.updateQ.append((key,data));
-		self.cond.notify();
+		if len(self.updateQ) == 1:
+			self.cond.notify();
 		self.cond.release();	
 			
 	def stop(self):

@@ -5,10 +5,16 @@ import copy
 import os
 import time
 import collections
+import timeit
+import math
 
 SINGLETON = 0
 class Plotter:
 
+    def setFPS(self,fps):
+        self.desiredFPS = 32;
+        self.period     = 1.0/self.desiredFPS;
+        
     def __init__(self,width,title):
         global SINGLETON
         if SINGLETON != 0:
@@ -16,6 +22,9 @@ class Plotter:
             return
 
         SINGLETON = 1
+
+        self.setFPS(30)
+        self.skipDraw   = 0;
 
         self.imgWritePath = "./plots/"
         self.rawWritePath = "./plotdata/"
@@ -46,14 +55,17 @@ class Plotter:
 
         #fig = pylab.gcf()
 
-        fig = plt.figure(figsize=(xinch,yinch))
-        fig.canvas.set_window_title(title)
-        plt.ion()
+        self.fig = plt.figure(figsize=(xinch,yinch))
+        self.fig.canvas.set_window_title(title)
+        self.ax = self.fig.add_subplot(111);
+
+        self.fig.show()
+        self.fig.canvas.draw()
+        #plt.ion()
         
         pylab.ylim([0,800])
         pylab.xlim([0,width])
 
-    #TODO
     def reset(self):
         self.endFullHistoryLog();
         self.Ydata = []
@@ -71,7 +83,6 @@ class Plotter:
 
     def plot(self,elements,tlabels):
         index = 0
-        
         if self.fullHistory == 0:
             self.startFullHistoryLog(tlabels)
 
@@ -79,7 +90,6 @@ class Plotter:
             if index == len(self.Ydata):
                 self.Ydata.append(copy.deepcopy(self.defaultY))
             self.Ydata[index].append(e)
-
             if self.fullHistory:
                 self.fullHistory.write(str(e)+",")
 
@@ -88,10 +98,18 @@ class Plotter:
         if self.fullHistory:
             self.fullHistory.write("\n")
         
+        time1 = time.time()
+        
+        if self.skipDraw > 0:
+            self.skipDraw -=1 
+            return
+
         ln = len(self.Ydata)
         for index in range(0,ln):
             if index == len(self.graphs):
-                graph = plt.plot(self.Xdata,self.Ydata[index])[0]
+                #print "PLOT:"+str(self.Ydata[index])
+                #graph = plt.plot(self.Xdata,self.Ydata[index])[0]
+                graph = self.ax.plot(self.Xdata,self.Ydata[index])[0]
                 self.graphs.append(graph)
                 self.labels.append(tlabels[index])
                 
@@ -104,10 +122,14 @@ class Plotter:
                 self.graphs[index].set_ydata(self.Ydata[index])
 
         try:
-            plt.draw() # update the plot
+            self.fig.canvas.draw() # update the plot
         except Exception as e:
             print "CAN'T PLOT - ISSUES WITH DATA MOST LIKELY"
             print e
+
+        time2 = time.time()
+        self.drawPeriod = time2-time1
+        self.skipDraw   = math.floor(self.drawPeriod / self.period)
 
     def save(self,prepend):
         name = prepend + self.title
@@ -119,6 +141,5 @@ class Plotter:
         plt.close()
 
     def setTitle(self,title):
-        fig = pylab.gcf()
-        fig.canvas.set_window_title(title)
+        self.fig.canvas.set_window_title(title)
         self.title = title

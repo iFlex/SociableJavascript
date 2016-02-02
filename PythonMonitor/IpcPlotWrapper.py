@@ -4,6 +4,8 @@ import json
 import math
 import sys
 from socket import *
+from threading import Thread
+from threading import Condition
 
 separator = ";";
 period = 1
@@ -18,6 +20,9 @@ addr = sys.argv[1].split(":");
 print "IPC::Connecting:"+str(addr)
 soc = socket(AF_INET,SOCK_STREAM);
 
+cond = Condition();
+dataQ = []
+
 #try to connect untill success
 while True:
 	try:
@@ -29,6 +34,7 @@ while True:
 
 plotter = Plotter(1024,sys.argv[2]);
 last = 0
+doExit = False;
 
 print "IPC::Connected, waiting for plot commands"
 
@@ -41,7 +47,7 @@ def handleResponse(cmd):
 	except Exception as e:
 		print "IPC::Json Error:"+str(e);
 		return False;
-	
+
 	try:
 		#handle commands
 		if "action" in cmd:
@@ -72,38 +78,64 @@ def handleResponse(cmd):
 		print "IPC::Plot Error:"+str(e)
 	return False;
 
-response = "";
-doExit = False;
-while not doExit:
-    buff = "";
-    try:
-        buff = soc.recv(1450);
-        #print buff;
-    except Exception as e:
-        break;
+def keepPlotting():
+	global dataQ,cond,doExit
 
-    i = 0
-    while i < len(buff):
-        while i < len(buff) and buff[i] == separator:
-            i += 1                  
-        
-        if i > 0 and len(response) > 0:
-            doExit = handleResponse(response)
-            response = ""
-        
-        if doExit:
-        	print "IPC::Exiting at:"+response;
-        	break;
+	response = ""
+	while not doExit:
+		buff = ""
+		cond.acquire()
+		if len(dataQ) == 0:
+			cond.wait()
+		buff = dataQ.pop()
+		cond.release()
+		
+		i = 0
+		while i < len(buff) and not doExit:
+			while i < len(buff) and buff[i] == separator:
+				i += 1                  
 
-        while i < len(buff) and buff[i] != separator:
-            response += buff[i]
-            i += 1
-print "IPC::Closing down the shop...";
-plotter.close();
-try:
-	soc.shutdown(SHUT_RDWR);
-except Exception as e:
-	print "IPC::IpcPlotWrapper socket shutdown error:"+str(e);
+			if i > 0 and len(response) > 0:
+			    doExit = handleResponse(response)
+			    response = ""
 
-soc.close();
+			if doExit:
+				print "IPC::Exiting at:"+response;
+				break;
+
+			while i < len(buff) and buff[i] != separator:
+			    response += buff[i]
+			    i += 1
+
+def keepReceiving():
+	global soc,cond,dataQ,plotter
+	while not doExit:
+		buff = "";
+		try:
+		    buff = soc.recv(1450);
+		    #print buff;
+		except Exception as e:
+		    break;
+
+		cond.acquire()
+		if len(dataQ) == 0:
+			cond.notify()
+		dataQ.append(buff)
+		cond.release()
+    
+	print "IPC::Closing down the shop...";
+	plotter.close();
+	try:
+		soc.shutdown(SHUT_RDWR);
+	except Exception as e:
+		print "IPC::IpcPlotWrapper socket shutdown error:"+str(e);
+
+	soc.close();
+
+thread = Thread(target = keepReceiving)
+thread.daemon = True
+thread.start();
+
+keepPlotting();
+
 print "IPC::ktnxbay"
