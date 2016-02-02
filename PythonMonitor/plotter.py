@@ -70,13 +70,13 @@ class Plotter:
         pylab.ylim([0,800])
         pylab.xlim([0,width])
 
-    def reset(self):
+    def reset(self,title):
         self.endFullHistoryLog();
         self.Ydata = []
         self.plotProgress = 0
 
+        self.setTitle(title)
         self.resetPlotPaths()
-        self.startFullHistoryLog()
 
     def startFullHistoryLog(self,labels):
         self.fullHistory = open(self.writePath+self.title+".csv","w")

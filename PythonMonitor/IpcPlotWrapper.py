@@ -55,8 +55,7 @@ def handleResponse(cmd):
 				plotter.save();
 				return True;
 			if cmd["action"] == "setTitle":
-				plotter.setTitle( cmd["title"] );
-				plotter.reset();
+				plotter.reset(cmd["title"]);
 				return False;
 			if cmd["action"] == "snapshot":
 				plotter.save();
