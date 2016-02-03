@@ -1,1 +1,2 @@
 chhz 30
+setMaxPlotters 2

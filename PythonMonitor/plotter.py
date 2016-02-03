@@ -67,7 +67,7 @@ class Plotter:
         self.fig.canvas.draw()
         #plt.ion()
         
-        pylab.ylim([0,800])
+        pylab.ylim([0,100])
         pylab.xlim([0,width])
 
     def reset(self,title):
@@ -75,6 +75,7 @@ class Plotter:
         self.endFullHistoryLog();
         self.Ydata = []
         self.plotProgress = 0
+        self.maxY = 0;
 
         self.setTitle(title)
         self.resetPlotPaths()
@@ -100,8 +101,12 @@ class Plotter:
             if index == len(self.Ydata):
                 self.Ydata.append(copy.deepcopy(self.defaultY))
             self.Ydata[index].append(e)
+            
             if self.fullHistory:
                 self.fullHistory.write(str(e)+",")
+            
+            if self.maxY < e:
+                self.maxY = e
 
             index += 1
 
@@ -130,7 +135,8 @@ class Plotter:
                     fancybox=True, shadow=True)
             else:
                 self.graphs[index].set_ydata(self.Ydata[index])
-
+        
+        pylab.ylim([0,self.maxY])
         try:
             self.fig.canvas.draw() # update the plot
         except Exception as e:
