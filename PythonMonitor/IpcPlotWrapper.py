@@ -7,9 +7,8 @@ from socket import *
 from threading import Thread
 from threading import Condition
 
-separator = ";";
+separator = "|";
 period = 1
-last_measurement = 0;
 
 if len(sys.argv) < 3:
 	print "IPC::Usage: python IpcPlotWrapper.py 127.0.0.1:14000 Title";
@@ -33,19 +32,19 @@ while True:
 		time.sleep(1);
 
 plotter = Plotter(1024,sys.argv[2]);
-last = 0
 doExit = False;
 
 print "IPC::Connected, waiting for plot commands"
 
 def handleResponse(cmd):
-	global plotter,last
+	global plotter
 		
 	try:
 		cmd = json.loads(cmd);
 		now = time.time()
 	except Exception as e:
 		print "IPC::Json Error:"+str(e);
+		print cmd
 		return False;
 
 	try:
@@ -61,65 +60,41 @@ def handleResponse(cmd):
 				plotter.save();
 				return False;
 
-		#handle data
-		#rpt = 1
-		#if last != 0:
-		#	rpt = math.floor(now - last) + 1
-		#plot the same value multiple times to account for no data received
-		#while rpt > 0:
 		plotter.plot(cmd["values"],cmd["labels"]);	
-		#	rpt -= 1;
 
-		last = now;
 	except Exception as e:
 		print "IPC::Plot Error:"+str(e)
 	return False;
 
-def keepPlotting():
-	global dataQ,cond,doExit
-
-	response = ""
-	while not doExit:
-		buff = ""
-		cond.acquire()
-		if len(dataQ) == 0:
-			cond.wait()
-		buff = dataQ.pop()
-		cond.release()
-		
-		i = 0
-		while i < len(buff) and not doExit:
-			while i < len(buff) and buff[i] == separator:
-				i += 1                  
-
-			if i > 0 and len(response) > 0:
-			    doExit = handleResponse(response)
-			    response = ""
-
-			if doExit:
-				print "IPC::Exiting at:"+response;
-				break;
-
-			while i < len(buff) and buff[i] != separator:
-			    response += buff[i]
-			    i += 1
-
 def keepReceiving():
-	global soc,cond,dataQ,plotter
+	global soc,cond,dataQ,plotter,doExit
+	request = ""
 	while not doExit:
 		buff = "";
 		try:
 		    buff = soc.recv(1450);
-		    #print buff;
 		except Exception as e:
 		    break;
+		ln = len(buff)
+		if ln == 0:
+			break;
 
-		cond.acquire()
-		if len(dataQ) == 0:
-			cond.notify()
-		dataQ.append(buff)
-		cond.release()
-    
+		i = 0
+		while i < ln:
+			while (i < ln) and (buff[i] != separator):
+				request += buff[i]
+				i+=1
+		
+			if not i < ln:
+				break;
+		
+			while (i < ln) and (buff[i] == separator):
+				i += 1
+		
+			if handleResponse(request):
+				break;
+			request = ""
+		
 	print "IPC::Closing down the shop...";
 	plotter.close();
 	try:
@@ -129,10 +104,6 @@ def keepReceiving():
 
 	soc.close();
 
-thread = Thread(target = keepReceiving)
-thread.daemon = True
-thread.start();
-
-keepPlotting();
+keepReceiving();
 
 print "IPC::ktnxbay"

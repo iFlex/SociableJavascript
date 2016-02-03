@@ -98,5 +98,5 @@ class Server:
 		if(len(self.startedPlotters) > self.maxPlotters):
 			return False;
 		
-		self.startedPlotters.append(Popen(["python","IpcPlotWrapper.py","127.0.0.1:14000",key],0))#,close_fds=True,stdout=file("/dev/null")));
+		self.startedPlotters.append(Popen(["python","IpcPlotWrapper.py","127.0.0.1:"+str(self.port),key],0))#,close_fds=True,stdout=file("/dev/null")));
 		return True;	
