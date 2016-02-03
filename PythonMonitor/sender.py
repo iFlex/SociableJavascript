@@ -1,8 +1,10 @@
 import json
+
 packet_size = 1450;
-separator = ";"
+separator = "|"
+
 def sendTo(soc,data):
-	global packet_size,separator
+	global packet_size,separator,lock
 
 	try:
 		data = json.dumps(data);
@@ -11,7 +13,7 @@ def sendTo(soc,data):
 		return 1;
 
 	#data = data + separator*(packet_size - len(data));
-	data += ";"
+	data += separator
 	
 	try:
 		soc.send(data);

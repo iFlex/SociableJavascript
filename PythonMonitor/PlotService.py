@@ -23,7 +23,7 @@ class PlotService:
 		self.interestList = []; #list of isolates to take interest in and ignore the rest
 	
 	def init(self):
-		self.server = Server(14000);
+		self.server = Server(14009);
 		print "Starting plotter server...";
 		if self.server.start():
 			print "Plotter server started";
@@ -107,16 +107,15 @@ class PlotService:
 						toDel = []
 						for active_key in self.currentPlotData.keys():
 							if key in active_key:
-								self.takeSnapshot(active_key);
-								self.setTitle(active_key,"Idle");
 								self.server.releasePlotter(self.currentPlotData[active_key][0]);
+								self.currentPlotData[active_key][0] = 0;
 								#sendTo(key,{"action":"close"})
 								#print self.server.getAvailablePlottersCount();
 								toDel.append(active_key);
-						
+								
 						for active_key in toDel:
 							del self.currentPlotData[active_key];
-						
+					
 	
 	def update(self,key,data):
 		self.cond.acquire();

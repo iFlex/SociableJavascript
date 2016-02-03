@@ -93,8 +93,8 @@ Future Work
 32) Explore d8, Visual VM, Intel Vtune, GCspy
 33) Implement policy
 34) Timing, HeapSize, UsedMemory - factor into policy
-35) Aggregator per machine - total memory used
-36) Pluggability of Ploicy - descriptor file that can be interpreted by the policy.py so that any policy can be used
+DONE >> 35) Aggregator per machine - total memory used
+DONE >> 36) Pluggability of Ploicy - descriptor file that can be interpreted by the policy.py so that any policy can be used
 
 
 *D* evaluation of the monitor

@@ -10,7 +10,7 @@ class server:
 		
 		self.maxConcurrentInstances = 50;
 		self.address = ""
-		self.port = 15000
+		self.port = 15004
 		self.error = "";
 		
 		self.keepRunning = True;
@@ -51,7 +51,7 @@ class server:
 			self.keepRunning = False;
 			return False;
 
-		print "Starting V8 registry server...";
+		print "Starting V8 registry server @ port "+str(self.port);
 		self.thread = Thread(target = self.listen)
 		self.thread.daemon = True
 		self.thread.start();

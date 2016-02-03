@@ -122,8 +122,6 @@ class Plotter:
         ln = len(self.Ydata)
         for index in range(0,ln):
             if index == len(self.graphs):
-                #print "PLOT:"+str(self.Ydata[index])
-                #graph = plt.plot(self.Xdata,self.Ydata[index])[0]
                 graph = self.ax.plot(self.Xdata,self.Ydata[index])[0]
                 self.graphs.append(graph)
                 self.labels.append(tlabels[index])
