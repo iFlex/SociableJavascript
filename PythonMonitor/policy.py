@@ -17,7 +17,7 @@ class Policy:
         self.cli = CommandLine(self);
         
         print "Loading default policy..."
-        self.policyDefault = "./policies/default.py"
+        self.policyDefault = "./Policies/default.py"
         self.policy = self.__loadModule(self.policyDefault);
         if self.policy == 0:
             print "Could not load default policy. You will need to load one manually using the command line";
@@ -25,7 +25,7 @@ class Policy:
             self.policy.init();
 
         #load default configuration
-        self.ldConfig("zmonitorConfig.txt");
+        self.ldConfig("/zmonitorConfig.txt");
         
         #starting cli
         print " Starting policy & updater thred...";
@@ -47,6 +47,7 @@ class Policy:
 
     def ldConfig(self,fileN):
         print "Loading configuration"+"_"*55
+        fileN = "./Configuration/"+fileN
         try:
             with open(fileN) as f:
                 content = f.readlines()
