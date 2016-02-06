@@ -1,6 +1,7 @@
 from threading import *
 from PlotService import *
 
+#TODO: update if the message type is update
 #threadsafe
 class monitor:
     def __init__(self,plotMode,plotService):

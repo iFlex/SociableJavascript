@@ -1,0 +1,31 @@
+* plots:
+	> plot outputs
+
+* Plotter:
+	IpcPlotWrapper	
+	plotter
+
+* PlotService:
+	server
+	service
+	sender
+
+* Communication:
+	requestBuilder
+	communicator
+	server
+
+* Management:
+	cli
+	monitor
+	policy
+
+* Policies:
+	>plug and play policies
+	default.py
+
+* Configuration:
+	>plug and play config files
+	default.cfg
+
+main
