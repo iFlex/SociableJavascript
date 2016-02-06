@@ -49,7 +49,7 @@ class Server:
 			self.keepRunning = False;
 			return False;
 
-		print "Starting PlotServer registry server...";
+		print "Starting PlotServer registry server @ port "+str(self.port);
 		self.thread = Thread(target = self.listen)
 		self.thread.daemon = True
 		self.thread.start();

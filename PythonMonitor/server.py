@@ -5,12 +5,12 @@ from communicator import *
 import sys, traceback
 
 class server:
-	def __init__(self,monitor):
+	def __init__(self,monitor,port):
 		self.soc = socket(AF_INET,SOCK_STREAM);
 		
 		self.maxConcurrentInstances = 50;
 		self.address = ""
-		self.port = 15004
+		self.port = port
 		self.error = "";
 		
 		self.keepRunning = True;

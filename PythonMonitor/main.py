@@ -15,8 +15,9 @@ print "Reading configuration...";
 #flags
 DEBUG = True
 #Defaults
-mon = monitor("ALL");
-srv = server(mon);
+pltSvc = PlotService(["heap"],15001)
+mon = monitor("ALL",pltSvc);
+srv = server(mon,15004);
 
 if srv.start() == False:
     print "Error starting registry server - "+srv.getError();

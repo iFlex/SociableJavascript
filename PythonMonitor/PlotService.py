@@ -9,11 +9,11 @@ import json
 import random
 
 class PlotService:
-	def __init__(self,labels):
+	def __init__(self,labels,port):
 		self.ready = False;
 		self.labels = labels;
 		self.maxPlotters = 10
-
+		self.port = port;
 		#heavy parallel plotting
 		self.cond = Condition()
 		self.updateQ = [];
@@ -23,7 +23,7 @@ class PlotService:
 		self.interestList = []; #list of isolates to take interest in and ignore the rest
 	
 	def init(self):
-		self.server = Server(14009);
+		self.server = Server(self.port);
 		print "Starting plotter server...";
 		if self.server.start():
 			print "Plotter server started";
@@ -46,7 +46,7 @@ class PlotService:
 		
 		for i in self.labels:
 			if i in info:
-				if i == "available":
+				if i == "available" and "heap" in info:
 					info[i] += info["heap"]
 				if i == "heap" or i == "maxHeapSize" or i == "available":
 					data.append(info[i]/1000000);

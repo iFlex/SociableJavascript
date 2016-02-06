@@ -7,10 +7,10 @@ import json
 import time
 
 #Defaults
-address = "127.0.0.1"
-port = 15000
+address = raw_input("IP:")
+port = input("port:")
 #network
-m = monitor();
+m = monitor("ALL");
 id = m.addMachine(address);
 print id;
 idv = m.addV8(id,"no comm");

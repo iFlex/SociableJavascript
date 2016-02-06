@@ -95,8 +95,9 @@ Future Work
 34) Timing, HeapSize, UsedMemory - factor into policy
 DONE >> 35) Aggregator per machine - total memory used
 DONE >> 36) Pluggability of Ploicy - descriptor file that can be interpreted by the policy.py so that any policy can be used
+37) Improve mock v8 to allow Jeremy to write and test policy, report from existing CSV files rather than random value
 
-
+* plot crashing binarytree and see how available memory works
 *D* evaluation of the monitor
 *D* talk about testing
 
@@ -104,6 +105,7 @@ DONE >> 36) Pluggability of Ploicy - descriptor file that can be interpreted by 
 
 * Norm for Garbage Collection aware OS norm
 * Keep security in mind
+* Mention implementation trick to improve rendering of graphs
 
 *D*
 Dissertation - >

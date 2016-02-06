@@ -3,7 +3,7 @@ from PlotService import *
 
 #threadsafe
 class monitor:
-    def __init__(self,plotMode):
+    def __init__(self,plotMode,plotService):
         self.STATUS = {"machines":{}};
         self.FreeMachineIDS = list();
         self.lock = RLock();
@@ -12,8 +12,7 @@ class monitor:
         self.plotMode = 0;
         self.setPlotMode(plotMode);
 
-        self.plotter = PlotService(["heap","available","maxHeapSize"]);
-
+        self.plotter = plotService;
         self.plotter.init();
 
     def setPlotMode(self,mode):
