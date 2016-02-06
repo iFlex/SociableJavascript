@@ -1,5 +1,5 @@
-from monitor import *
-from requestbuilder import *
+from ..Management.monitor import *
+from ..Management.Communication.requestbuilder import *
 
 m = monitor();
 id = m.addMachine("127.0.0.1");

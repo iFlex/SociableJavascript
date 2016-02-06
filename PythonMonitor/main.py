@@ -1,8 +1,8 @@
 #!/bin/src/python
-from communicator import *
-from monitor import *
-from server import *
-from policy import *
+from Management.Communication.server import *
+from Management.monitor import *
+from Management.policy import *
+from PlotFacility.PlotService import *
 import time
 import subprocess
 

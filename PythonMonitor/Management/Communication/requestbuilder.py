@@ -1,8 +1,6 @@
 '''
 Create a request for a certain v8 process
 '''
-from monitor import *
-
 class RequestBuilder:
     def __init__(self, monitor):
         self.monitor = monitor;

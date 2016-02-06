@@ -1,4 +1,4 @@
-from requestbuilder import *
+from Communication.requestbuilder import *
 from cli import *
 from threading import Thread
 import time;

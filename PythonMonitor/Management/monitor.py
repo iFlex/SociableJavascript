@@ -1,5 +1,4 @@
 from threading import *
-from PlotService import *
 
 #TODO: update if the message type is update
 #threadsafe
@@ -14,7 +13,8 @@ class monitor:
         self.setPlotMode(plotMode);
 
         self.plotter = plotService;
-        self.plotter.init();
+        if self.plotter != 0:
+            self.plotter.init();
 
     def setPlotMode(self,mode):
         if mode == "NONE":

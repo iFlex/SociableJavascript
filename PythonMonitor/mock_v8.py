@@ -1,6 +1,6 @@
 #!/bin/src/python
-from requestbuilder import *
-from monitor import *
+from Management.Communication.requestbuilder import *
+from Management.monitor import *
 from socket import *
 from base64 import *
 import json
@@ -10,7 +10,7 @@ import time
 address = raw_input("IP:")
 port = input("port:")
 #network
-m = monitor("ALL");
+m = monitor("NONE",0);
 id = m.addMachine(address);
 print id;
 idv = m.addV8(id,"no comm");
