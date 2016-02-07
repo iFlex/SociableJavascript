@@ -5,15 +5,15 @@ from subprocess import *
 import sys, traceback
 
 class Server:
-	def __init__(self,port):
+	def __init__(self):
 		self.soc = socket(AF_INET,SOCK_STREAM);
 		
 		self.maxConcurrentInstances = 50;
 		self.address = ""
-		self.port = port
 		self.error = "";
 
 		self.keepRunning = True;
+		self.isListening = False;
 		self.lock = Condition();
 
 		self.maxPlotters = 50;
@@ -27,6 +27,7 @@ class Server:
 			self.error = "PlotServer::Listen error:"+str(e);
 			return;
 
+		self.isListening = True;
 		while self.keepRunning:
 			try:
 				soc,addr = self.soc.accept()
@@ -37,11 +38,13 @@ class Server:
 				print self.error;
 				traceback.print_exc(file=sys.stdout)
 				print "###PlotServer shutting down!";
-				return;
-
-
-	def start(self):
+				break;
+		self.isListening = False;
+	
+	def start(self,port):
 		#bind to port
+		self.port = port;
+		self.keepRunning = True
 		try:
 			self.soc.bind((self.address,self.port));
 		except Exception as e:
@@ -50,9 +53,11 @@ class Server:
 			return False;
 
 		print "Starting PlotServer registry server @ port "+str(self.port);
-		self.thread = Thread(target = self.listen)
-		self.thread.daemon = True
-		self.thread.start();
+		
+		if not self.isListening: 
+			self.thread = Thread(target = self.listen)
+			self.thread.daemon = True
+			self.thread.start();
 
 		return True;
 

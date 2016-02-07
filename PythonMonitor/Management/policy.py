@@ -26,7 +26,7 @@ class Policy:
 
         #load default configuration
         self.ldConfig("/zmonitorConfig.txt");
-        
+        self.bytesInMb = 1024*1024
         #starting cli
         print " Starting policy & updater thred...";
         self.thread = Thread(target = self.run)
@@ -91,7 +91,7 @@ class Policy:
 
     def loadPolicy(self,policyName):
         print "Loading policy "+policyName;
-        self.policy = self.__loadModule("./policies/"+policyName);
+        self.policy = self.__loadModule("./Policies/"+policyName);
         
         if self.policy == 0:
             print "Reverting to default policy...";
@@ -130,10 +130,13 @@ class Policy:
                                 continue
 
                             for suggestion in suggestions:
-                                request  = self.requestbuilder.setMaxHeapSize(idd,v8,suggestion["id"],suggestion["hardHeapLimit"]);
-                                request2 = self.requestbuilder.recommendHeapSize(idd,v8,suggestion["id"],suggestedHeapSize,suggestion["softHeapLimit"])
-                                requestQ.append((comm,request))
-                                requestQ.append((comm,request2))
+                                if "hardHeapLimit" in suggestion:
+                                    request  = self.requestBldr.setMaxHeapSize(idd,v8,suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);
+                                    requestQ.append((comm,request))
+                                
+                                if "softHeapLimit" in suggestion: 
+                                    request2 = self.requestBldr.recommendHeapSize(idd,v8,suggestion["id"],suggestion["softHeapLimit"]/self.bytesInMb,0)
+                                    requestQ.append((comm,request2))
                                 
             while len(requestQ) > 0:
                 comm,request = requestQ.pop()

@@ -1,5 +1,7 @@
+runningAvg = {}
+startOffset = 10;
 def init():
-	print "ALIVE"
+	print "POLICY:Instantiated default running average policy"
 
 '''
 	Takes in:
@@ -14,5 +16,15 @@ def init():
 	for each isolate, the soft limit is less than the hard limit
 '''	
 def calculate(totalAvailableMemory,isolates):
-	
-	return [];
+	global runningAvg,startOffset
+	result = []
+	for isolate in isolates:
+		if isolate not in runningAvg:
+			runningAvg[isolate] = {"count":0,"sum":0}
+		runningAvg[isolate]["count"] += 1;
+		runningAvg[isolate]["sum"]   += isolates[isolate]["heap"];
+		
+		if runningAvg[isolate]["count"] > startOffset:
+			result.append({"id":isolate,"hardHeapLimit":(runningAvg[isolate]["sum"]/runningAvg[isolate]["count"])})
+	print result;
+	return result;

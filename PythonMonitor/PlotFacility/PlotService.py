@@ -20,21 +20,26 @@ class PlotService:
 		#TODO:
 		self.ignoreList = [];   #list of isolates to ignore 
 		self.interestList = []; #list of isolates to take interest in and ignore the rest
-	
-	def init(self):
-		self.server = Server(self.port);
+		#start server
+		self.server = Server();
+		self.reinit(self.port);
+
+		#start updater thread
+		self.thread = Thread(target = self._update)
+		self.thread.daemon = True
+		self.thread.start();
+
+
+	def reinit(self,port):
+		self.port = port;
 		print "Starting plotter server...";
-		if self.server.start():
+		if self.server.start(self.port):
 			print "Plotter server started";
 			self.ready = True;
-			self.thread = Thread(target = self._update)
-			self.thread.daemon = True
-			self.thread.start();
-
-			return True;
 		else:
+			self.ready = False;
 			print "Error starting server:"+self.server.getError();
-		return False;
+		return self.ready;
 	
 	def setMaxPlotters(self,_max):
 		if _max > -1:
