@@ -7,6 +7,7 @@ from base64 import *
 import json
 import time
 import sys
+import random
 
 address = 0
 port = 0 
@@ -70,6 +71,10 @@ def fakeAnswer(mid,vid,msg):
             if i < lbln: 
                 request["isolates"][str(IDs[2])][labels[i]] = int(line[i])*1000000;
                 request["isolates"][str(IDs[2])]["action"] = "update";
+    else:
+        for i in request["isolates"]:
+            request["isolates"][str(IDs[2])]["heap"] = random.randint(0,800)*1000000;
+            request["isolates"][str(IDs[2])]["action"] = "update";
 
     request["global"]["action"] = "update";
     comm.send(request);
