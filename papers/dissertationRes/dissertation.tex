@@ -1,0 +1,99 @@
+\documentclass[a4paper]{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{url}
+\input{cover}
+
+\begin{document}
+\maketitle
+\newpage
+\begin{abstract}
+   As JavaScript has grown in popularity, it has also became more versatile. More application running JavaScript on the same machine may result in more memory contention among processes. To make the best use of the system resources while maximising utilisation, the applications would need to be aware of each other's memory needs and cooperate in order for them to continuously have access to the minimum running requirements. To achieve system wide awareness at an individual application level, we propose a client-server model, where a monitor process keeps track of all running client applications and controls how much memory hey are allocated. We present a set of policies based on social welfare theory that model JavaScript execution environments as individuals and evaluate how they impact the execution speed and memory footprint of each application. An application with a low memory footprint that has acceptable throughput could make JavaScript a suitable choice for highly multiprocessing and elastic systems. 
+\end{abstract}
+\newpage
+
+\tableofcontents
+
+\newpage
+\section{Introduction}
+%expand
+JavaScript is a highly dynamic language for web-based applications.\cite{intro} 
+It began as a simple solution for animating web-page content, but has evolved into a multipurpose scripting language with growing support and popularity. A large part of the functionality of web products is now implemented in JavaScript and there are initiatives, such as NodeJS\cite{nodejs}, that aim to bring this language to the server side. Since the language is interpreted, browser vendors implement JavaScript virtual machines that perform just in time compilation and execute the code. Some of the most popular ones are V8 from Google Chrome\cite{v8}, Nitro from Apple Safari, Spidermonkey\cite{spidermk} from Mozilla Firefox and Chakra\cite{chakra} from Microsoft Edge.
+\\\\
+One reason for the considerable popularity of the language is its simplicity. A key factor of this simplicity is that JavaScript programmers do not have to handle memory. This allows developers to focus on the high level functionality such as how an application responds to a certain request rather than on low level implementation details such as how much memory a new object needs and when that memory should be freed. The responsibility of memory management is passed onto the virtual machine that executes the program. While memory allocation may be straight forward, a new block of memory is requested from the host operating system when the application creates a new object, freeing memory can not be done in the same fashion as an object that goes out of scope might still be referenced by a live object. The virtual machine needs to inspect the live objects and detect which ones have truly expired and free the memory they occupy. This process is called garbage collection.  
+%add definition of garbage collection
+\\\\
+These virtual machines are optimised to offer the best possible performance from a user perspective, this means that speed of execution and steady rendering are most important. In the case of V8, the engineers that designed it are using the term "jank" to refer to noticeable rendering pauses caused by JavaScript garbage collection and are currently striving to minimise it. One example of jank is when the user scrolls the page and the animation has noticeable pauses that make it look discontinuous. Jank occurs because in order to carry out garbage collection the execution of the JavaScript application needs to be paused. To reduce the impact observable by the user, garbage collection pauses are divided into small execution sequences and are interleaved with long execution sequences. This improves the user experience but increases the memory footprint of the application as unused memory is held for longer than necessary.
+
+%The purpose of this project is to modify the V8 virtual machine so that its memory consumption will be managed according to the economic utility principles and evaluate the results. By reducing the available memory the virtual machine will be forced to carry out more garbage collection, thus increasing the overall execution time. The aim is to obtain a considerable heap footprint reduction while keeping performance within acceptable levels.
+
+%The approach adopted was similar to the Java Forseti system developed at the University of Glasgow\cite{forseti}. To implement this system, changes need to be done to the V8 engine and a monitor process that would implement the policy would need to be built. The V8 engine would need modifications that allow dynamic expanding and shrinking of a running context's (isolate) heap size and a network server that receives and executes commands issued by the monitor. A communication protocol would based on JSON would describe the commands and responses to be passed between the monitor and the V8. %diagram
+
+%The system would work as follows: a V8 instance would run either by itself or inside the Chrome browser. The manager process will connect to the V8's server. This will cause the server to send periodic updates to the manager with the throughput and memory usage of each isolate (running context). The manager will use this information to calculate how large the heap of each isolate should be and will send the calculated value back to the v8. The engine will then try to adapt each isolate's memory consumption to match the recommended value.
+
+%The main benefit of enforcing a global memory utilisation policy over all of the JavaScript running contexts on a machine is reducing competition for resources and increasing cooperation. Garbage collection will be done more frequently, thus freeing up more memory and allowing more instances to run on the same machine. The end goal would be to increase the multi-programming level without hindering performance.
+%expand
+\section{Background}
+%java script
+%garbage collection
+%v8
+\subsection{JavaScript}
+\subsection{Garbage Collection}
+%Garbage collection is really a double-edged sword. On the positive side, it allows for a massive simplification in languages that use it, since memory no longer needs to be managed explicitly by the programmer. It reduces (but does not eliminate!) a large class of errors, memory leaks, which plague large long-running applications. For some programs, it can even improve performance.
+
+%On the other hand, using a garbage collected language means relinquishing a great deal of control over how memory is managed in your program, which is an especially big concern for mobile applications. In JavaScript's case, you relinquish all control over how memory is managed: the ECMAScript specification doesn't expose any interface to the garbage collector. There's no way for a web app to measure its memory usage or provide any hints to the garbage collector.
+
+%Performance of garbage collected languages in not strictly better or worse than languages without managed memory. In C, allocating and freeing objects can be costly, since heap bookkeeping tends to be more complicated if you need to free objects later. With managed memory, allocation usually means just incrementing a pointer, but as we'll see, you have to pay for it eventually when you run out of memory and the garbage collector kicks in. Poorly implemented garbage collection systems can lead to long, unpredictable and embarrassing pauses, which make interactive systems (especially those with animations) frustrating to use. Reference counting is frequently touted as an alternative to garbage collection, but these systems can have the same unpredictable pauses when the last reference to a large sub-graph of objects is removed. Reference counting systems can also have a fairly large overhead for executing numerous load/increment/store instructions.
+
+%For better or worse, JavaScript requires garbage collection. V8's implementation has improved and matured significantly in the last year. Performance is pretty good, pauses are short, and overhead is pretty manageable.
+\subsection{Why control resource allocation}
+
+\section{Requirements}
+\subsection{Functional Requirements}
+\subsection{Non-Functional Requirements}
+
+\section{Design}
+\subsection{Overview}
+\subsection{V8}
+\subsection{V8 Modifications}
+\subsection{Monitor}
+\section{Implementation}
+\subsection{Overview}
+\subsection{V8 Client}
+\subsection{Monitor}
+\section{Evaluation}
+\section{Conclusion}
+\section{Future Work}
+
+%more accurate biblio
+\begin{thebibliography}{9}
+\bibitem{intro}
+  Gregor Richards, Andreas Gal, Brendan Eich, Jan Vitek,
+  \emph{Automated Construction of JavaScript Benchmarks},
+\bibitem{v8gctour}
+A Tour of the V8 Garbage Collector
+\url{http://jayconrod.com/posts/55/a-tour-of-v8-garbage-collection},
+\bibitem{nodejs}
+  NWJS Project
+  \url{http://nwjs.io/}
+\bibitem{nwjs}
+  NodeJS Project
+  \url{https://nodejs.org/en/}
+\bibitem{v8}
+  V8 Engine
+  \url{https://developers.google.com/v8/}
+\bibitem{spidermk}
+SpidermonkeyEngine
+\url{https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey}
+\bibitem{chakra}
+Chackra Engine
+\url{https://github.com/Microsoft/ChakraCore}
+\bibitem{forseti}
+  Callum Cameron, Jeremy Singer, David Vengerov
+  \emph{The Judgment of Forseti: Economic Utility for Dynamic Heap Sizing of Multiple Runtimes},  
+\end{thebibliography}
+\end{document}
