@@ -191,6 +191,16 @@ class CommandLine:
 								"param":[("str","configuration")],
 								"method":self.p.ldConfig,
 								"desc":"Load and apply configuration file"
+							},
+							"setPlotMode":{
+								"param":[("str","mode")],
+								"method":self.monitor.setPlotMode,
+								"desc":"Set the plot mode: NONE,MACHINE,ISOLATE,ALL"
+							},
+							"setPlotServerPort":{
+								"param":[("int","port")],
+								"method":self.monitor.restartPlotterService,
+								"desc":"Restart the plotter server on a different port"
 							}
 						}
 #TODO - screenshot all frames, stop plotter, stop all plotters

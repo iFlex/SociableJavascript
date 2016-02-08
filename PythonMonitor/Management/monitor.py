@@ -13,8 +13,9 @@ class monitor:
         self.setPlotMode(plotMode);
 
         self.plotter = plotService;
-        if self.plotter != 0:
-            self.plotter.init();
+
+    def restartPlotterService(self,port):
+        self.plotter.reinit(port);
 
     def setPlotMode(self,mode):
         if mode == "NONE":
