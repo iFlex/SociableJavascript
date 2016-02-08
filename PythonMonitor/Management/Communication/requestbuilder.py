@@ -1,6 +1,7 @@
 '''
 Create a request for a certain v8 process
 '''
+#V8 and Isolate IDs are strings
 class RequestBuilder:
     def __init__(self, monitor):
         self.monitor = monitor;
@@ -15,7 +16,7 @@ class RequestBuilder:
 
         isolates = v8["isolates"].keys();
         for i in isolates:
-            result["isolates"][i] = {"action":""};
+            result["isolates"][str(i)] = {"action":""};
         
         result["TotalIsolates"] = len(isolates);
         return result;
@@ -33,7 +34,8 @@ class RequestBuilder:
             result = self.makeDefaultRequest(machineId,v8Id);
             if result == 0:
                 return 0;
-        
+
+        isolateId = str(isolateId)
         if  isolateId in result["isolates"]:
             result["isolates"][isolateId]["action"] = "status";
         
@@ -45,6 +47,7 @@ class RequestBuilder:
             if result == 0:
                 return 0;
 
+        isolateId = str(isolateId)
         if  isolateId in result["isolates"]:
             result["isolates"][isolateId]["action"] = "set_heap_size";
             result["isolates"][isolateId]["heap"] = size;
@@ -57,13 +60,14 @@ class RequestBuilder:
             if result == 0:
                 return 0;
 
+        isolateId = str(isolateId)
         if isolateId in result["isolates"]:
             result["isolates"][isolateId]["action"] = "set_max_heap_size";
             result["isolates"][isolateId]["heap"] = size;
             return result;
         else:
             print "The V8 you want to control does not have an isolate_"+str(isolateId);
-            print result["isolates"]
+            print "Available isolates @ "+machineId+"_V8_"+str(v8Id)+" "+str(result["isolates"])
         return 0;
 
 
@@ -83,6 +87,7 @@ class RequestBuilder:
             if result == 0:
                 return 0;
 
+        isolateId = str(isolateId)
         if  isolateId in result["isolates"]:
             result["isolates"][isolateId]["action"] = "terminate";
             return result;

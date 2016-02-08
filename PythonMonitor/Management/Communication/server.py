@@ -36,7 +36,7 @@ class server:
 		 		else:
 		 			machineId = machineId["id"];
 
-		 		communicator(soc,self.monitor,machineId)
+		 		communicator(soc,self.monitor,machineId,self.monitor.update);
 			except Exception as e:
 				self.error = "Accept error:"+str(e);
 				print self.error;

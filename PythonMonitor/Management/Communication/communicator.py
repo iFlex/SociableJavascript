@@ -7,7 +7,7 @@ from socket import *
 
 class communicator:
 
-    def __init__(self,socket,monitor,machineId):
+    def __init__(self,socket,monitor,machineId,requestCallback):
         global id;
         self.lock = RLock();
         self.keepRunning = True;
@@ -20,7 +20,8 @@ class communicator:
         self.monitor = monitor;
         self.mid = machineId;
         self.v8id = monitor.addV8(machineId,self);
-        
+        self.requestCallback = requestCallback;
+
         #start listener thread
         print "New V8_"+str(self.v8id)+" @ machine_"+str(machineId);
         self.thread = Thread(target = self.listen)
@@ -50,7 +51,9 @@ class communicator:
             response = b64decode(response);
             #print "R:"+response;
             message = json.loads(response);
-            self.monitor.update(self.mid,self.v8id,message);
+            self.requestCallback(self.mid,self.v8id,message);
+            #self.monitor.update(self.mid,self.v8id,message);
+
         except Exception as e:
             print "Error parsing response from V8 instance:"+str(e);
             traceback.print_exc(file=sys.stdout)

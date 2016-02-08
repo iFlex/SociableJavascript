@@ -2,6 +2,7 @@ from threading import *
 
 #TODO: update if the message type is update
 #threadsafe
+#V8 and IsolateIDs are numeric
 class monitor:
     def __init__(self,plotMode,plotService):
         self.STATUS = {"machines":{}};
@@ -237,8 +238,6 @@ class monitor:
         if self.plotMode == 3:
             self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
 
-        
-
     def update(self,machineId,v8Id,response):
         with self.lock:
             nris = response["TotalIsolates"];
@@ -265,7 +264,7 @@ class monitor:
         if(v8 == 0):
             print spaces+"Could not find v8 instance";
             return;
-
+ 
         for i in v8["isolates"]:
             isolate = v8["isolates"][i];
             items = "("+str(isolate["id"])+") ";
