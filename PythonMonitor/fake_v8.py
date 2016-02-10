@@ -61,7 +61,6 @@ def fakeAnswer(mid,vid,msg):
         print "LINE:("+str(len(line))+") "+line
         if len(line) < 3:
             terminate = True;
-            comm.close()
 
         line = line.split(",")[:-1];
         lbln = len(labels)
@@ -105,3 +104,6 @@ while not terminate:
 
     print "Updater thread exited..."
     time.sleep(3);
+print "Closing last communicator"
+comm.close()
+print "ktnxbay"

@@ -121,6 +121,16 @@ class CommandLine:
 	def runscript(self,script):
 		comm = self.monitor.getV8Comm(self.machine_id,self.v8_id);
 		comm.send(self.p.requestBldr.startScript(self.machine_id,self.v8_id,script));
+	
+	def setNewMachineMemoryLimit(self,limit):
+		self.monitor.newMachineMemoryLimit = limit;
+
+	def setMachineMemoryLimit(self,mid,limit):
+		machine = self.monitor.getMachine(mid);
+		if machine != 0:
+			machine["memoryLimit"] = limit;
+			return True;
+		return False;
 
 	def initCmds(self):
 		self.commands = {
@@ -201,6 +211,16 @@ class CommandLine:
 								"param":[("int","port")],
 								"method":self.monitor.restartPlotterService,
 								"desc":"Restart the plotter server on a different port"
+							},
+							"setMachineMemoryLimit":{
+								"param":[("str","machine_id"),("int","memory_limit_in_MB")],
+								"method":self.setMachineMemoryLimit,
+								"desc":"Set the global memory limit for all JS instances per machine"
+							},
+							"setNewMachineMemoryLimit":{
+								"param":[("int","memory_limit_in_MB")],
+								"method":self.setNewMachineMemoryLimit,
+								"desc":"Set the global memory limit for all JS instances for new machines that connect"
 							}
 						}
 #TODO - screenshot all frames, stop plotter, stop all plotters

@@ -8,7 +8,7 @@ class monitor:
         self.STATUS = {"machines":{}};
         self.FreeMachineIDS = list();
         self.lock = RLock();
-
+        self.newMachineMemLimit = 1024;
         #PLOT MODES: 0 - NO PLOTTING, 1 - PLOT PER MACHINE ONLY, 2 - PLOT PER ISOLATE ONLY, 3 - PLOT PER ISOLATE AND PER MACHINE
         self.plotMode = 0;
         self.setPlotMode(plotMode);
@@ -52,7 +52,7 @@ class monitor:
 
     def addMachine(self,id):
         id = str(id)
-        machine = {"FreeList":list(),"v8s":dict(),"id":"0"};
+        machine = {"FreeList":list(),"v8s":dict(),"id":"0", "memoryLimit":self.newMachineMemLimit };
         machine["id"] = id;
         with self.lock:
             if id in self.STATUS["machines"].keys():
