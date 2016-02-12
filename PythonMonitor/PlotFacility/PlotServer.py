@@ -3,6 +3,7 @@ from threading import Thread
 from threading import Condition
 from subprocess import *
 import sys, traceback
+import json
 
 class Server:
 	def __init__(self):
@@ -19,6 +20,11 @@ class Server:
 		self.maxPlotters = 50;
 		self.startedPlotters = [];
 		self.freeSocks = [];
+
+		self.plotterStartupConfig = {};
+	
+	def setPlotterStartupConfig(self,cfg):
+		self.plotterStartupConfig = cfg;
 
 	def listen(self):
 		try:
@@ -103,5 +109,30 @@ class Server:
 		if(len(self.startedPlotters) > self.maxPlotters):
 			return False;
 		
-		self.startedPlotters.append(Popen(["python","./Plotter/IpcPlotWrapper.py","127.0.0.1:"+str(self.port),key],0))#,close_fds=True,stdout=file("/dev/null")));
-		return True;	
+		conf = "{}"
+		try:
+			conf = json.dumps(self.plotterStartupConfig)
+		except Exception as e:
+			pass
+
+		self.startedPlotters.append(Popen(["python","./Plotter/IpcPlotWrapper.py","127.0.0.1:"+str(self.port),key,conf],0))#,close_fds=True,stdout=file("/dev/null")));
+		return True;
+
+	def sendTo(self,soc,data):
+		packet_size = 1450;
+		separator = "|"
+
+		try:
+			data = json.dumps(data);
+		except Exception as e:
+			print "Could not encode to JSON:"+str(e)
+			return 1;
+
+		#data = data + separator*(packet_size - len(data));
+		data += separator
+	
+		try:
+			soc.send(data);
+		except Exception as e:
+			print "Network error:"+str(e)
+			return 0;

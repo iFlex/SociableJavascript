@@ -29,7 +29,6 @@ class PlotService:
 		self.thread.daemon = True
 		self.thread.start();
 
-
 	def reinit(self,port):
 		self.port = port;
 		print "Starting plotter server...";
@@ -41,6 +40,9 @@ class PlotService:
 			print "Error starting server:"+self.server.getError();
 		return self.ready;
 	
+	def setPlotterStartupConfig(self,cfg):
+		self.server.setPlotterStartupConfig(cfg);
+
 	def setMaxPlotters(self,_max):
 		if _max > -1:
 			self.maxPlotters = _max
@@ -98,7 +100,7 @@ class PlotService:
 				#send plot data
 				self.currentPlotData[key][1] = data;
 				cdp = self.currentPlotData[key];
-				self.sendTo(cdp[0],{"values":cdp[1],"labels":self.labels});	
+				self.server.sendTo(cdp[0],{"values":cdp[1],"labels":self.labels});	
 
 			else:
 				if "action" in info:
@@ -113,7 +115,7 @@ class PlotService:
 							if key in active_key:
 								self.server.releasePlotter(self.currentPlotData[active_key][0]);
 								self.currentPlotData[active_key][0] = 0;
-								#seld.sendTo(key,{"action":"close"})
+								#seld.server.sendTo(key,{"action":"close"})
 								#print self.server.getAvailablePlottersCount();
 								toDel.append(active_key);
 								
@@ -133,14 +135,14 @@ class PlotService:
 			for key in self.currentPlotData.keys():
 				value = self.currentPlotData[key];
 				print "Closing Plotter:"+str(key);
-				self.sendTo(value[0],{"action":"snapshot","title":"_"});
-				self.sendTo(value[0],{"action":"close"});
+				self.server.sendTo(value[0],{"action":"snapshot","title":"_"});
+				self.server.sendTo(value[0],{"action":"close"});
 			
 			while self.server.getAvailablePlottersCount() > 0:
 				print ("Closing spare plotter");
 				soc = self.server.acquirePlotter();
-				self.sendTo(soc,{"action":"snapshot","title":"_"});
-				self.sendTo(soc,{"action":"close"});
+				self.server.sendTo(soc,{"action":"snapshot","title":"_"});
+				self.server.sendTo(soc,{"action":"close"});
 			
 			print "Closing plot server";
 			self.server.close();
@@ -148,28 +150,10 @@ class PlotService:
 
 	def takeSnapshot(self,key):
 		if self.ready and key in self.currentPlotData:
-			self.sendTo(self.currentPlotData[key][0],{"action":"snapshot"});
+			self.server.sendTo(self.currentPlotData[key][0],{"action":"snapshot"});
 
 	def setTitle(self,key,title):
 		if self.ready and key in self.currentPlotData:
-			self.sendTo(self.currentPlotData[key][0],{"action":"setTitle","title":title});
+			self.server.sendTo(self.currentPlotData[key][0],{"action":"setTitle","title":title});
 
-	def sendTo(self,soc,data):
-		packet_size = 1450;
-		separator = "|"
-
-		try:
-			data = json.dumps(data);
-		except Exception as e:
-			print "Could not encode to JSON:"+str(e)
-			return 1;
-
-		#data = data + separator*(packet_size - len(data));
-		data += separator
-	
-		try:
-			soc.send(data);
-		except Exception as e:
-			print "Network error:"+str(e)
-			return 0;
 	#TODO: add change isolate that is being plotted + graph clearing and a snapshot for the old one

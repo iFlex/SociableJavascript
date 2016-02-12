@@ -1,1 +1,3 @@
-chhz 10
+chhz 32
+setPlotterStartupConfig {"makeCSV":true,"makePNG":true}
+loadpolicy robinhood

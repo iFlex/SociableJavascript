@@ -17,19 +17,36 @@ class Plotter:
         self.period     = 1.0/self.desiredFPS;
     
     def resetPlotPaths(self):
+        if not self.makeFolders:
+            return
+
         self.startDateTime = str(time.asctime( time.localtime(time.time())))
         self.writePath = "./plots/"+self.startDateTime+"/"+self.title+"/"
         
         if not os.path.exists(self.writePath):
             os.makedirs(self.writePath)
-        
-    def __init__(self,width,title):
+
+    def configure(self,config):    
+        if "makeCSV" in config:
+            self.makeCSV = config["makeCSV"]
+
+        if "makePNG" in config:
+            self.makePNG = config["makePNG"]
+
+        self.makeFolders = self.makeCSV or self.makePNG
+ 
+    def __init__(self,width,title,config):
         global SINGLETON
         if SINGLETON != 0:
             print "#ERROR: Plotter is a singleton class, can't instantiate more than one instance of it! It is because of the way matplotlib was built"
             return
 
         SINGLETON = 1
+
+        self.makeCSV = True;
+        self.makePNG = True;
+        self.makeFolders = True;
+        self.configure(config);
 
         self.width = width
         self.plotProgress = 0
@@ -81,6 +98,9 @@ class Plotter:
         self.resetPlotPaths()
 
     def startFullHistoryLog(self,labels):
+        if not self.makeCSV:
+            return 0;
+
         self.fullHistory = open(self.writePath+self.title+".csv","w")
         for label in labels:
             self.fullHistory.write(label+",")
@@ -102,15 +122,16 @@ class Plotter:
                 self.Ydata.append(copy.deepcopy(self.defaultY))
             self.Ydata[index].append(e)
             
-            if self.fullHistory:
+            if self.fullHistory != 0:
                 self.fullHistory.write(str(e)+",")
             
             if self.maxY < e:
                 self.maxY = e
 
             index += 1
-
-        self.fullHistory.write("\n")
+        
+        if self.fullHistory != 0:
+            self.fullHistory.write("\n")
         
         time1 = time.time()
         
@@ -149,6 +170,9 @@ class Plotter:
         self.skipDraw   = math.floor(self.drawPeriod / self.period)
 
     def save(self):
+        if not self.makePNG:
+            return;
+
         plt.savefig(self.writePath+str(self.plotProgress)+".png")
 
     def close(self):

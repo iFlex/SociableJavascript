@@ -39,7 +39,7 @@ class monitor:
 
     def takeSnapshot(self,m,v,i):
         self.plotter.takeSnapshot("Machine_"+m+"_V8_"+str(v)+"_isl_"+str(i));
-    #NOT THREAD SAGFE, NEEDS TO BE CALLED WHILE LOCK IS HELD
+    #NOT THREAD SAFE, NEEDS TO BE CALLED WHILE LOCK IS HELD
     def getAppropriateId(self,FreeList,alternate):
         id = len(FreeList);
         if len(FreeList) > 0:
