@@ -6,6 +6,7 @@ import imp
 import os
 import sys, traceback
 
+#todo: implement checks for policy output
 class Policy:
 
     def __init__(self,monitor,frequency):
@@ -121,7 +122,7 @@ class Policy:
                             
                             suggestions = []
                             try:
-                                suggestions = self.policy.calculate(1024,isolates);
+                                suggestions = self.policy.calculate(machine["memoryLimit"],isolates);
                                 if len(suggestions) == 0:
                                     continue
                             except Exception as e:

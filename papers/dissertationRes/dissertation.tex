@@ -1,0 +1,226 @@
+\pdfoutput=1
+
+\documentclass{l4proj}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{xcolor}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
+\begin{document}
+\title{Sociable Javascript}
+\author{Milorad Liviu Felix}
+\date{\today}
+\maketitle
+\educationalconsent
+%
+%NOTE: if you include the educationalconsent (above) and your project is graded an A then
+%      it may be entered in the CS Hall of Fame
+%
+\newpage
+\begin{abstract}
+   As JavaScript has grown in popularity, it has also became more versatile. More applications running JavaScript on the same machine may result in greater memory contention among processes. To make the best use of system resources while maximising utilisation, the applications would need to be aware of each other's memory needs, and cooperate in order for them to continuously have access to the minimum running requirements. To achieve system-wide awareness at an individual application level, we propose a client-server model, where a monitor process keeps track of all running client applications and controls how much memory they are allocated. We present a set of policies based on social welfare theory that model JavaScript execution environments as individuals and evaluate how they impact the execution speed and memory footprint of each application. An application with a low memory footprint, that has acceptable throughput, could make JavaScript a suitable choice for highly multiprocessing and elastic systems.
+\end{abstract}
+\newpage
+
+\tableofcontents
+
+\newpage
+\section{Introduction}
+%intro
+\hspace*{3em} JavaScript is a highly dynamic language for web-based applications.\cite{intro} 
+It began as a simple solution for animating web-page content, but has evolved into a multipurpose scripting language with growing support and popularity. A large part of the functionality of web products is now implemented in JavaScript and there are initiatives, such as NodeJS\cite{nodejs}, that aim to bring this language to the server side. Since the language is interpreted, browser vendors implement JavaScript virtual machines that perform just-in-time compilation and execute the code. Some of the most widely used examples are V8 from Google Chrome\cite{v8}, Nitro from Apple Safari, Spidermonkey\cite{spidermk} from Mozilla Firefox and Chakra\cite{chakra} from Microsoft Edge.
+\\\\%garbage collection
+\hspace*{3em} One reason for the considerable popularity of the language is its simplicity. A key factor of this simplicity is that JavaScript programmers do not have to handle memory. This allows developers to focus on the high level functionality such as how an application responds to a certain request rather than on low level implementation details such as how much memory a new object needs and when that memory should be freed. The responsibility of memory management is passed onto the virtual machine that executes the program. While memory allocation may be straight forward (a new block of memory is requested from the host operating system when the application creates a new object), freeing memory cannot be done in the same manner, as an object that goes out of scope might still be referenced by a live object. The virtual machine needs to inspect the live objects and detect which ones have truly expired and free the memory they occupy. This process is called \textit{garbage collection}.
+\\\\%virtual machines optimisations
+\hspace*{3em} These virtual machines are optimised to offer the best possible performance from a user perspective, this means that speed of execution and steady rendering are most important. In the case of V8, the engineers that designed it are using the term ``jank'' to refer to noticeable rendering pauses caused by JavaScript garbage collection and are currently striving to minimise it. One example of jank is when the user scrolls the page and the animation has noticeable pauses that make it look discontinuous. Jank occurs because in order to carry out garbage collection the execution of the JavaScript application needs to be paused. To reduce the impact observable by the user, garbage collection pauses are divided into small execution sequences and are interleaved with long execution sequences. This improves the user experience but increases the memory footprint of the application as unused memory is held for longer than necessary. Such a system is not concerned with conserving memory and cooperating with other processes in order to allow as many applications as possible to run on the system, but this behavior is justified as each tab in the browser needs to display as smoothly as possible.
+\\\\%server side applications
+%TODO: add some examples of nodejs services
+\hspace*{3em} JavaScript outgrew its original intended purpose and has expanded to server side applications and native client applications. In the case of server side applications, the NodsJS framework is experiencing a growing adoption trend for services such as web-servers, push notification servers, server side voice recognition and other computation bound services. This is in part due to the fact that a large majority of the JavaScript library ecosystem is compatible with NodeJS leaving out only the libraries that utilise HTML document related methods and structures (which are not present in NodeJS). In this case, jank does not exist since no rendering is done, therefore garbage collection would only impact total execution time. Service providers would greatly benefit if these applications were to have a lower memory footprint (achieved by collecting garbage more intensely) as more processes can be run per single physical machine, thus increasing the service availability. Also being able limit memory expansion per process guarantees that system processes and other service specific administrative processes will always have enough memory to remain responsive, regardless of how loaded the client serving applications are. Elastic systems can benefit from a global service that controls memory usage of garbage collected systems as the limits can be tightened or relaxed depending on the load and total amount of memory made available at each point in time.\\%client side applications
+\hspace*{3em} JavaScript based client side applications are also beginning to emerge in the form of NWJS(Node Webkit JavaScript) applications. In essence this is a web browser rendering a local webpage which has access to JavaScript file system APIs and other native application functionality that is normally not included in regular web browsers for security reasons. This approach is gaining popularity especially among organisations that lack the human resources necessary to build different native applications for each platform they intend to support or want to deploy their existing web applications in the form of native applications. 
+Examples of such native applications are: Powder Player - a video streaming application with torrent download and seeding integration\cite{powderplayer}, WhatsApp - a popular messenger application acquired by Facebook in 2014 \cite{whatsap}, Facebook’s messenger - Facebook's own messenger platform \cite{messenger}, DevKit - a modular integrated development environment \cite{devkit},
+Wunderlist - a popular productivity application allowing users to create and share task lists\cite{wunderlist} and even a game named GameDev Tycoon\cite{tycoongame}. 
+%kind of weak
+Having a mechanism for controlling such an application's memory usage would allow the user to run many JavaScript applications concurrently while using an optimum amount of memory so that all the other processes can complete successfully. This way the user can play a game while listening to music and streaming files from the internet, all using JavaScript applications.
+\\\\%purpose of the project
+\hspace*{3em} The purpose of this project is to build a framework capable of monitoring the memory usage of every JavaScript running context and apply a memory management policy that will generate a limit for each one of them. Upon receiving its memory limit from the manager the JavaScript virtual machine will free more memory during garbage collection in order to comply.
+\\\\ %motivation and social welfare
+\hspace*{3em} The motivation for building such a system is improving the maximum possible multi-programming degree, availability and fault tolerance for services based on JavaScript applications, making this technology suitable for multi-tasking and elastic systems. The main benefit of enforcing a global memory utilisation policy over all of the JavaScript running contexts on a machine is reducing competition for resources and increasing cooperation. Garbage collection will be done more frequently, thus freeing up more memory and allowing more instances to run on the same machine. The end goal would be to increase the multi-programming level without hindering performance.\\
+\hspace*{3em} Through the coordinated management of memory based on global information, applications achieve a form of cooperation much like individuals cooperate and responsibly share resources with each other, in order to maintain a necessary level of comfort. The key factor to the success of this framework would be to maintain acceptable throughput levels for each JavaScript appliaction. This translates directly to how long each program takes to complete. If execution time increases considerably, the applications become unfeasible. In order to find a balance between throughput and memory size, the framework models execution contexts as individuals and applies a social welfare function in order to determine how much memory each individual is allowed to use.
+\\\\%social welfare
+\hspace*{3em} \textit{Welfare economics} is a branch of economics that uses microeconomic techniques to evaluate well-being (welfare) at the aggregate (economy-wide) level.\cite{welfareeconomics} The typical evaluation begins with the derivation of a \textit{social welfare function}. In welfare economics, a social welfare function is a function that ranks social states (alternative complete descriptions of the society) as less desirable, more desirable, or indifferent for every possible pair of social states. Inputs of the function include any variables considered to affect the economic welfare of a society.\cite{socialwelfarefunction} This is then used to rank economically feasible allocations of resources. JavaScript applications can be modeled as individuals using a a combination of the characteristics of running contexts as input values for the social welfare function. Such characteristics are heap size, available memory, throughput, etc. The exact choice of the social welfare function, selected set of runtime context characteristics and the way these characteristics are mapped to the input values of the function are what we call a \textit{policy}. This project aims to evaluate the effectiveness of various policies in relation to different types of JavaScript applications: web pages scripts, IO bound standalone applications, computation bound standalone applications. Some policies may be better suited for standalone applications while others may work work well with web-page scripts, some might perform well overall. 
+\\\\
+There are two main components to this project:
+\begin{itemize}
+\item The \textit{manager} - receives memory usage information, applies the management policy and then issues limits to each execution environment.
+\item a modified \textit{JavaScript virtual machine} executes JavaScript, reports runtime context characteristics (heap size, throughput, etc) and enforces memory limits received from the manager.
+\end{itemize}
+The manager is a Python application and the virtual machine selected for this project is Google's V8 engine. The manager will be central to evaluating the performance of each script in relation to the applied policy using the characteristics received from the V8. 
+\begin{figure}[!ht]
+  \caption{Overall project diagram.}
+  \centering
+    \includegraphics[width=0.75\textwidth]{SimplifiedOverall.png}
+\end{figure}
+
+The approach adopted was similar to the Java Forseti system developed at the University of Glasgow\cite{forseti}. To implement this system, changes need to be done to the V8 engine and a manager process that would implement the policy would need to be built. The V8 engine would need modifications that allow dynamic expanding and shrinking of a running context's (isolate) heap size and a network client that receives and executes commands issued by the monitor. A communication protocol based on JSON would describe the commands and responses to be passed between the manager and the V8. %diagram
+
+The system would work as follows: the manager process starts a registry server that listens for connections from V8 instances. A new V8 instance would run either by itself or inside the Chrome browser and would connect to the manager process. As soon as the manager detects a new V8 instance, it starts polling it for status information (heap memory used, throughput, etc). The manager will use this information to calculate how large the heap of each isolate should be and will send the calculated value back to the V8. The engine will then try to adapt each isolate's memory consumption to match the recommended value by increasing the number of garbage collection operations.
+%expand
+\section{Background}
+%java script
+%garbage collection
+%v8
+\subsection{JavaScript}
+\subsection{Garbage Collection}
+%Garbage collection is really a double-edged sword. On the positive side, it allows for a massive simplification in languages that use it, since memory no longer needs to be managed explicitly by the programmer. It reduces (but does not eliminate!) a large class of errors, memory leaks, which plague large long-running applications. For some programs, it can even improve performance.
+
+%On the other hand, using a garbage collected language means relinquishing a great deal of control over how memory is managed in your program, which is an especially big concern for mobile applications. In JavaScript's case, you relinquish all control over how memory is managed: the ECMAScript specification doesn't expose any interface to the garbage collector. There's no way for a web app to measure its memory usage or provide any hints to the garbage collector.
+
+%Performance of garbage collected languages in not strictly better or worse than languages without managed memory. In C, allocating and freeing objects can be costly, since heap bookkeeping tends to be more complicated if you need to free objects later. With managed memory, allocation usually means just incrementing a pointer, but as we'll see, you have to pay for it eventually when you run out of memory and the garbage collector kicks in. Poorly implemented garbage collection systems can lead to long, unpredictable and embarrassing pauses, which make interactive systems (especially those with animations) frustrating to use. Reference counting is frequently touted as an alternative to garbage collection, but these systems can have the same unpredictable pauses when the last reference to a large sub-graph of objects is removed. Reference counting systems can also have a fairly large overhead for executing numerous load/increment/store instructions.
+
+%For better or worse, JavaScript requires garbage collection. V8's implementation has improved and matured significantly in the last year. Performance is pretty good, pauses are short, and overhead is pretty manageable.
+\subsection{Why control resource allocation}
+
+\section{Requirements}
+\subsection{Functional Requirements}
+\subsection{Non-Functional Requirements}
+
+\newpage
+\section{Design}
+\subsection{Overview}
+\begin{figure}[!ht]
+  \caption{Overall project diagram detailed.}
+  \centering
+    \includegraphics[width=0.85\textwidth]{OverallFramework.png}
+\end{figure}
+The overall framework has two main components:
+\begin{itemize}
+\item A \textit{manager} - keeps track of active V8 instances, polls V8 instances for status information periodically, groups and plots the status information, calculates the memory allowance for each V8 Isolate, sends the appropriate commands containing the memory limits.
+\item A modified V8 engine - connects to manager, retrieves status information and responds to poll requests and commands, depending on current memory limit: intensifies or relaxes garbage collection process.
+\end{itemize}
+\hspace*{3em} In distributed systems a high per node multi-programming degree translates to high availability. This kind of environment also has potential to behave in an elastic way, making more resources available when the load increases and reducing the utilised resources when it diminishes. This means that our framework would have a greater impact when applied to a cluster of computers running JavaScript applications rather than a single computer.\\
+\hspace*{3em} In order to adapt to this scenario the interaction between the V8 instances and the manager is done through the network, using TCP/IP. This allows the manager process to reside on any machine in a network and coordinate the memory usage of all the V8 instances running within the cluster. This makes the framework extremely adaptable to various use scenarios. For example: if the frameworks is to be used on a single computer it becomes a special case of the general model, a cluster with one node.
+\\\\
+\hspace*{3em} A JSON protocol is used to represent the commands and updates that are exchanged by the V8 instances and monitor process. JSON is a good format option as it allows easy extension of the protocol schema, by simply adding additional keys the the concerned entities.
+\newpage
+\begin{lstlisting}[language=json,firstnumber=1]
+{
+  "global":{"action":"","error":"", ... },
+  "TotalIsolates":Integer,
+  "isolates":{
+    "1":{ "action":"","error":"", "heap":Integer,"throughput":Float,... },
+    "2":{...}
+    ...
+  }
+}
+\end{lstlisting}
+Here are the possible values that the \textit{action} fields can have:\\\\
+\begin{tabular}{  l  l  l  l  }
+  Action & Global & Per Isolate & Description \\
+\hline
+  status & Yes & Yes & Isolate status request packet\\
+  update & Yes & Yes & Isolate update response packet\\
+  set\_heap\_size & No & Yes & Sets the heap size threshold over which the GC should intensify\\
+  set\_max\_heap\_size & No & Yes & Sets the absolute maximum size the isolate can have\\
+  terminated & Yes & Yes & V8 notifies the monitor that one of its isolates has finished execution\\
+\hline
+\end{tabular}
+\subsection{V8}
+Talk about the V8 Architecture
+\subsubsection{Modifications}
+Detail the V8 modification high level specification
+\subsection{Monitor}
+High level description of the monitor
+
+\section{Implementation}
+\subsection{Overview}
+Protocol implementation
+JSON library
+\subsection{V8 Client}
+\subsection{Monitor}
+\section{Evaluation}
+\subsection{Evaluating the Framework}
+\section{Conclusion}
+\section{Future Work}
+
+%more accurate biblio
+\begin{thebibliography}{9}
+\bibitem{intro}
+  Gregor Richards, Andreas Gal, Brendan Eich, Jan Vitek,
+  \emph{Automated Construction of JavaScript Benchmarks},
+\bibitem{v8gctour}
+A Tour of the V8 Garbage Collector
+\url{http://jayconrod.com/posts/55/a-tour-of-v8-garbage-collection},
+\bibitem{nodejs}
+  NWJS Project
+  \url{http://nwjs.io/}
+\bibitem{nwjs}
+  NodeJS Project
+  \url{https://nodejs.org/en/}
+\bibitem{v8}
+  V8 Engine
+  \url{https://developers.google.com/v8/}
+\bibitem{spidermk}
+SpidermonkeyEngine
+\url{https://developer.mozilla.org/en-US/docs/Mozilla/Projects/SpiderMonkey}
+\bibitem{chakra}
+Chackra Engine
+\url{https://github.com/Microsoft/ChakraCore}
+\bibitem{forseti}
+  Callum Cameron, Jeremy Singer, David Vengerov
+  \emph{The Judgment of Forseti: Economic Utility for Dynamic Heap Sizing of Multiple Runtimes},
+\bibitem{powderplayer}
+  https://github.com/jaruba/PowderPlayer
+\bibitem{whatsap}
+https://web.whatsapp.com/
+\bibitem{messenger}
+http://messengerfordesktop.com/
+\bibitem{devkit}
+https://github.com/printhom/devkit-core
+\bibitem{wunderlist}
+https://www.wunderlist.com/download/
+\bibitem{tycoongame}
+http://www.greenheartgames.com/app/game-dev-tycoon/
+\bibitem{welfareeconomics}
+Deardorff, Alan V. (2014), "Welfare economics", Deardorffs' Glossary of International Economics \url{http://www-personal.umich.edu/~alandear/glossary/w.html#WelfareEconomics}
+\bibitem{socialwelfarefunction}
+Amartya K. Sen, 1970 [1984], Collective Choice and Social Welfare, ch. 3, "Collective Rationality." p. 33, and ch. 3*, "Social Welfare Functions." \url{http://www.citeulike.org/user/rlai/article/681900}
+\end{thebibliography}
+\end{document}

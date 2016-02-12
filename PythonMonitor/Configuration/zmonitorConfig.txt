@@ -1,2 +1,3 @@
 chhz 32
 loadpolicy nopolicy
+setPlotterStartupConfig {"makeCSV":true,"makePNG":true}

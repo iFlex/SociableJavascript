@@ -14,6 +14,13 @@ if len(sys.argv) < 3:
 	print "IPC::Usage: python IpcPlotWrapper.py 127.0.0.1:14000 Title";
 	sys.exit(1);
 
+conf = {}
+if len(sys.argv) > 3:
+	try:
+		conf = json.loads(sys.argv[3])
+	except Exception as e:
+		print "IPC:: Failed to load configuration:"+sys.argv[3]+" "+str(e)
+
 print "IPC::Connecting to controller...";
 addr = sys.argv[1].split(":");
 print "IPC::Connecting:"+str(addr)
@@ -31,7 +38,7 @@ while True:
 		print "IPC::Connection failed, retrying..."
 		time.sleep(1);
 
-plotter = Plotter(1024,sys.argv[2]);
+plotter = Plotter(1024,sys.argv[2],conf);
 doExit = False;
 
 print "IPC::Connected, waiting for plot commands"

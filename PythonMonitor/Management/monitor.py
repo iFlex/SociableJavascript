@@ -2,12 +2,13 @@ from threading import *
 
 #TODO: update if the message type is update
 #threadsafe
+#V8 and IsolateIDs are numeric
 class monitor:
     def __init__(self,plotMode,plotService):
         self.STATUS = {"machines":{}};
         self.FreeMachineIDS = list();
         self.lock = RLock();
-
+        self.newMachineMemLimit = 1024;
         #PLOT MODES: 0 - NO PLOTTING, 1 - PLOT PER MACHINE ONLY, 2 - PLOT PER ISOLATE ONLY, 3 - PLOT PER ISOLATE AND PER MACHINE
         self.plotMode = 0;
         self.setPlotMode(plotMode);
@@ -38,7 +39,7 @@ class monitor:
 
     def takeSnapshot(self,m,v,i):
         self.plotter.takeSnapshot("Machine_"+m+"_V8_"+str(v)+"_isl_"+str(i));
-    #NOT THREAD SAGFE, NEEDS TO BE CALLED WHILE LOCK IS HELD
+    #NOT THREAD SAFE, NEEDS TO BE CALLED WHILE LOCK IS HELD
     def getAppropriateId(self,FreeList,alternate):
         id = len(FreeList);
         if len(FreeList) > 0:
@@ -51,7 +52,7 @@ class monitor:
 
     def addMachine(self,id):
         id = str(id)
-        machine = {"FreeList":list(),"v8s":dict(),"id":"0"};
+        machine = {"FreeList":list(),"v8s":dict(),"id":"0", "memoryLimit":self.newMachineMemLimit };
         machine["id"] = id;
         with self.lock:
             if id in self.STATUS["machines"].keys():
@@ -237,8 +238,6 @@ class monitor:
         if self.plotMode == 3:
             self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
 
-        
-
     def update(self,machineId,v8Id,response):
         with self.lock:
             nris = response["TotalIsolates"];
@@ -265,7 +264,7 @@ class monitor:
         if(v8 == 0):
             print spaces+"Could not find v8 instance";
             return;
-
+ 
         for i in v8["isolates"]:
             isolate = v8["isolates"][i];
             items = "("+str(isolate["id"])+") ";

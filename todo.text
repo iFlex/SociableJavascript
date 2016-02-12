@@ -16,7 +16,7 @@ DONE >> 8) Pithon live plotting class - need to make class instance it own the p
 
 DONE >> 1) Binary Tree Benchmark test
 2) Make benchmark that allocates a lot of memory and moves it
-3) Look at Gregor R. Benchmark papers +
+DONE >> 3) Look at Gregor R. Benchmark papers +
 DONE >> 4) Regenerate graphs with tiny semi-space
 DONE >> 5) 1-6 min heap size graph granularity 1/3
 DONE >> 6) Can the max heap size be resized dynamically
@@ -89,13 +89,13 @@ Conclusion
 Future Work
 
 
-31) Determine the nature of the evaluation. Read through Blair's dissertation evaluation.
+DONE >> 31) Determine the nature of the evaluation. Read through Blair's dissertation evaluation.
 32) Explore d8, Visual VM, Intel Vtune, GCspy
 33) Implement policy
 34) Timing, HeapSize, UsedMemory - factor into policy
 DONE >> 35) Aggregator per machine - total memory used
 DONE >> 36) Pluggability of Ploicy - descriptor file that can be interpreted by the policy.py so that any policy can be used
-37) Improve mock v8 to allow Jeremy to write and test policy, report from existing CSV files rather than random value
+DONE >> 37) Improve mock v8 to allow Jeremy to write and test policy, report from existing CSV files rather than random value
 
 * plot crashing binarytree and see how available memory works
 *D* evaluation of the monitor
@@ -115,3 +115,11 @@ Dissertation - >
  * Unit Testing...
 
 find -name "*.cc" -or -name "*.cpp" -or -name "*.h" | xargs wc -l
+
+List of tricks:
+Use the max_old_space_size to forge GC to do all the deallocation work. Space expands by itself anyway
+Skip Rendering Phases to Preserve Frame Rate
+Pluggable policy so anyone can write one
+Component oriented testing
+TCP/IP for distributed use
+Multi Processing for better plotting
