@@ -1386,6 +1386,7 @@ class Isolate {
     
     //metrics getters
     long long getHeapSize();
+    long long getAvailableHeapSize();
     double    getThroughput();
     //////////////////////////////////MLF//////////////////////////////////
 

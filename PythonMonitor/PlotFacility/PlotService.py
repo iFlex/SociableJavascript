@@ -17,18 +17,17 @@ class PlotService:
 		self.cond = Condition()
 		self.updateQ = [];
 		self.currentPlotData = {};# key = Machine_[MachineId]_V8_[V8Id]_[IsolateId], value = [plotterSocket,array_of_data_to_plot]
+		self.normalise = {}
 		#TODO:
 		self.ignoreList = [];   #list of isolates to ignore 
 		self.interestList = []; #list of isolates to take interest in and ignore the rest
 		#start server
 		self.server = Server();
 		self.reinit(self.port);
-
 		#start updater thread
 		self.thread = Thread(target = self._update)
 		self.thread.daemon = True
 		self.thread.start();
-
 
 	def reinit(self,port):
 		self.port = port;
@@ -44,16 +43,18 @@ class PlotService:
 	def setMaxPlotters(self,_max):
 		if _max > -1:
 			self.maxPlotters = _max
+	
+	def doNormalise(self,items):
+		for key in items:
+			self.normalise[key] = items[key];
 
 	def extractUsefulData(self,info):
 		data = [];
 		
 		for i in self.labels:
 			if i in info:
-				if i == "available" and "heap" in info:
-					info[i] += info["heap"]
-				if i == "heap" or i == "maxHeapSize" or i == "available":
-					data.append(info[i]/1000000);
+				if i in self.normalise:
+					data.append(info[i]/self.normalise[i]);
 				else:
 					data.append(info[i])
 

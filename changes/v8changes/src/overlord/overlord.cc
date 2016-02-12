@@ -1,5 +1,6 @@
 #include "overlord.h"
 #include "instance.h"
+#include "src/globals.h"
 
 #include <string.h>
 #include <iostream>
@@ -225,8 +226,9 @@ void handleIsolateRequest(int i, action cmd, command &response){
         
         detail->heap       = (int) isl->getHeapSize();
         detail->throughput = isl->getThroughput();
-        detail->available  = (int) isl->getAvailableHeapSize();  
-        detail->maxHeapSize = (int) isl->getTargetHeapSize(); 
+        detail->available  = (int) isl->getAvailableHeapSize(); 
+        detail->maxHeapSize = (int) isl->heap()->getMaxOldGenerationSize();
+        detail->suggestedHeapSize = (int) isl->getTargetHeapSize();
         actions[actIndex].name    = "update";
     }
 

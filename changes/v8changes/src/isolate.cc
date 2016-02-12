@@ -559,7 +559,6 @@ void Isolate::removeIsolate(Isolate *i){
 
 Isolate* Isolate::getIsolate(int id){
   pthread_mutex_lock(&count_mutex);
-  cout<<"Searching for isolate:"<<id<<endl;
   auto search = allIsolates.find(id);
   
   Isolate *ret = NULL;
@@ -641,7 +640,7 @@ void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
   avgGC   = (double)garbageAverageTime   / gcIndex;
 
   if(ISOLATE_ID == 1) //prevent parallel access to same files
-    commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
+    commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),getAvailableHeapSize());//((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
   
   gcIndex %= sampleLength;
   //if( gcIndex % 500 ==  0) {
@@ -654,8 +653,17 @@ long long Isolate::getHeapSize(){
   return (long long) (heap_.old_space()->Size() + heap_.map_space()->Size());
 }
 
+long long Isolate::getAvailableHeapSize(){
+  return (long long) (heap_.old_space()->Available() );//+ heap_.map_space()->Available());
+}
+
+//double Isolate::getAvgThroughput(){
+//  return avgExec/avgGC;
+//}
+
 double Isolate::getThroughput(){
-  return avgExec/avgGC;
+  return ((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1];
+  //return avgExec/avgGC;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 class CaptureStackTraceHelper {

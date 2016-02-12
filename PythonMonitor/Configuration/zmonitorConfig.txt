@@ -1,1 +1,2 @@
-chhz 10
+chhz 32
+loadpolicy nopolicy

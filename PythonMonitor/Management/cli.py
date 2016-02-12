@@ -112,7 +112,7 @@ class CommandLine:
 
 	def suggest(self,id,size):
 		comm = self.monitor.getV8Comm(self.machine_id,self.v8_id);
-		comm.send(self.p.requestBldr.recommendHeapSize(self.machine_id,self.v8_id,id,size,0));
+		comm.send(self.p.requestBldr.recommendHeapSize(self.machine_id,self.v8_id,id,size*1024*1024,0));
 
 	def setmax(self,id,size):
 		comm = self.monitor.getV8Comm(self.machine_id,self.v8_id);

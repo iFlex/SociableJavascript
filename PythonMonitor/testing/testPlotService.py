@@ -1,8 +1,8 @@
-from PlotService import *
+from PlotFacility.PlotService import *
 import time
 import random
 
-labels = ["a","b","c"]
+labels = ["a","b","c","d"]
 plotter = PlotService(labels);
 plotter.init();
 
@@ -81,6 +81,6 @@ while True:
 		else:
 			print "Usage: r key k value";
 			
-plotter.labels = ["a","b","c"]
+plotter.labels = ["a","b","c","d"]
 run_test(keys,delay,duration);
 plotter.stop();

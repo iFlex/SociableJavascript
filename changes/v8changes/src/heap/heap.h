@@ -1053,6 +1053,7 @@ class Heap {
   
   //setter for max_old_generation_size_ 
   void setMaxOldGenerationSize(int max_old_space);
+  long long getMaxOldGenerationSize(){ return (int)max_old_generation_size_; }
 
   // Configure heap size in MB before setup. Return false if the heap has been
   // set up already.
