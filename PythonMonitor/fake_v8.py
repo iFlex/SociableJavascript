@@ -14,6 +14,10 @@ port = 0
 labels = 0
 csv = 0
 terminate = False
+#Machine properties
+HEAP = 1024*1024      # 1MB
+AVAILABLE = 1024*1024 # 1MB
+THROUGHPUT = 1.0      #
 #CLI args
 try:
     for cmd in sys.argv:
@@ -24,6 +28,7 @@ try:
 
         if "playback=" in cmd:
             csv = cmd[9:]
+
 except Exception as e:
     print "Could not parse command line arguments "+str(e);
     print "Usage: python fake_v8.py manager=[IP_ADDRESS]:[PORT] playback=[PATH TO CSV FILE TO PLAY BACK]"
@@ -53,31 +58,35 @@ comm = 0;
 r = RequestBuilder(m);
 
 def fakeAnswer(mid,vid,msg):
-    global comm,r,IDs,csv,labels,terminate
-    
-    request = r.statusReport(IDs[0],IDs[1]);
-    if csv != 0:
-        line = csv.readline()
-        print "LINE:("+str(len(line))+") "+line
-        if len(line) < 3:
-            terminate = True;
+    global comm,r,IDs,csv,labels,terminate,HEAP,AVAILABLE,THROUGHPUT
+    if(msg["global"]["action"] == "status"):
+        request = r.statusReport(IDs[0],IDs[1]);
+        if csv != 0:
+            line = csv.readline()
+            print "LINE:("+str(len(line))+") "+line
+            if len(line) < 3:
+                terminate = True;
 
-        line = line.split(",")[:-1];
-        lbln = len(labels)
-        lnln = len(line)
+            line = line.split(",")[:-1];
+            lbln = len(labels)
+            lnln = len(line)
 
-        for i in range(0,lnln):
-            if i < lbln: 
-                request["isolates"][str(IDs[2])][labels[i]] = int(line[i])*1000000;
-                request["isolates"][str(IDs[2])]["action"] = "update";
+            for i in range(0,lnln):
+                if i < lbln: 
+                    request["isolates"][str(IDs[2])][labels[i]] = int(line[i])*1000000;
+                    request["isolates"][str(IDs[2])]["action"] = "update";
+        else:
+            for i in request["isolates"]:
+                request["isolates"][str(IDs[2])]["heap"]       = HEAP;
+                request["isolates"][str(IDs[2])]["throughput"] = THROUGHPUT;
+                request["isolates"][str(IDs[2])]["available"]  = AVAILABLE;
+                request["isolates"][str(IDs[2])]["action"]     = "update";
+
+        request["global"]["action"] = "update";
+        comm.send(request);
     else:
-        for i in request["isolates"]:
-            request["isolates"][str(IDs[2])]["heap"] = random.randint(0,800)*1000000;
-            request["isolates"][str(IDs[2])]["action"] = "update";
-
-    request["global"]["action"] = "update";
-    comm.send(request);
-
+        print msg;
+        
 #network
 soc = socket(AF_INET,SOCK_STREAM);
 print "Starting message loop..."
@@ -100,7 +109,14 @@ while not terminate:
     print "Created fake Machine_"+IDs[0]+"_V8_"+str(IDs[1])+"_Isolate_"+str(IDs[2]);
     while connected and not terminate:
         connected = comm.keepRunning;
-        time.sleep(1);
+        newState = raw_input("[HEAP(MB),AVAILABLE(MB),THROUGHPUT]:");
+        newState = newState.split(",");
+        if len(newState) == 3:
+            HEAP = int(newState[0])*1024*1024
+            AVAILABLE = int(newState[1])*1024*1024
+            THROUGHPUT = float(newState[2])
+        else:
+            print "Wrong format len="+str(len(newState))+" should be 3";
 
     print "Updater thread exited..."
     time.sleep(3);

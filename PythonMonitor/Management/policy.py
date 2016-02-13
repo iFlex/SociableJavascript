@@ -18,12 +18,10 @@ class Policy:
         self.cli = CommandLine(self);
         
         print "Loading default policy..."
-        self.policyDefault = "./Policies/default.py"
+        self.policyDefault = "./Policies/robinhood.py" #"./Policies/default.py"
         self.policy = self.__loadModule(self.policyDefault);
         if self.policy == 0:
             print "Could not load default policy. You will need to load one manually using the command line";
-        else:
-            self.policy.init();
 
         #load default configuration
         self.ldConfig("/zmonitorConfig.txt");
@@ -112,6 +110,8 @@ class Policy:
                 for idd in reg:
                     machine = reg[idd]
                     v8s = machine["v8s"];
+                    inspectionList = []
+        
                     for v8 in v8s:
                         comm = v8s[v8]["comm"];
                         requestQ.append((comm,self.requestBldr.statusReport(idd,v8)))
@@ -119,25 +119,34 @@ class Policy:
                         #apply policy
                         if not (self.policy == 0):
                             isolates = v8s[v8]["isolates"];
-                            
-                            suggestions = []
-                            try:
-                                suggestions = self.policy.calculate(machine["memoryLimit"],isolates);
-                                if len(suggestions) == 0:
-                                    continue
-                            except Exception as e:
-                                print "Ploicy error:"+str(e)
-                                traceback.print_exc(file=sys.stdout)
-                                continue
+                        
+                        for i in isolates:
+                            isolates[i]["v8Id"] = v8;
+                            inspectionList.append(isolates[i])
 
-                            for suggestion in suggestions:
-                                if "hardHeapLimit" in suggestion:
-                                    request  = self.requestBldr.setMaxHeapSize(idd,v8,suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);
-                                    requestQ.append((comm,request))
-                                
-                                if "softHeapLimit" in suggestion: 
-                                    request2 = self.requestBldr.recommendHeapSize(idd,v8,suggestion["id"],suggestion["softHeapLimit"]/self.bytesInMb,0)
-                                    requestQ.append((comm,request2))
+                    #init policy state store per machine
+                    if "policy_store" not in machine:
+                        machine["policy_store"] = {}
+                        self.policy.init(machine["policy_store"]);
+                    
+                    suggestions = []
+                    try:
+                        suggestions = self.policy.calculate(machine["memoryLimit"],inspectionList,machine["policy_store"]);
+                        if len(suggestions) == 0:
+                            continue
+                    except Exception as e:
+                        print "Ploicy error:"+str(e)
+                        traceback.print_exc(file=sys.stdout)
+                        continue
+
+                    for suggestion in suggestions:
+                        if "hardHeapLimit" in suggestion:
+                            request  = self.requestBldr.setMaxHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);
+                            requestQ.append((self.monitor.getV8Comm(idd,suggestion["v8Id"]),request))
+                        
+                        if "softHeapLimit" in suggestion: 
+                            request2 = self.requestBldr.recommendHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["softHeapLimit"]/self.bytesInMb,0)
+                            requestQ.append((self.monitor.getV8Comm(idd,suggestion["v8Id"]),request2))
                                 
             while len(requestQ) > 0:
                 comm,request = requestQ.pop()
