@@ -15,11 +15,11 @@ print "Reading configuration...";
 #flags
 DEBUG = True
 #Defaults
-pltSvc = PlotService(["heap","suggestedHeapSize","maxHeapSize"],15022)
+pltSvc = PlotService(["heap","maxHeapSize"],15027)
 #pltSvc.doNormalise({"heap":1000000,"suggestedHeapSize":1000000,"maxHeapSize":1000000});
 #pltSvc.doNormalise({"heap":1000000000.0,"suggestedHeapSize":1000000000.0,"maxHeapSize":1000000000.0,"throughput":100.0});
 
-mon = monitor("ALL",pltSvc);
+mon = monitor("ISOLATE",pltSvc);
 srv = server(mon,15004);
 
 if srv.start() == False:

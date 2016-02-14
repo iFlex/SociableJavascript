@@ -8,7 +8,7 @@ class monitor:
         self.STATUS = {"machines":{}};
         self.FreeMachineIDS = list();
         self.lock = RLock();
-        self.newMachineMemLimit = 1024;
+        self.newMachineMemLimit = 1024*1024*1024;#1GB
         #PLOT MODES: 0 - NO PLOTTING, 1 - PLOT PER MACHINE ONLY, 2 - PLOT PER ISOLATE ONLY, 3 - PLOT PER ISOLATE AND PER MACHINE
         self.plotMode = 0;
         self.setPlotMode(plotMode);
@@ -39,6 +39,7 @@ class monitor:
 
     def takeSnapshot(self,m,v,i):
         self.plotter.takeSnapshot("Machine_"+m+"_V8_"+str(v)+"_isl_"+str(i));
+
     #NOT THREAD SAFE, NEEDS TO BE CALLED WHILE LOCK IS HELD
     def getAppropriateId(self,FreeList,alternate):
         id = len(FreeList);
@@ -234,9 +235,9 @@ class monitor:
         if info["action"] == "update":
             for key in info:
                 isolate[key] = info[key];
-            
-        if self.plotMode == 3:
-            self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
+                
+            if self.plotMode > 1:
+                self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),info);
 
     def update(self,machineId,v8Id,response):
         with self.lock:

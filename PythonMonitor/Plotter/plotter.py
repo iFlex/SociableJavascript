@@ -117,7 +117,14 @@ class Plotter:
         if self.fullHistory == 0:
             self.startFullHistoryLog(tlabels)
 
-        for e in elements:
+        #for e in elements:
+        ln = len(tlabels)
+        lnn = len(elements)
+        for i in range(0,ln):
+            e = 0
+            if i < lnn:
+                e = elements[i]
+                
             if index == len(self.Ydata):
                 self.Ydata.append(copy.deepcopy(self.defaultY))
             self.Ydata[index].append(e)

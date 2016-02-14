@@ -60,7 +60,6 @@ class PlotService:
 					data.append(info[i]/self.normalise[i]);
 				else:
 					data.append(info[i])
-
 		return data;
 	
 	def _update (self):

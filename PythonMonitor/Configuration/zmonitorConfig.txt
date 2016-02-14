@@ -1,3 +1,2 @@
-chhz 32
-loadpolicy nopolicy
+chhz 30
 setPlotterStartupConfig {"makeCSV":true,"makePNG":true}
