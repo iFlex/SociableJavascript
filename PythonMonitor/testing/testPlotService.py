@@ -4,7 +4,6 @@ import random
 
 labels = ["a","b","c","d"]
 plotter = PlotService(labels,15005);
-plotter.init();
 
 keys = [];
 delay = 0.1
@@ -23,9 +22,18 @@ def run_test(k,d,ttr):
 		return;
 	print "Starting plot test..."
 	elapsed = 0.0;
+	
 	while elapsed < ttr:
+
+		data = {}
+		tres = 0;
+		for l in labels:
+			data[l] = random.randint(tres,tres+100);
+			tres += 800/len(labels);
+
+
 		for t in k:
-			plotter.update(t,{"a":2000000+random.randint(100,200),"b":2000000+random.randint(0,50),"c":2000000+random.randint(50,100)});
+			plotter.update(t,data);
 		time.sleep(d);
 		elapsed += d;
 
@@ -81,6 +89,6 @@ while True:
 		else:
 			print "Usage: r key k value";
 			
-plotter.labels = ["a","b","c","d"]
+plotter.labels = labels
 run_test(keys,delay,duration);
 plotter.stop();

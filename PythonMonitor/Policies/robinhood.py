@@ -1,4 +1,4 @@
-#Robin Hood Policy - soft robin hood, does not force the hand of rich isolates
+#Robin Hood Policy
 #Author@ Milorad Liviu Felix
 import math
 
