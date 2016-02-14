@@ -141,7 +141,13 @@ class CommandLine:
 			self.monitor.plotter.setPlotterStartupConfig(cfg);
 		except Exception as e:
 			print "ERROR your json is invalid:"+str(e)
-		
+	
+	def policyName(self):
+		print self.p.policy.name();
+	
+	def policyStats(self):
+		print self.p.policy.stats()
+
 	def initCmds(self):
 		self.commands = {
 							"help":{
@@ -235,6 +241,16 @@ class CommandLine:
 							"setPlotterStartupConfig":{
 								"param":[("str","JSON config")],
 								"method":self.setPlotterStartupConfig,
+								"desc":"Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)"
+							},
+							"policyname":{
+								"param":[],
+								"method":self.policyName,
+								"desc":"Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)"
+							},
+							"policystats":{
+								"param":[],
+								"method":self.policyStats,
 								"desc":"Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)"
 							}
 						}

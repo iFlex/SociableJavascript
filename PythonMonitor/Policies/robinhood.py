@@ -3,6 +3,10 @@
 import math
 
 context = {}
+fromBudget = 0
+fromAvailable = 0
+fromStealing  = 0
+total         = 1
 
 def init(context):
 	context["immediateBudget"] = 0;
@@ -61,7 +65,7 @@ def getPoorNeeds(poor):
 	return need
 
 def helpThePoor(poor,rich):
-	global context
+	global context,fromStealing,fromAvailable,fromBudget,total
 	suggestions = [];
 
 	if len(poor) > 0:
@@ -74,7 +78,7 @@ def helpThePoor(poor,rich):
 			for i in poor:
 				i["hardHeapLimit"] += poorIsolateNeed(i);
 				suggestions.append(i);
-		
+			fromBudget += 1
 		elif len(rich) > 0: # need to force the hand of rich isolates
 			stolen = 0;
 			for i in rich:
@@ -95,6 +99,10 @@ def helpThePoor(poor,rich):
 						steal = math.floor(i["heap"] * coef)
 						i["hardHeapLimit"] -= steal; 
 						stolen += steal;
+				fromStealing += 1
+			else:
+				fromAvailable += 1
+			total += 1
 
 			for i in poor:
 				need = poorIsolateNeed(i)
@@ -117,3 +125,11 @@ def calculate(totalAvailableMemory,isolates,ctx):
 	recalculateBudgets(totalAvailableMemory,rich,poor)
 	r = helpThePoor(poor,rich);
 	return r
+
+def name():
+	return "RobinHood v1.0"
+
+def stats():
+	return "RobinHood stats - FromBudget:"+str(float(fromBudget)/total*100)+". FromAvailable:"+str(float(fromAvailable)/total*100)+". FromStealing:"+str(float(fromStealing)/total*100)+"."
+
+
