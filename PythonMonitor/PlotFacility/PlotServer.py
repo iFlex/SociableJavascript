@@ -48,6 +48,10 @@ class Server:
 		self.isListening = False;
 	
 	def start(self,port):
+		if self.isListening:
+			#self.soc.shutdown(SHUT_RDWR)
+			self.soc = socket(AF_INET,SOCK_STREAM)
+			self.isListening = False
 		#bind to port
 		self.port = port;
 		self.keepRunning = True

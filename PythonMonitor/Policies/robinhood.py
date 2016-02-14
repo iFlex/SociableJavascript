@@ -74,6 +74,7 @@ def helpThePoor(poor,rich):
 		if steal_need < 0:
 			steal_need = 0
 
+		total += 1
 		if steal_need <= (context["totalBudget"] - context["immediateBudget"]): #can allocate from free memory
 			for i in poor:
 				i["hardHeapLimit"] += poorIsolateNeed(i);
@@ -102,7 +103,6 @@ def helpThePoor(poor,rich):
 				fromStealing += 1
 			else:
 				fromAvailable += 1
-			total += 1
 
 			for i in poor:
 				need = poorIsolateNeed(i)

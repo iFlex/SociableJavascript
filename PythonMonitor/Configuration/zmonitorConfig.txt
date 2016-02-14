@@ -1,2 +1,3 @@
 chhz 30
 setPlotterStartupConfig {"makeCSV":true,"makePNG":true}
+echo 0

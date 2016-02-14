@@ -7,9 +7,30 @@ class CommandLine:
 	def __init__(self,policy):
 		self.p = policy;
 		self.monitor = self.p.monitor;
-
+		self.echo = True
 		self.initCmds()
 	
+	def toggleEcho(self,toggle):
+		if toggle == 0:
+			self.echo = False;
+		else:
+			self.echo = True;
+		print "Echo is now:"+str(self.echo)
+
+	def getCommandShortForms(self,cmd):
+		forms = []
+		for i in self.shortForms:
+			form = self.shortForms[i];
+			if form == cmd:
+				forms.append(i)
+		return forms
+	
+	def listNiceFormat(self,lst,sep):
+		st = ""
+		for item in lst:
+			st += str(item)+sep
+		return st
+
 	def help(self):
 		print "Monitor Commands "
 		print "_"*80
@@ -21,6 +42,10 @@ class CommandLine:
 			for i in range(0,len(self.commands[key]["param"])):
 				params += " ["+self.commands[key]["param"][i][1]+"("+self.commands[key]["param"][i][0]+")]"
 			print ">> "+key+params;
+			
+			sf = self.getCommandShortForms(key)
+			if len(sf) > 0:
+				print "   "+self.listNiceFormat(sf," ")
 			
 			if "desc" in self.commands[key]:
 				print "     "+self.commands[key]["desc"]
@@ -35,11 +60,16 @@ class CommandLine:
 		print "Usage: "+cmd+" "+p
 
 	def matchCommand(self,cmd):
+		if cmd[0] in self.shortForms:
+			cmd[0] = self.shortForms[cmd[0]]
 
 		if cmd[0] in self.commands:
 			params = self.commands[cmd[0]]["param"]
 			method = self.commands[cmd[0]]["method"]
 			
+			if self.echo:
+				print "."+str(cmd)
+
 			if len(cmd) - 1 < len(params):
 				self.printUsage(cmd[0],params)
 			else:
@@ -95,7 +125,7 @@ class CommandLine:
 		self.monitor.prettyPrint(self.machine_id,self.v8_id)
 
 	def chhz(self,hz):
-		print "Changed frequency:"+str(self.p.changeSamplingFrequency(hz));
+		print "Changed frequency:"+str(self.p.changeSamplingFrequency(hz))+" @ "+str(1/self.p.interval)+"Hz";
 
 	def where(self):
 		print "@ Machine_"+str(self.machine_id)+" V8_"+str(self.v8_id);
@@ -155,7 +185,7 @@ class CommandLine:
 								"method":self.help,
 							},
 							"chhz":{
-								"param":[("int","frequency in Hz")],
+								"param":[("float","frequency in Hz")],
 								"method":self.chhz,
 								"desc":"Change the machine polling frequency."
 							},
@@ -252,6 +282,34 @@ class CommandLine:
 								"param":[],
 								"method":self.policyStats,
 								"desc":"Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)"
+							},
+							"echo":{
+								"param":[("int","0/1 off/on")],
+								"method":self.toggleEcho,
+								"desc":"Toggle echo function on or off"			
 							}
 						}
+
+		self.shortForms = {
+		"?":"help",
+		"ldp":"loadpolicy",
+		"ps":"policystatus",
+		"p?":"policyname",
+		"pltsconf":"setPlotterStartupConfig",
+		"hard":"setmax",
+		"soft":"suggest",
+		"h":"setmax",
+		"s":"suggest",
+		"plotport":"setPlotServerPort",
+		"pp":"setPlotServerPort",
+		"pmode":"setPlotMode",
+		"pm":"setPlotMode",
+		"nmlim":"setNewMachineMemoryLimit",
+		"mlim":"setMachineMemoryLimit",
+		"maxPlt":"setMaxPlotters",
+		"mp":"setMaxPlotters",
+		"r":"run",
+		"conf":"loadConfig",
+		"lc":"loadConfig"
+		}
 #TODO - screenshot all frames, stop plotter, stop all plotters

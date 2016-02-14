@@ -31,7 +31,7 @@ class PlotService:
 
 	def reinit(self,port):
 		self.port = port;
-		print "Starting plotter server...";
+		print "Starting plotter server("+str(port)+")";
 		if self.server.start(self.port):
 			print "Plotter server started";
 			self.ready = True;
