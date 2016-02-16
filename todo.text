@@ -31,7 +31,7 @@ so caution when expanding and shrinking -> all stat values need to be updated
 Explore the thread model ( Isolates are contexts that the threads enter and execute.
 If a thread exits an Isolate it's not guaranteed it will resume it, another may step in and continue the work )
 
-7) Check if Isolate objects can be suspended/resumed
+NO_NEED >> 7) Check if Isolate objects can be suspended/resumed
 
 DONE >> 8) Export the ExpandSpace method for the old_space_ to JS - Did not work
 DONE >> 8.1) Added a setMaxOldSpace in heap.h/cc that sets the max_old_generation_space hard limit
@@ -41,7 +41,7 @@ NO_NEED >> 11) try GDB with V8 to debug JS
 DONE >> 12) Look for debug funcitonality for JS
 DONE >> 13) V8 memory profiler reasearch
 
-15) Get external C process comm. with V8 to change the heap size
+DONE >> 15) Get external Python process comm. with V8 to change the heap size
 DONE >> 16) Read paper Heap Sizing
 nonessential_17) Consider how DOS may occur & consider mitigation
 DONE >> 19) Take a look at build process of v8 to add new files to the build
@@ -49,8 +49,8 @@ DONE >> 20) Devise a simple protocol for the v8 overlord server thread
   some queries that are going to publicise the state of the v8 heap
   some commands that are going to alter the size of the v8 heap
 
-DONE>> 21) Do a test on different machines
-HALF>> 22) Download Chrome codebase see where v8 is in the project
+DONE >> 21) Do a test on different machines
+DONE >> 22) Download Chrome codebase see where v8 is in the project
 DONE >> 23) Figure out how to get all isolates in a list to make an overall daemon
 DONE >> 24) Figure out a way to measure Isolate throughput
  * using GC prologue and epilogue hooks and timer
@@ -59,8 +59,9 @@ DONE >> 25) Identify the start and end of GC process
 GCprologue/epilogue hook
 examples in test files. just search for invocations of AddGCPrologueCallback
 
-PARTLY >> 27) Check what performance metrics V8 measures and get access to them
+DONE >> 27) Check what performance metrics V8 measures and get access to them
 D8 - generates plottable information but goes deep into program stack and heap nodes which makes in unnecessary and adds overhead
+using own calculated throughput
 
 DONE >> 28) Integrate JSON protocol in Overlord + make CLI controller
 DONE >> 29) Draft progress report by next Monday
@@ -70,34 +71,16 @@ DONE >> 27) Use GC hooks to measure GC pauses and do data analysis. Pause time v
 max, median, avg
 DONE >> 28) Look at benchmarks from Phd Student
 29) Raspberry Pi install script and testing if the framwework works
-
-30) Write up a draft of the first 3 dissertation chapters	
--Introduction
- 
--Background chapter
-	JS
-	GC
-	why control resource alloc
-
--Requirements
-	functional / nonfunctional
-
-Design
-Implementation
-Evaluation
-Conclusion
-Future Work
-
-
+DONE >> 30) Early dissertation task
 DONE >> 31) Determine the nature of the evaluation. Read through Blair's dissertation evaluation.
 32) Explore d8, Visual VM, Intel Vtune, GCspy
-33) Implement policy
-34) Timing, HeapSize, UsedMemory - factor into policy
+DONE >> 33) Implement policy
+DONE >> 34) Timing, HeapSize, UsedMemory - factor into policy
 DONE >> 35) Aggregator per machine - total memory used
 DONE >> 36) Pluggability of Ploicy - descriptor file that can be interpreted by the policy.py so that any policy can be used
 DONE >> 37) Improve mock v8 to allow Jeremy to write and test policy, report from existing CSV files rather than random value
+DONE >> 38) Implement Robin Hood Policy
 
-* plot crashing binarytree and see how available memory works
 *D* evaluation of the monitor
 *D* talk about testing
 
@@ -122,4 +105,4 @@ Skip Rendering Phases to Preserve Frame Rate
 Pluggable policy so anyone can write one
 Component oriented testing
 TCP/IP for distributed use
-Multi Processing for better plotting
+Multi Processing for better live plotting
