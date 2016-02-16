@@ -4,6 +4,8 @@
 /memplot/out
 /memplot/measurements
 /PythonMonitor/plots
+/PythonMonitor/processlogs
+/PythonMonitor/scenariologs
 *.png
 *.csv
 **/*_collection.txt
