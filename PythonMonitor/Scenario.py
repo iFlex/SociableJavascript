@@ -3,12 +3,14 @@ from subprocess import *
 import time
 import os
 import math
+from Plotter.plotter import *
 
 class Scenario:
 	def __init__(self,fileName):
 		self.evalRez = []
 		self.evalSet = []
-
+		self.config = {}
+		self.plotter = 0
 		self.logPath = "./processlogs/"
 		if not os.path.exists(self.logPath):
 			os.makedirs(self.logPath)
@@ -28,6 +30,13 @@ class Scenario:
 				self.scenario = json.loads(config);
 			except Exception as e:
 				print "Could not parse scenario file "+fileName+" "+str(e)
+				return
+
+		if "config" in self.scenario:
+			self.config = self.scenario["config"]
+
+		if "plot" in self.config and self.config["plot"] == True:
+				self.plotter = Plotter(100,"ScenarioMemoryUsage",{});
 
 	def startProcess(self,descriptor,count):
 		try:
@@ -40,13 +49,51 @@ class Scenario:
 			print "ScenarioBldr: Error starting process "+str(e)
 
 	def collectResults(self):
+		#os.system('cls')
+		os.system('clear');
+
+		memoryUsage = []
+		labels      = []
+		totalMemoryUsage = 0
+
 		ln = len(self.evalSet)
 		for i in range(0,ln):
-			process = self.evalSet[i][0];
+			process = self.evalSet[i][0]
+
+			memuse = check_output("ps -orss= -ovsz= -p "+str(process.pid), shell=True)
+			memuse = memuse.split(" ");
+			msum = 0
+			for char in memuse:
+				try:
+					msum += int(char)
+				except:
+					pass
+
+			print  str(process.pid)+" - "+str(msum)+" B";
+			totalMemoryUsage += msum
+			memoryUsage.append(msum)
+			labels.append(str(process.pid))
+
 			if process.poll() is not None:
 				self.evalRez.append({"time":time.time() - self.evalSet[i][1],"retcode":process.returncode});
 
 		self.evalSet = [x for x in self.evalSet if x[0].poll() is None ]	
+		
+		print "Total - "+str(totalMemoryUsage)+" B"
+		if self.plotter != 0:
+			self.plotter.plot(memoryUsage,labels)
+
+		if "maxMemory" in self.config:
+			if totalMemoryUsage > self.config["maxMemory"]:
+				print "CORRECTNESS ERROR - POLICY HAS NOT KEPT TOTAL MEMORY USAGE UNDER "+str(self.config["maxMemory"])+" Bytes"
+				ln = len(self.evalSet)
+				for i in range(0,ln):
+					process = self.evalSet[i][0]
+					print "Killing - "+str(process.pid)
+					process.kill()
+
+				del self.evalSet[:]
+				del self.evalRez[:]
 
 	def prettifyTime(self,time):
 		seconds = math.floor(time);
@@ -94,5 +141,6 @@ class Scenario:
 			self.collectResults()
 			time.sleep(0.001)
 
-		print "All processes finished"
-		print self.prettyResult()
+		if len(self.evalRez) > 0:
+			print "All processes finished"
+			print self.prettyResult()
