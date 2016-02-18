@@ -5,13 +5,14 @@ import os
 import math
 from Plotter.plotter import *
 
+MB = 1024*1024
 class Scenario:
 	def __init__(self,fileName):
 		self.evalRez = []
 		self.evalSet = []
 		self.config = {}
 		self.plotter = 0
-		self.logPath = "./processlogs/"
+		self.logPath = "./out/processlogs/"
 		if not os.path.exists(self.logPath):
 			os.makedirs(self.logPath)
 
@@ -36,7 +37,7 @@ class Scenario:
 			self.config = self.scenario["config"]
 
 		if "plot" in self.config and self.config["plot"] == True:
-				self.plotter = Plotter(100,"ScenarioMemoryUsage",{});
+				self.plotter = Plotter(100,"ScenarioMemoryUsage",{"fps":64,"makePNG":True,"path":self.logPath});
 
 	def startProcess(self,descriptor,count):
 		try:
@@ -49,38 +50,41 @@ class Scenario:
 			print "ScenarioBldr: Error starting process "+str(e)
 
 	def collectResults(self):
-		#os.system('cls')
-		os.system('clear');
-
-		memoryUsage = []
-		labels      = []
+		global MB
+		surviving   = []
+		memoryUsage = [0]
+		labels      = ["Total"]
 		totalMemoryUsage = 0
 
 		ln = len(self.evalSet)
 		for i in range(0,ln):
 			process = self.evalSet[i][0]
 
-			memuse = check_output("ps -orss= -ovsz= -p "+str(process.pid), shell=True)
-			memuse = memuse.split(" ");
+			#slowest component
 			msum = 0
-			for char in memuse:
-				try:
-					msum += int(char)
-				except:
-					pass
+			if "maxMemory" in self.config:
+				memuse = check_output("ps -orss= -ovsz= -p "+str(process.pid), shell=True)
+				memuse = memuse.split(" ");
+				for char in memuse:
+					try:
+						msum += int(char)
+					except:
+						pass
 
-			print  str(process.pid)+" - "+str(msum)+" B";
 			totalMemoryUsage += msum
 			memoryUsage.append(msum)
 			labels.append(str(process.pid))
 
 			if process.poll() is not None:
 				self.evalRez.append({"time":time.time() - self.evalSet[i][1],"retcode":process.returncode});
-
-		self.evalSet = [x for x in self.evalSet if x[0].poll() is None ]	
+				print "Process "+str(process.pid)+" finished "+self.prettifyTime(self.evalRez[len(self.evalRez)-1]["time"]);
+			else:
+				surviving.append(self.evalSet[i])
 		
-		print "Total - "+str(totalMemoryUsage)+" B"
+		self.evalSet = surviving
+		#print "Total - "+str(totalMemoryUsage)+" B"
 		if self.plotter != 0:
+			memoryUsage[0] = totalMemoryUsage
 			self.plotter.plot(memoryUsage,labels)
 
 		if "maxMemory" in self.config:
@@ -114,16 +118,15 @@ class Scenario:
 		
 	def prettyResult(self):
 		out = ""
-		total = 0
 		success = 0
 		for item in self.evalRez:
 			ret = self.isSuccess(item["retcode"])
 			if ret is "OK":
 				success += 1
-			total += 1
 			out += ret +" > "+self.prettifyTime(item["time"])+"\n";
 		
-		out += ("_"*20)+"\nTotal Processes:"+str(total)+"\nSuccessful:"+str(success)+"("+str(float(success)/total*100)+"%)"+"\nFailed    :"+str(total-success)+"("+str(float(total-success)/total*100)+"%)";
+		total = len(self.evalRez)
+		out += ("_"*20)+"\nTotal Processes:"+str(len(self.evalRez))+"\nSuccessful:"+str(success)+"("+str(float(success)/total*100)+"%)"+"\nFailed    :"+str(total-success)+"("+str(float(total-success)/total*100)+"%)";
 		return out
 
 	def run(self):
@@ -139,7 +142,7 @@ class Scenario:
 
 		while len(self.evalSet) > 0:
 			self.collectResults()
-			time.sleep(0.001)
+			#time.sleep(0.001)
 
 		if len(self.evalRez) > 0:
 			print "All processes finished"

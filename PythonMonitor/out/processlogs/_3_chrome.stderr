@@ -1,0 +1,34 @@
+[9149:9149:0218/015326:ERROR:browser_main_loop.cc(223)] Running without the SUID sandbox! See https://chromium.googlesource.com/chromium/src/+/master/docs/linux_suid_sandbox_development.md for more information on developing with the sandbox on.
+[9149:9149:0218/015333:ERROR:object_proxy.cc(580)] Failed to call method: org.freedesktop.DBus.ObjectManager.GetManagedObjects: object_path= /: org.freedesktop.DBus.Error.UnknownMethod: Method "GetManagedObjects" with signature "" on interface "org.freedesktop.DBus.ObjectManager" doesn't exist
+
+[9149:9149:0218/015334:ERROR:object_proxy.cc(580)] Failed to call method: org.freedesktop.DBus.ObjectManager.GetManagedObjects: object_path= /: org.freedesktop.DBus.Error.UnknownMethod: Method "GetManagedObjects" with signature "" on interface "org.freedesktop.DBus.ObjectManager" doesn't exist
+
+1   0x7f2a905d1028
+2   0x7f2a9080a665
+3   0x7f2a90819079
+4   0x7f2a909eb730
+5   0x1bf6158088b8
+Received signal 11 SEGV_MAPERR 0000fbadbeef
+#0 0x7f2a956f5c2b base::debug::(anonymous namespace)::StackDumpSignalHandler()
+#1 0x7f2a8f72a340 <unknown>
+#2 0x7f2a8a8454f1 blink::reportFatalErrorInMainThread()
+#3 0x7f2a905d1028 v8::internal::V8::FatalProcessOutOfMemory()
+#4 0x7f2a9080a665 v8::internal::Factory::NewRawOneByteString()
+#5 0x7f2a90819079 v8::internal::Factory::NumberToString()
+#6 0x7f2a909eb730 v8::internal::Runtime_NumberToStringSkipCache()
+#7 0x1bf6158088b8 <unknown>
+  r8: 00007f2a83569a00  r9: 0000000000000001 r10: 00007f2a8cf11be0 r11: 0000000000000000
+ r12: 00007ffe6cc3b9a0 r13: 00000bae13abb020 r14: 00007f2a90b3a3cf r15: 00007ffe6cc3bbb0
+  di: 0000000000000000  si: 0000000000000000  bp: 00007f2a90c89cb8  bx: 00007f2a90b5242d
+  dx: 0000000000000000  ax: 00000000fbadbeef  cx: 00007f2a8cc4088d  sp: 00007ffe6cc3b1f0
+  ip: 00007f2a8a8454f1 efl: 0000000000010246 cgf: 0000000000000033 erf: 0000000000000006
+ trp: 000000000000000e msk: 0000000000000000 cr2: 00000000fbadbeef
+[end of stack trace]
+[0218/015443:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly
+[0218/015443:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly
+[0218/015443:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly
+[0218/015443:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly

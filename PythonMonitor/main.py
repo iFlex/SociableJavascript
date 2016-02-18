@@ -15,7 +15,7 @@ print "Reading configuration...";
 #flags
 DEBUG = True
 #Defaults
-pltSvc = PlotService(["heap","maxHeapSize","footPrint"],15027)
+pltSvc = PlotService(["heap","maxHeapSize","footPrint","throughput","hardHeapLimit"],15027)
 #pltSvc.doNormalise({"heap":1000000,"suggestedHeapSize":1000000,"maxHeapSize":1000000});
 #pltSvc.doNormalise({"heap":1000000000.0,"suggestedHeapSize":1000000000.0,"maxHeapSize":1000000000.0,"throughput":100.0});
 

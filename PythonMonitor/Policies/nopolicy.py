@@ -1,6 +1,11 @@
 def init(context):
-	print "POLICY:Instantiated no policy. No restrictions will be imposedon the isolates"
+	pass
 
 def calculate(totalAvailableMemory,isolates,context):
-	result = []
-	return result;
+	return [];
+
+def name():
+	return "No Policy"
+
+def stats():
+	return "Stateless policy"

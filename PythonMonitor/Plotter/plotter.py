@@ -21,7 +21,7 @@ class Plotter:
             return
 
         self.startDateTime = str(time.asctime( time.localtime(time.time())))
-        self.writePath = "./plots/"+self.startDateTime+"/"+self.title+"/"
+        self.writePath = self.rootStore+self.startDateTime+"/"+self.title+"/"
         
         if not os.path.exists(self.writePath):
             os.makedirs(self.writePath)
@@ -33,6 +33,12 @@ class Plotter:
         if "makePNG" in config:
             self.makePNG = config["makePNG"]
 
+        if "fps" in config:
+            self.setFPS(config["fps"])
+
+        if "path" in config:
+            self.rootStore = config["path"]
+        
         self.makeFolders = self.makeCSV or self.makePNG
  
     def __init__(self,width,title,config):
@@ -46,6 +52,7 @@ class Plotter:
         self.makeCSV = True;
         self.makePNG = True;
         self.makeFolders = True;
+        self.rootStore = "./out/plots/"
         self.configure(config);
 
         self.width = width

@@ -3,10 +3,13 @@
 import math
 
 context = {}
+gracePeriod = 200;
 fromBudget = 0
 fromAvailable = 0
 fromStealing  = 0
-total         = 1
+allPoor       = 0
+allRich       = 0
+total         = 0
 
 def init(context):
 	context["immediateBudget"] = 0;
@@ -17,8 +20,14 @@ def markIsolates(isolates):
 	for isolate in isolates:
 		if "rhMark" not in isolate:
 			isolate["rhMark"] = True;
-			isolate["throughput"] = 0;
-			isolate["hardHeapLimit"] = 0;
+			isolate["throughput"] = 1;
+			isolate["hardHeapLimit"] = 1024;
+		#aggravated unresponsiveness
+		elif isolate["hardHeapLimit"] < isolate["heap"]:
+			if isolate["throughput"] < 1:
+				isolate["throughput"] /= 2;
+			else:
+				isolate["throughput"] = 0.1
 
 def splitInPoorAndRich(isolates):
 	poor = []
@@ -65,16 +74,16 @@ def getPoorNeeds(poor):
 	return need
 
 def helpThePoor(poor,rich):
-	global context,fromStealing,fromAvailable,fromBudget,total
+	global context,fromStealing,fromAvailable,fromBudget,total,allPoor,allRich
 	suggestions = [];
 
+	total += 1
 	if len(poor) > 0:
 		raw_need   = getPoorNeeds(poor)
 		steal_need = raw_need - context["immediateBudget"]
 		if steal_need < 0:
 			steal_need = 0
 
-		total += 1
 		if steal_need <= (context["totalBudget"] - context["immediateBudget"]): #can allocate from free memory
 			for i in poor:
 				i["hardHeapLimit"] += poorIsolateNeed(i);
@@ -113,23 +122,41 @@ def helpThePoor(poor,rich):
 					i["hardHeapLimit"] += stolen;
 					steal = 0
 				suggestions.append(i);
+		else:
+			allPoor += 1
+	else:
+		allRich += 1
 	#print suggestions
 	return suggestions
 
 def calculate(totalAvailableMemory,isolates,ctx):
-	global context
+	global context,gracePeriod
+	
+	if gracePeriod > 0:
+		gracePeriod -= 1
+		return;
+
 	context = ctx
 
 	markIsolates(isolates)
 	poor,rich = splitInPoorAndRich(isolates)
 	recalculateBudgets(totalAvailableMemory,rich,poor)
-	r = helpThePoor(poor,rich);
-	return r
+	
+	if len(rich) > 0 or len(poor) > 0:
+		return helpThePoor(poor,rich);
+	return []
 
 def name():
 	return "RobinHood v1.0"
 
 def stats():
-	return "RobinHood stats - FromBudget:"+str(float(fromBudget)/total*100)+". FromAvailable:"+str(float(fromAvailable)/total*100)+". FromStealing:"+str(float(fromStealing)/total*100)+"."
-
+	if total == 0:
+		return "No stats available"
+	
+	s =  "RobinHood stats:\nFromBudget:"+str(float(fromBudget)/total*100)
+	s += "\nFromAvailable:"+str(float(fromAvailable)/total*100)
+	s += "\nFromStealing:"+str(float(fromStealing)/total*100)
+	s += "\nAllRich:"+str(float(allRich)/total*100)
+	s += "\nAllPoor:"+str(float(allPoor)/total*100)
+	return s
 

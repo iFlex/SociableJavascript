@@ -293,7 +293,7 @@ class CommandLine:
 		self.shortForms = {
 		"?":"help",
 		"ldp":"loadpolicy",
-		"ps":"policystatus",
+		"ps":"policystats",
 		"p?":"policyname",
 		"pltsconf":"setPlotterStartupConfig",
 		"hard":"setmax",

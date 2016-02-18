@@ -129,11 +129,12 @@ class Policy:
                         machine["policy_store"] = {}
                         self.policy.init(machine["policy_store"]);
                     
+                    if len(inspectionList) == 0:
+                        continue
+                    
                     suggestions = []
                     try:
                         suggestions = self.policy.calculate(machine["memoryLimit"],inspectionList,machine["policy_store"]);
-                        if len(suggestions) == 0:
-                            continue
                     except Exception as e:
                         print "Ploicy error:"+str(e)
                         traceback.print_exc(file=sys.stdout)

@@ -1,0 +1,9 @@
+[9141:9141:0218/015326:ERROR:browser_main_loop.cc(223)] Running without the SUID sandbox! See https://chromium.googlesource.com/chromium/src/+/master/docs/linux_suid_sandbox_development.md for more information on developing with the sandbox on.
+[0218/015333:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly
+[9203:9203:0100/000000:ERROR:zygote_linux.cc(668)] write: Broken pipe
+[0218/015338:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly
+[9202:9202:0100/000000:ERROR:zygote_linux.cc(668)] write: Broken pipe
+[0218/015338:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly
