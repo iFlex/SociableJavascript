@@ -105,16 +105,18 @@ class Policy:
         sm = 0
         for s in suggestions:
             sm += s["hardHeapLimit"]
+            
             if "hardHeapLimit" in s and s["hardHeapLimit"] > maxMachineMemory:
                 print "POLICY HAS ALLOCATED MORE THAN THE AVAILABLE MEMORY TO ONE ISOLATE"
                 return False
+
             if "softHeapLimit" in s and s["softHeapLimit"] > s["hardHeapLimit"]:
                 print "SOFT HEAP LIMIT HIGHER THAN HARD HEAP LIMIT!"
                 return False
         
         if sm > maxMachineMemory:
             print "WARNING, POLICY HAS ALLOCATED MORE MEMORY THAN AVAILABLE"
-            return False
+            #return False
         
         return True
 

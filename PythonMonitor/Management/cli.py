@@ -1,6 +1,7 @@
 import sys, traceback
 import os
 import json
+from subprocess import *
 
 class CommandLine:
 	
@@ -185,6 +186,12 @@ class CommandLine:
 			print str(comm[1])+"_V8_"+str(comm[2])+" "+comm[0].getStrStats()
 		print "_"*60
 
+	def runScenario(self,path):
+		self.scenario = Popen(["python","runscen.py",path],0)
+
+	def listScenarios(self):
+		pass
+
 	def initCmds(self):
 		self.commands = {
 							"help":{
@@ -299,6 +306,16 @@ class CommandLine:
 								"param":[],
 								"method":self.getRegistryNetUsage,
 								"desc":"Get a summary of the network usage on the registry side"
+							},
+							"testScenario":{
+								"param":[("str","path_to_scenario")],
+								"method":self.runScenario,
+								"desc":"Run a testing scenario"
+							},
+							"listScenarios":{
+								"param":[],
+								"method":self.listScenarios,
+								"desc":"Show a listiong of all scenarios"	
 							}
 						}
 
@@ -324,6 +341,10 @@ class CommandLine:
 		"conf":"loadConfig",
 		"lc":"loadConfig",
 		"rio":"registryIO",
-		"r?":"registryIO"
+		"r?":"registryIO",
+		"scenario":"testScenario",
+		"scen":"testScenrio",
+		"t":"testScenario",
+		"rs":"testScenario"
 		}
 #TODO - screenshot all frames, stop plotter, stop all plotters
