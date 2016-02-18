@@ -178,6 +178,13 @@ class CommandLine:
 	def policyStats(self):
 		print self.p.policy.stats()
 
+	def getRegistryNetUsage(self):
+		comms = self.monitor.listCommunicators();
+		print "Registry Network Usage "+"_"*40
+		for comm in comms:
+			print str(comm[1])+"_V8_"+str(comm[2])+" "+comm[0].getStrStats()
+		print "_"*60
+
 	def initCmds(self):
 		self.commands = {
 							"help":{
@@ -287,6 +294,11 @@ class CommandLine:
 								"param":[("int","0/1 off/on")],
 								"method":self.toggleEcho,
 								"desc":"Toggle echo function on or off"			
+							},
+							"registryIO":{
+								"param":[],
+								"method":self.getRegistryNetUsage,
+								"desc":"Get a summary of the network usage on the registry side"
 							}
 						}
 
@@ -310,6 +322,8 @@ class CommandLine:
 		"mp":"setMaxPlotters",
 		"r":"run",
 		"conf":"loadConfig",
-		"lc":"loadConfig"
+		"lc":"loadConfig",
+		"rio":"registryIO",
+		"r?":"registryIO"
 		}
 #TODO - screenshot all frames, stop plotter, stop all plotters

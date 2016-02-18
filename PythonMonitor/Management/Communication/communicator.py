@@ -12,6 +12,10 @@ class communicator:
         self.lock = RLock();
         self.keepRunning = True;
         self.doJoin = True;
+        self.sent = 0
+        self.recvd = 0
+        self.sentB = 0
+        self.recvdB = 0
 
         self.packetSize = 1450;
         self.socket = socket;
@@ -46,6 +50,12 @@ class communicator:
         if self.doJoin:
             self.thread.join();
 
+    def getStats(self):
+        return {"sent":self.sent,"received":self.recvd,"bytesOut":self.sentB,"bytesIn":self.recvdB}
+
+    def getStrStats(self):
+        return "SentCMD:"+str(self.sent)+" RecvCMD:"+str(self.recvd)+" SendB:"+str(self.sentB)+" RecvB:"+str(self.recvdB)
+
     def handleResponse(self,response):
         try:
             response = b64decode(response);
@@ -53,7 +63,7 @@ class communicator:
             message = json.loads(response);
             self.requestCallback(self.mid,self.v8id,message);
             #self.monitor.update(self.mid,self.v8id,message);
-
+            self.recvd += 1
         except Exception as e:
             print "Error parsing response from V8 instance:"+str(e);
             traceback.print_exc(file=sys.stdout)
@@ -64,6 +74,7 @@ class communicator:
             buff = "";
             try:
                 buff = self.socket.recv(self.packetSize);
+                self.recvdB += len(buff)
                 #print buff;
             except Exception as e:
                 self.doJoin = False;
@@ -98,6 +109,8 @@ class communicator:
         with self.lock:
             try:
                 self.socket.send(toSend+padding);                    
+                self.sent += 1
+                self.sentB += len(toSend)+len(padding)
             except Exception as e:
                 print "Machine disconnected:"+str(e)
                 self.close();

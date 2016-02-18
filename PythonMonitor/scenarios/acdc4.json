@@ -1,0 +1,11 @@
+{
+	"config":{},
+	"run":[
+		[
+		5,[
+		"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"1024",
+		"/home/airjack/level4/SociableJavascript/benchmarks/ACDC4GC/acdc.js"]
+		]
+	]
+}

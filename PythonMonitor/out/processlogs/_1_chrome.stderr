@@ -1,9 +1,15 @@
-[9153:9153:0218/015326:ERROR:browser_main_loop.cc(223)] Running without the SUID sandbox! See https://chromium.googlesource.com/chromium/src/+/master/docs/linux_suid_sandbox_development.md for more information on developing with the sandbox on.
-[0218/015334:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+[7153:7153:0218/155952:ERROR:browser_main_loop.cc(223)] Running without the SUID sandbox! See https://chromium.googlesource.com/chromium/src/+/master/docs/linux_suid_sandbox_development.md for more information on developing with the sandbox on.
+[7153:7153:0218/155953:ERROR:object_proxy.cc(580)] Failed to call method: org.freedesktop.DBus.ObjectManager.GetManagedObjects: object_path= /: org.freedesktop.DBus.Error.UnknownMethod: Method "GetManagedObjects" with signature "" on interface "org.freedesktop.DBus.ObjectManager" doesn't exist
+
+[7153:7153:0218/155953:ERROR:object_proxy.cc(580)] Failed to call method: org.freedesktop.DBus.ObjectManager.GetManagedObjects: object_path= /: org.freedesktop.DBus.Error.UnknownMethod: Method "GetManagedObjects" with signature "" on interface "org.freedesktop.DBus.ObjectManager" doesn't exist
+
+[7153:7153:0218/160027:ERROR:platform_util_aura.cc(33)] Not implemented reached in bool platform_util::IsWindowActive(gfx::NativeWindow)
+[7153:7153:0218/160027:ERROR:platform_util_aura.cc(33)] Not implemented reached in bool platform_util::IsWindowActive(gfx::NativeWindow)
+[0218/160051:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
 Most likely you need to configure your SUID sandbox correctly
-[9215:9215:0100/000000:ERROR:zygote_linux.cc(668)] write: Broken pipe
-[0218/015339:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+[0218/160051:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
 Most likely you need to configure your SUID sandbox correctly
-[9214:9214:0100/000000:ERROR:zygote_linux.cc(668)] write: Broken pipe
-[0218/015339:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+[0218/160051:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
+Most likely you need to configure your SUID sandbox correctly
+[0218/160051:ERROR:nacl_helper_linux.cc(307)] NaCl helper process running without a sandbox!
 Most likely you need to configure your SUID sandbox correctly

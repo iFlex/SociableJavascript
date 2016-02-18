@@ -1,5 +1,7 @@
 from threading import *
-
+import timeit
+import time
+import math
 #TODO: update if the message type is update
 #threadsafe
 #V8 and IsolateIDs are numeric
@@ -14,6 +16,18 @@ class monitor:
         self.setPlotMode(plotMode);
 
         self.plotter = plotService;
+    
+    def prettifyTime(self,time):
+        seconds = math.floor(time);
+        millis  = int(math.floor(time/1000));
+        
+        mins    = math.floor(seconds/60)
+        seconds = int(seconds%60);
+
+        hours   = int(math.floor(seconds/60));
+        mins    = int(mins%60);
+
+        return str(hours)+":"+str(mins)+":"+str(seconds)+"."+str(millis);
 
     def restartPlotterService(self,port):
         self.plotter.reinit(port);
@@ -155,8 +169,7 @@ class monitor:
 
         with self.lock:
             freeIDs = v8["FreeList"];
-            isolate = {"id":0};
-
+            isolate = {"id":0,"created":time.time()};
             id = self.getAppropriateId(freeIDs,len(v8["isolates"].keys()));
             isolate["id"] = id;
             v8["isolates"][id] = isolate;
@@ -182,6 +195,7 @@ class monitor:
         retval = 0;
         with self.lock:
             if isolateId in v8["isolates"]:
+                print "(X)"+machineId+"_"+str(v8Id)+"_"+str(isolateId)+" LIVED:"+str(self.prettifyTime(time.time() - v8["isolates"][isolateId]["created"]))
                 del v8["isolates"][isolateId];
                 freeIDs = v8["FreeList"];
                 freeIDs.append(isolateId)
@@ -268,9 +282,9 @@ class monitor:
  
         for i in v8["isolates"]:
             isolate = v8["isolates"][i];
-            items = "("+str(isolate["id"])+") ";
+            items = self.prettifyTime(time.time() - isolate["created"])+" ("+str(isolate["id"])+") "
             for item in isolate:
-                if item != "action" and item != "id":
+                if item != "action" and item != "id" and item != "created":
                     items += str(item)+":"+str(isolate[item])+" "
             print spaces+items;
             print "_"*45

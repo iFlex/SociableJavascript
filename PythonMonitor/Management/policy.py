@@ -5,7 +5,8 @@ import time;
 import imp
 import os
 import sys, traceback
-
+import types
+        
 #todo: implement checks for policy output
 class Policy:
 
@@ -96,7 +97,27 @@ class Policy:
             print "Reverting to default policy...";
             self.policy = self.__loadModule(self.policyDefault);
 
-    #at the moment this deadlocks, somehow
+    def validateSuggestions(self,suggestions,maxMachineMemory):
+        if not isinstance(suggestions, types.ListType):
+            print "POLICY RETURNED INVALID RESPONSE"
+            return False
+
+        sm = 0
+        for s in suggestions:
+            sm += s["hardHeapLimit"]
+            if "hardHeapLimit" in s and s["hardHeapLimit"] > maxMachineMemory:
+                print "POLICY HAS ALLOCATED MORE THAN THE AVAILABLE MEMORY TO ONE ISOLATE"
+                return False
+            if "softHeapLimit" in s and s["softHeapLimit"] > s["hardHeapLimit"]:
+                print "SOFT HEAP LIMIT HIGHER THAN HARD HEAP LIMIT!"
+                return False
+        
+        if sm > maxMachineMemory:
+            print "WARNING, POLICY HAS ALLOCATED MORE MEMORY THAN AVAILABLE"
+            return False
+        
+        return True
+
     def run(self):
         reg  = {}
         requestQ = []
@@ -140,15 +161,16 @@ class Policy:
                         traceback.print_exc(file=sys.stdout)
                         continue
 
-                    for suggestion in suggestions:
-                        if "hardHeapLimit" in suggestion:
-                            request  = self.requestBldr.setMaxHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);
-                            requestQ.append((self.monitor.getV8Comm(idd,suggestion["v8Id"]),request))
-                        
-                        if "softHeapLimit" in suggestion: 
-                            request2 = self.requestBldr.recommendHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["softHeapLimit"]/self.bytesInMb,0)
-                            requestQ.append((self.monitor.getV8Comm(idd,suggestion["v8Id"]),request2))
-                                
+                    if self.validateSuggestions(suggestions,machine["memoryLimit"]):
+                        for suggestion in suggestions:
+                            if "hardHeapLimit" in suggestion:
+                                request  = self.requestBldr.setMaxHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);
+                                requestQ.append((self.monitor.getV8Comm(idd,suggestion["v8Id"]),request))
+                            
+                            if "softHeapLimit" in suggestion: 
+                                request2 = self.requestBldr.recommendHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["softHeapLimit"]/self.bytesInMb,0)
+                                requestQ.append((self.monitor.getV8Comm(idd,suggestion["v8Id"]),request2))
+                                    
             while len(requestQ) > 0:
                 comm,request = requestQ.pop()
                 comm.send(request);

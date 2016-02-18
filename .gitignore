@@ -6,6 +6,7 @@
 /PythonMonitor/plots
 /PythonMonitor/processlogs
 /PythonMonitor/scenariologs
+/PythonMonitor/out
 *.png
 *.csv
 **/*_collection.txt
