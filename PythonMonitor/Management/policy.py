@@ -68,14 +68,16 @@ class Policy:
 
     def changeSamplingFrequency(self,hz):
         if hz <= 0:
-            hz = -hz
+            hz = 1
 
-        if(hz > 150):
-            return False
+        if(hz > 60000): #60KHz
+            hz = 60000;
+
+        if(hz < 0.01):
+            hz = 0.01
             
-        intvl = 1.0/hz;
-        self.interval = intvl
-        return True;
+        self.interval = 1.0/hz;
+        return hz;
 
     def __loadModule(self,filepath):
         mod_name,file_ext = os.path.splitext(os.path.split(filepath)[-1])
@@ -106,7 +108,7 @@ class Policy:
             print "LOADED"
 
     def logPolicyInfo(self,name,msg):
-        logtime = str(time.asctime( time.localtime(time.time())))
+        logtime = str(time.strftime("%Y/%d/%m-%H:%M:%S"))
         self.log.write("\n"+logtime+"["+name+"]"+msg)
 
     def validateSuggestions(self,suggestions,maxMachineMemory):

@@ -6,13 +6,16 @@ from threading import Condition
 import time
 import json
 import random
+import os
 
 class PlotService:
+	
 	def __init__(self,labels,port):
 		self.ready = False;
 		self.labels = labels;
 		self.maxPlotters = 10
 		self.port = port;
+		self.log = 0;
 		#heavy parallel plotting
 		self.cond = Condition()
 		self.updateQ = [];
@@ -40,6 +43,28 @@ class PlotService:
 			print "Error starting server:"+self.server.getError();
 		return self.ready;
 	
+	def logInfo(self,key,info):
+		if self.log != 0:
+			self.log.write("\n"+str(time.strftime("%Y/%d/%m-%H:%M:%S"))+" "+str(key)+" "+str(info))
+	
+	def initLogger(self):
+		logpath = "./out/logs/"
+		if not os.path.exists(logpath):
+			os.makedirs(logpath)
+		self.log = open(logpath+"plotservice.log","a");
+
+	def closeLogger(self):
+		if self.log != 0:
+			self.log.close();
+		self.log = 0
+
+	def toggleLogging(self,toggle):
+		print "PlotService::Logging = "+str(toggle)
+		if toggle == True:
+			self.initLogger();
+		else:
+			self.closeLogger();
+
 	def setPlotterStartupConfig(self,cfg):
 		self.server.setPlotterStartupConfig(cfg);
 
@@ -97,6 +122,7 @@ class PlotService:
 							
 					self.currentPlotData[key][0] = self.server.acquirePlotter();
 					self.setTitle(key,key);
+					self.logInfo(key,"CREATED");
 
 				#send plot data
 				self.currentPlotData[key][1] = data;
@@ -119,6 +145,7 @@ class PlotService:
 								#seld.server.sendTo(key,{"action":"close"})
 								#print self.server.getAvailablePlottersCount();
 								toDel.append(active_key);
+								self.logInfo(active_key,"TERMINATED");
 								
 						for active_key in toDel:
 							del self.currentPlotData[active_key];
@@ -145,6 +172,9 @@ class PlotService:
 				self.server.sendTo(soc,{"action":"snapshot","title":"_"});
 				self.server.sendTo(soc,{"action":"close"});
 			
+			self.logInfo("PlotterService","Shutting down");
+			self.toggleLogging(False)
+
 			print "Closing plot server";
 			self.server.close();
 			print "plot:ktnxbay";
@@ -152,9 +182,11 @@ class PlotService:
 	def takeSnapshot(self,key):
 		if self.ready and key in self.currentPlotData:
 			self.server.sendTo(self.currentPlotData[key][0],{"action":"snapshot"});
+			self.logInfo(key,"SNAPSHOT");
 
 	def setTitle(self,key,title):
 		if self.ready and key in self.currentPlotData:
 			self.server.sendTo(self.currentPlotData[key][0],{"action":"setTitle","title":title});
+			self.logInfo(key,"TITLE_CHANGE:"+title)
 
 	#TODO: add change isolate that is being plotted + graph clearing and a snapshot for the old one

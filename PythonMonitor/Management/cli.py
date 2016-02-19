@@ -125,8 +125,22 @@ class CommandLine:
 		os.system('clear');
 		self.monitor.prettyPrint(self.machine_id,self.v8_id)
 
+	def nicePrintMagnitude(self,raw,unit,magnitudes):
+		mp = ["G","M","K"]
+		for i in range(0,len(mp)):
+			if raw >= magnitudes[i]:
+				return str(raw/magnitudes[i])+" "+mp[i]+unit
+		return str(raw)+" "+unit;
+
+	def hz(self):
+		print "Polling frequency "+self.nicePrintMagnitude(1/self.p.interval,"Hz",[1000000000,1000000,1000]);
+		print "Estimated Network Load "+self.nicePrintMagnitude(2048*(1.0/self.p.interval),"B/s",[1024*1024*1024,1024*1024,1024]) + " -> " + self.nicePrintMagnitude(8*2048*(1.0/self.p.interval),"b/s",[1000000000,1000000,1000]);
+
 	def chhz(self,hz):
-		print "Changed frequency:"+str(self.p.changeSamplingFrequency(hz))+" @ "+str(1/self.p.interval)+"Hz";
+		print "Attempting to change polling frequency to "+str(hz)+" Hz";
+		print "."*40
+		self.p.changeSamplingFrequency(hz)
+		self.hz()
 
 	def where(self):
 		print "@ Machine_"+str(self.machine_id)+" V8_"+str(self.v8_id);
@@ -140,7 +154,7 @@ class CommandLine:
 		self.where()
 
 	def takeSnapshot(self,iid):
-		self.monitor.takeSnapshot(self.monitor_id,self.v8_id,iid);
+		self.monitor.takeSnapshot(self.machine_id,self.v8_id,iid);
 
 	def suggest(self,id,size):
 		comm = self.monitor.getV8Comm(self.machine_id,self.v8_id);
@@ -192,6 +206,9 @@ class CommandLine:
 	def listScenarios(self):
 		pass
 
+	def togglePServiceLogging(self,toggle):
+		self.monitor.plotter.toggleLogging(toggle=="ON")
+		
 	def initCmds(self):
 		self.commands = {
 							"help":{
@@ -202,6 +219,11 @@ class CommandLine:
 								"param":[("float","frequency in Hz")],
 								"method":self.chhz,
 								"desc":"Change the machine polling frequency."
+							},
+							"hz":{
+								"param":[],
+								"method":self.hz,
+								"desc":"Get the current polling frequency"
 							},
 							"stats":{
 								"param":[],
@@ -316,6 +338,11 @@ class CommandLine:
 								"param":[],
 								"method":self.listScenarios,
 								"desc":"Show a listiong of all scenarios"	
+							},
+							"togglePlotServiceLogging":{
+								"param":[("str","ON/OFF")],
+								"method":self.togglePServiceLogging,
+								"desc":"Toggle PlotService logging"	
 							}
 						}
 
@@ -345,6 +372,8 @@ class CommandLine:
 		"scenario":"testScenario",
 		"scen":"testScenrio",
 		"t":"testScenario",
-		"rs":"testScenario"
+		"rs":"testScenario",
+		"tpsl":"togglePlotServiceLogging",
+		"pslog":"togglePlotServiceLogging",
 		}
 #TODO - screenshot all frames, stop plotter, stop all plotters
