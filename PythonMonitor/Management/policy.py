@@ -27,6 +27,12 @@ class Policy:
         #load default configuration
         self.ldConfig("/zmonitorConfig.txt");
         self.bytesInMb = 1024*1024
+
+        logpath = "./out/logs/"
+        if not os.path.exists(logpath):
+            os.makedirs(logpath)
+        self.log = open(logpath+"policy.log","a");
+        
         #starting cli
         print " Starting policy & updater thred...";
         self.thread = Thread(target = self.run)
@@ -35,6 +41,7 @@ class Policy:
         print "  Starting cli...";
         self.cli.run();
         print "Stopping policy...";
+        self.log.close()
 
         self.keepRunning = False;
         self.thread.join();
@@ -82,7 +89,6 @@ class Policy:
                 if not file_ext.lower() == '.py':
                     filepath += '.py';
                 py_mod = imp.load_source(mod_name, filepath)
-
         except Exception as e:
             print "Error loading policy "+filepath+" "+str(e)
             py_mod = 0;
@@ -96,10 +102,16 @@ class Policy:
         if self.policy == 0:
             print "Reverting to default policy...";
             self.policy = self.__loadModule(self.policyDefault);
+        else:
+            print "LOADED"
+
+    def logPolicyInfo(self,name,msg):
+        logtime = str(time.asctime( time.localtime(time.time())))
+        self.log.write("\n"+logtime+"["+name+"]"+msg)
 
     def validateSuggestions(self,suggestions,maxMachineMemory):
         if not isinstance(suggestions, types.ListType):
-            print "POLICY RETURNED INVALID RESPONSE"
+            self.logPolicyInfo(self.policy.name(),"INVALID_RESPONSE:"+str(suggestions));
             return False
 
         sm = 0
@@ -107,15 +119,15 @@ class Policy:
             sm += s["hardHeapLimit"]
             
             if "hardHeapLimit" in s and s["hardHeapLimit"] > maxMachineMemory:
-                print "POLICY HAS ALLOCATED MORE THAN THE AVAILABLE MEMORY TO ONE ISOLATE"
+                self.logPolicyInfo(self.policy.name(),"ALLOC_ERROR: GIVEN="+str(s["hardHeapLimit"])+" MACHINE_MAX="+str(maxMachineMemory));
                 return False
 
             if "softHeapLimit" in s and s["softHeapLimit"] > s["hardHeapLimit"]:
-                print "SOFT HEAP LIMIT HIGHER THAN HARD HEAP LIMIT!"
+                self.logPolicyInfo(self.policy.name(),"SOFT_LIM_ERROR: SOFT="+str(s["softHeapLimit"])+" HARD="+str(s["hardHeapLimit"]));
                 return False
         
         if sm > maxMachineMemory:
-            print "WARNING, POLICY HAS ALLOCATED MORE MEMORY THAN AVAILABLE"
+            self.logPolicyInfo(self.policy.name(),"TOTAL_ALLOC_ERROR GIVEN="+str(sm)+" MACHINE_MAX="+str(maxMachineMemory));         
             #return False
         
         return True
@@ -143,9 +155,9 @@ class Policy:
                         if not (self.policy == 0):
                             isolates = v8s[v8]["isolates"];
                         
-                        for i in isolates:
-                            isolates[i]["v8Id"] = v8;
-                            inspectionList.append(isolates[i])
+                            for i in isolates:
+                                isolates[i]["v8Id"] = v8;
+                                inspectionList.append(isolates[i])
 
                     #init policy state store per machine
                     if "policy_store" not in machine:
@@ -159,11 +171,13 @@ class Policy:
                     try:
                         suggestions = self.policy.calculate(machine["memoryLimit"],inspectionList,machine["policy_store"]);
                     except Exception as e:
-                        print "Ploicy error:"+str(e)
-                        traceback.print_exc(file=sys.stdout)
+                        self.logPolicyInfo(self.policy.name(),"POLICY_ERROR ERROR="+str(e)+" TRACEBACK:");
+                        traceback.print_exc(file=self.log)
+                        print "POLICY_ERROR";
                         continue
 
                     if self.validateSuggestions(suggestions,machine["memoryLimit"]):
+                        self.logPolicyInfo(self.policy.name(),"DECISION="+str(suggestion));
                         for suggestion in suggestions:
                             if "hardHeapLimit" in suggestion:
                                 request  = self.requestBldr.setMaxHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);
