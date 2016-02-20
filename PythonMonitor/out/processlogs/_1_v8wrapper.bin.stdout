@@ -1,8 +1,0 @@
-Running with heap size:1024
-Overlord: Connecting... 15004:15004
-Isolate created:1
-Loading scritp:/home/airjack/level4/SociableJavascript/v8runner/test/binarytree.js
-Preoading new Isolate JS with:load('/home/airjack/level4/SociableJavascript/v8runner/test/binarytree.js');
->>Compiled
-BTREE START
-Overlord::connection successful. Awaiting commands...

@@ -179,7 +179,7 @@ class Policy:
                         continue
 
                     if self.validateSuggestions(suggestions,machine["memoryLimit"]):
-                        self.logPolicyInfo(self.policy.name(),"DECISION="+str(suggestion));
+                        self.logPolicyInfo(self.policy.name(),"DECISION="+str(suggestions));
                         for suggestion in suggestions:
                             if "hardHeapLimit" in suggestion:
                                 request  = self.requestBldr.setMaxHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);
