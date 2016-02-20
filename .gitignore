@@ -9,6 +9,7 @@
 /PythonMonitor/out
 *.png
 *.csv
+*.xlsx
 **/*_collection.txt
 **/*_instantthrpt.txt
 **/*_throughput.txt

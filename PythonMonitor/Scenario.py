@@ -12,9 +12,15 @@ class Scenario:
 		self.evalSet = []
 		self.config = {}
 		self.plotter = 0
+		
 		self.logPath = "./out/processlogs/"
 		if not os.path.exists(self.logPath):
 			os.makedirs(self.logPath)
+
+		self.summaryPath = "./out/scenarios/"
+		if not os.path.exists(self.summaryPath):
+			os.makedirs(self.summaryPath)
+		self.resultFile = open(self.summaryPath+str(time.strftime("%Y_%b_%d_%H_%M"))+"output.txt","w")
 
 		config = ""
 		try:
@@ -44,6 +50,10 @@ class Scenario:
 			pname = descriptor[0][descriptor[0].rfind('/')+1:];
 			slog = open(self.logPath+"_"+str(count)+"_"+pname+".stdout","w");
 			elog = open(self.logPath+"_"+str(count)+"_"+pname+".stderr","w");
+			
+			print "Started "+pname
+			self.resultFile.write("Started "+pname+"\n");
+			
 			self.evalSet.append((Popen(descriptor,stdout=slog,stderr=elog),time.time()))
 		except Exception as e:
 			print "@ "+str(descriptor)
@@ -77,7 +87,10 @@ class Scenario:
 
 			if process.poll() is not None:
 				self.evalRez.append({"time":time.time() - self.evalSet[i][1],"retcode":process.returncode});
-				print "Process "+str(process.pid)+" finished "+self.prettifyTime(self.evalRez[len(self.evalRez)-1]["time"]);
+				finish = "Failed"
+				if process.returncode == 0:
+					finish = "Finished"
+				print "Process "+str(process.pid)+finish+self.prettifyTime(self.evalRez[len(self.evalRez)-1]["time"]);
 			else:
 				surviving.append(self.evalSet[i])
 		
@@ -146,4 +159,9 @@ class Scenario:
 
 		if len(self.evalRez) > 0:
 			print "All processes finished"
-			print self.prettyResult()
+			r = self.prettyResult()
+			print r
+
+			self.resultFile.write("All processes finished\n");
+			self.resultFile.write(r)
+			self.resultFile.close()

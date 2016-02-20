@@ -45,7 +45,7 @@ class PlotService:
 	
 	def logInfo(self,key,info):
 		if self.log != 0:
-			self.log.write("\n"+str(time.strftime("%Y/%d/%m-%H:%M:%S"))+" "+str(key)+" "+str(info))
+			self.log.write("\n"+str(time.strftime("%Y/%m/%d-%H:%M:%S"))+" "+str(key)+" "+str(info))
 	
 	def initLogger(self):
 		logpath = "./out/logs/"

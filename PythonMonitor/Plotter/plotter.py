@@ -20,7 +20,7 @@ class Plotter:
         if not self.makeFolders:
             return
 
-        self.startDateTime = str(time.strftime("%Y_%d_%m_%H_%M")) #str(time.asctime( time.localtime(time.time())))
+        self.startDateTime = str(time.strftime("%Y_%b_%d_%H_%M")) #str(time.asctime( time.localtime(time.time())))
         self.writePath = self.rootStore+self.startDateTime+"/"+self.title+"/"
         
         if not os.path.exists(self.writePath):

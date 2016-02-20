@@ -108,7 +108,7 @@ class Policy:
             print "LOADED"
 
     def logPolicyInfo(self,name,msg):
-        logtime = str(time.strftime("%Y/%d/%m-%H:%M:%S"))
+        logtime = str(time.strftime("%Y/%m/%d-%H:%M:%S"))
         self.log.write("\n"+logtime+"["+name+"]"+msg)
 
     def validateSuggestions(self,suggestions,maxMachineMemory):
