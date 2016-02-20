@@ -3,7 +3,7 @@ import time
 import timeit
 import random
 
-plotter = Plotter(1024,"Test");
+plotter = Plotter(1024,"Test",{"makeLiveDrawing":True});
 
 nrPltLines = input("No. concurrent plots:")
 nrResets   = input("No. plotter resets:");

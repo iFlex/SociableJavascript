@@ -20,7 +20,7 @@ class Plotter:
         if not self.makeFolders:
             return
 
-        self.startDateTime = str(time.asctime( time.localtime(time.time())))
+        self.startDateTime = str(time.strftime("%Y_%d_%m_%H_%M")) #str(time.asctime( time.localtime(time.time())))
         self.writePath = self.rootStore+self.startDateTime+"/"+self.title+"/"
         
         if not os.path.exists(self.writePath):
@@ -32,6 +32,9 @@ class Plotter:
 
         if "makePNG" in config:
             self.makePNG = config["makePNG"]
+        
+        if "makeLiveDrawing" in config:
+            self.makeLiveDrawing = config["makeLiveDrawing"];
 
         if "fps" in config:
             self.setFPS(config["fps"])
@@ -52,6 +55,7 @@ class Plotter:
         self.makeCSV = True;
         self.makePNG = True;
         self.makeFolders = True;
+        self.makeLiveDrawing = True;
         self.rootStore = "./out/plots/"
         self.configure(config);
 
@@ -81,18 +85,16 @@ class Plotter:
         xinch = xpixels / dpi
         yinch = ypixels / dpi
 
-        #fig = pylab.gcf()
+        if self.makeLiveDrawing:
+            self.fig = plt.figure(figsize=(xinch,yinch))
+            self.fig.canvas.set_window_title(title)
+            self.ax = self.fig.add_subplot(111);
 
-        self.fig = plt.figure(figsize=(xinch,yinch))
-        self.fig.canvas.set_window_title(title)
-        self.ax = self.fig.add_subplot(111);
-
-        self.fig.show()
-        self.fig.canvas.draw()
-        #plt.ion()
-        
-        pylab.ylim([0,100])
-        pylab.xlim([0,width])
+            self.fig.show()
+            self.fig.canvas.draw()
+            
+            pylab.ylim([0,100])
+            pylab.xlim([0,width])
 
     def reset(self,title):
         self.save();
@@ -154,37 +156,38 @@ class Plotter:
             self.skipDraw -=1 
             return
 
-        ln = len(self.Ydata)
-        for index in range(0,ln):
-            if index == len(self.graphs):
-                graph = self.ax.plot(self.Xdata,self.Ydata[index])[0]
-                self.graphs.append(graph)
-                self.labels.append(tlabels[index])
-                
-                plt.legend(self.labels, ncol=4, loc='upper center', 
-                    bbox_to_anchor=[0.5, 1.1], 
-                    columnspacing=1.0, labelspacing=0.0,
-                    handletextpad=0.0, handlelength=1.5,
-                    fancybox=True, shadow=True)
-            else:
-                self.graphs[index].set_ydata(self.Ydata[index])
-        
-        pylab.ylim([0,self.maxY])
-        try:
-            self.fig.canvas.draw() # update the plot
-        except Exception as e:
-            print "CAN'T PLOT - ISSUES WITH DATA MOST LIKELY"
-            print e
+        if self.makeLiveDrawing:
+            ln = len(self.Ydata)
+            for index in range(0,ln):
+                if index == len(self.graphs):
+                    graph = self.ax.plot(self.Xdata,self.Ydata[index])[0]
+                    self.graphs.append(graph)
+                    self.labels.append(tlabels[index])
+                    
+                    plt.legend(self.labels, ncol=4, loc='upper center', 
+                        bbox_to_anchor=[0.5, 1.1], 
+                        columnspacing=1.0, labelspacing=0.0,
+                        handletextpad=0.0, handlelength=1.5,
+                        fancybox=True, shadow=True)
+                else:
+                    self.graphs[index].set_ydata(self.Ydata[index])
+            
+            pylab.ylim([0,self.maxY])
+            try:
+                self.fig.canvas.draw() # update the plot
+            except Exception as e:
+                print "CAN'T PLOT - ISSUES WITH DATA MOST LIKELY"
+                print e
 
-        if self.plotProgress % self.width == 0:
-            self.save();
+            if self.plotProgress % self.width == 0:
+                self.save();
 
         time2 = time.time()
         self.drawPeriod = time2-time1
         self.skipDraw   = math.floor(self.drawPeriod / self.period)
 
     def save(self):
-        if not self.makePNG:
+        if not self.makePNG or not self.makeLiveDrawing:
             return;
 
         plt.savefig(self.writePath+str(self.plotProgress)+".png")
@@ -195,5 +198,8 @@ class Plotter:
         plt.close()
 
     def setTitle(self,title):
+        if not self.makeLiveDrawing:
+            return;
+
         self.fig.canvas.set_window_title(title)
         self.title = title
