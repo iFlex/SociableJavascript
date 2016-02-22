@@ -1,9 +1,9 @@
 #!/bin/src/python
-from communicator import *
-from monitor import *
+from Management.Communication.communicator import *
+from Management.monitor import *
 from socket import *
-from policy import *
-from requestbuilder import *
+from Management.policy import *
+from Management.Communication.requestbuilder import *
 import time;
 
 import subprocess
@@ -18,9 +18,9 @@ raw_input("Press any key after you have started a V8 instance");
 DEBUG = True
 #Defaults
 address = "127.0.0.1"
-port = 15000
+port = 15004
 #network
-mon = monitor();
+mon = monitor("NONE",0);
 
 soc = socket(AF_INET,SOCK_STREAM);
 print "Connecting to local V8 instance:"+str(address)+":"+str(port)

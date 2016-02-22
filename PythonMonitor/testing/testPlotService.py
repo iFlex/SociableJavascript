@@ -1,3 +1,6 @@
+import os
+os.chdir("../")
+
 from PlotFacility.PlotService import *
 import time
 import random
@@ -36,7 +39,7 @@ def run_test(k,d,ttr):
 			plotter.update(t,data);
 		time.sleep(d);
 		elapsed += d;
-
+print "Available commands:exit,set_duration,set_delay,set_parallel,start,s,raw"
 while True:
 	cmd = raw_input(">");
 	cmd = cmd.split(" ");
@@ -87,7 +90,7 @@ while True:
 
 			plotter.update(cmd[1],data)
 		else:
-			print "Usage: r key k value";
+			print "Usage: raw key k value";
 			
 plotter.labels = labels
 run_test(keys,delay,duration);

@@ -1,7 +1,7 @@
-from ..Management.monitor import *
-from ..Management.Communication.requestbuilder import *
+from Management.monitor import *
+from Management.Communication.requestbuilder import *
 
-m = monitor();
+m = monitor("NONE",0);
 id = m.addMachine("127.0.0.1");
 if "127.0.0.1" != id:
 	print "FAIL: Machine Address Resolution Failed";
@@ -26,7 +26,6 @@ if isl == 0:
 else:
 	print "SUCCESS: new isolate added:"+str(isl);
 
-m.getCommunicators();
 
 r = RequestBuilder(m);
 print r.makeDefaultRequest(id,v8);
