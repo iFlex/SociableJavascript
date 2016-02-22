@@ -33,7 +33,7 @@ cp ./src/lib_json/libjsoncpp.a $installdr/custom_libs/
 
 cd $installdr
 echo "-- Downloading Modified V8"
-wget  -O $installdr/v8freeze.zip "https://drive.google.com/open?id=0B-5kDNkCYWq5NlhwbTFPdHhUc0U"
+wget  -O $installdr/v8freeze.zip "https://drive.google.com/file/d/0B-5kDNkCYWq5NlhwbTFPdHhUc0U/view?usp=sharing"
 unzip v8freeze.zip
 cd v8freeze
 echo "-- Building V8 ..."
