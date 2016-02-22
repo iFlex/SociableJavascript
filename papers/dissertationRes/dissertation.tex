@@ -258,6 +258,8 @@ The popularity of a programming language comes from the size and activity of its
 \hspace*{3em} For the framework to be effective and efficient it must meet a number of criteria. !!-!!-!!-!!
 \section{Non-Functional Requirements}
 \begin{itemize}
+\item Detect V8 instances within the managed environment and apply a selected memory management policy.
+\item Control the memory limits for all the Isolates within the managed environment without causing any of them to terminate execution abnormally.
 \item Automatically detect new V8 processes and add them to a pool of managed processes.
 \item Automatically detect when new Isolates are created by their host V8 processes and add them to a pool of active isolates.
 \item Automatically detect when Isolates finish execution and remove them from the pool of active isolates.
@@ -272,12 +274,20 @@ The popularity of a programming language comes from the size and activity of its
 \end{itemize}
 \section{Functional Requirements}
 \begin{itemize}
-\item Mapping IDS
-\item Given a pool of active isolates and send a status update to the correct host V8 process
+\item !!-!!-!!-!!
+\item Given a new V8 process connection, update the pools of managed machines, V8s and isolates.
+\item Given a new V8 process connection, use the remote IP address as a unique identifier for the host machine, assign a new numeric ID value, unique within the context of the host machine, to represent the V8. Also store the communications channel (socket) used to contact this V8.
+\item Given a new Isolate, assign it the same ID used by its host V8 process and store it in the managed isolates pool.
+\item Given a Machine Id, V8 Id and an Isolate Id correctly retrieve the status information of the Isolate and the communications channel needed to communicate with its host V8 process.
+\item Given a pool of active isolates send a status update request to the correct host V8 processes. 
 \item Given a list of isolates and a maximum available memory value and output a list of memory limits for each isolate
 \item Given a collection of status values for an isolate, plot the selected (relevant) ones on screen in the window corresponding to the isolate.
 \item Given a collection of status values for an isolate, append them to a file containing the full history for that isolate.
-\item 
+%are these non-functional?
+\item Allow the user to set the polling frequency of the manager
+\item Allow the user to select the memory management policy used to calculate the memory limits.
+\item Allow the user to get status information about the managed isolates and other framework facilities.
+\item Allow the user to configure the plotting facility behaviour: such as whether a full history file should be created, PNG files should be created or live plotting should be done
 \end{itemize}
 \newpage
 \chapter{Design}
