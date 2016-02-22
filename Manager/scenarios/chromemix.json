@@ -1,0 +1,33 @@
+{
+	"config":{"sequential":false},
+	"run":[
+	{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox","/home/airjack/level4/SociableJavascript/benchmarks/ACDC4GC/acdc.html"],
+		"instanceCount":1
+	},{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox --disable-web-security",
+				  "--user-data-dir=\"~/level4/SociableJavascript/benchmarks\"",
+				  "--app=\"~/level4/SociableJavascript/benchmarks/jsbench-2013.1/index.html\"", 
+				  "~/level4/SociableJavascript/benchmarks/jsbench-2013.1/index.html"],
+		"instanceCount":1,
+		"minimumHeapSize":"?"
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_Fasta.js"],
+		"instanceCount":5,
+		"minimumHeapSize":14
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_KNucleotide.js"],
+		"instanceCount":5,
+		"minimumHeapSize":27
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js"],
+		"instanceCount":5,
+		"minimumHeapSize":5
+	}
+	]
+}

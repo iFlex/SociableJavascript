@@ -1,0 +1,10 @@
+{
+	"config":{},
+	"run":[
+	{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox","/home/airjack/level4/SociableJavascript/benchmarks/ACDC4GC/acdc.html"],
+		"instanceCount":1
+	}
+	]
+}

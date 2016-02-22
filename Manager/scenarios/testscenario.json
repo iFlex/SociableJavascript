@@ -1,0 +1,10 @@
+{
+	"config":{"maxMemory":1073741824,"plot":true},
+	"run":[
+	{
+		"program":"cat",
+		"params":["~/.bashrc"],
+		"instanceCount":2
+	}
+	]
+}

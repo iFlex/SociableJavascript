@@ -1,0 +1,10 @@
+{
+	"config":{},
+	"run":[
+	{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox","/home/airjack/level4/v8/benchmarks/spinning-balls/index.html"],
+		"instanceCount":7
+	}
+	]
+}

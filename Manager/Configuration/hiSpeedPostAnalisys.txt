@@ -1,0 +1,6 @@
+chhz 10
+setPlotterStartupConfig {"makeCSV":true,"makePNG":false,"makeLiveDrawing":false}
+pm ISOLATE
+togglePlotServiceLogging OFF 
+loadpolicy inversetp 
+echo 0

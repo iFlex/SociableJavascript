@@ -1,0 +1,5 @@
+chhz 10
+pm NONE
+togglePlotServiceLogging OFF 
+loadpolicy inversetp 
+echo 0

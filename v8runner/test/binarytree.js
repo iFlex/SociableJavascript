@@ -26,7 +26,7 @@ function bottomUpTree(item,depth){
    }
 }
 
-
+print("BTREE START");
 var minDepth = 4;
 var n = 20;
 var maxDepth = Math.max(minDepth + 2, n);
@@ -46,6 +46,6 @@ for (var depth=minDepth; depth<=maxDepth; depth+=2){
    }
    //print(iterations*2 + "\t trees of depth " + depth + "\t check: " + check);
 }
-
+print("BTREE DONE");
 //print("long lived tree of depth " + maxDepth + "\t check: "
 //   + longLivedTree.itemCheck());

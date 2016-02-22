@@ -1,0 +1,31 @@
+{
+	"config":{"sequential":false},
+	"run":[
+	{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/v8runner/test/binarytree.js"],
+		"instanceCount":2,
+		"minimumHeapSize":205
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_BinaryTrees.js"],
+		"instanceCount":10,
+		"minimumHeapSize":9
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_Fasta.js"],
+		"instanceCount":11,
+		"minimumHeapSize":14
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_KNucleotide.js"],
+		"instanceCount":11,
+		"minimumHeapSize":27
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js"],
+		"instanceCount":10,
+		"minimumHeapSize":5
+	}
+	]
+}
