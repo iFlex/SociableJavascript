@@ -7,6 +7,11 @@
 /PythonMonitor/processlogs
 /PythonMonitor/scenariologs
 /PythonMonitor/out
+/Manager/plots
+/Manager/processlogs
+/Manager/scenariologs
+/Manager/out
+/Manager/testing/out
 *.png
 *.csv
 *.xlsx
