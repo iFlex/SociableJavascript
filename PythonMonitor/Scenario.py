@@ -16,6 +16,15 @@ class Scenario:
 		self.logPath = "./out/processlogs/"
 		if not os.path.exists(self.logPath):
 			os.makedirs(self.logPath)
+		
+		print "Cleaning up previous scenario output"
+		for the_file in os.listdir(self.logPath):
+			file_path = os.path.join(self.logPath, the_file)
+			try:
+				if os.path.isfile(file_path):
+					os.unlink(file_path)
+			except Exception, e:
+				pass
 
 		self.summaryPath = "./out/scenarios/"
 		if not os.path.exists(self.summaryPath):
@@ -47,14 +56,17 @@ class Scenario:
 
 	def startProcess(self,descriptor,count):
 		try:
-			pname = descriptor[0][descriptor[0].rfind('/')+1:];
-			slog = open(self.logPath+"_"+str(count)+"_"+pname+".stdout","w");
-			elog = open(self.logPath+"_"+str(count)+"_"+pname+".stderr","w");
-			
-			print "Started "+pname
-			self.resultFile.write("Started "+pname+"\n");
-			
+			slog = open(self.logPath+"_"+str(count)+".stdout","w");
+			elog = open(self.logPath+"_"+str(count)+".stderr","w");
+
+			print "Started "+str(descriptor)
 			self.evalSet.append((Popen(descriptor,stdout=slog,stderr=elog),time.time()))
+			
+			if "sequential" in self.config and self.config["sequential"] == True:
+				while len(self.evalSet) > 0:
+					self.collectResults()
+					time.sleep(0.1)
+
 		except Exception as e:
 			print "@ "+str(descriptor)
 			print "ScenarioBldr: Error starting process "+str(e)
@@ -87,10 +99,10 @@ class Scenario:
 
 			if process.poll() is not None:
 				self.evalRez.append({"time":time.time() - self.evalSet[i][1],"retcode":process.returncode});
-				finish = "Failed"
+				finish = "Failed  "
 				if process.returncode == 0:
 					finish = "Finished"
-				print "Process "+str(process.pid)+finish+self.prettifyTime(self.evalRez[len(self.evalRez)-1]["time"]);
+				print "Process("+str(process.pid)+") "+finish+" -> "+self.prettifyTime(self.evalRez[len(self.evalRez)-1]["time"]);
 			else:
 				surviving.append(self.evalSet[i])
 		
@@ -146,16 +158,22 @@ class Scenario:
 		if self.scenario == 0:
 			return;
 
+		globalCount = 0;
+		start = time.time()
 		config = self.scenario["config"];
 		for process in self.scenario["run"]:
-			count = process[0]
+			count = process["instanceCount"]
+			self.resultFile.write(str(count)+"x "+process["program"]+" -> "+str(process["params"]))
+			
 			while count > 0:
-				self.startProcess(process[1],count)
+				rundesc = [process["program"]]+process["params"]
+				self.startProcess(rundesc,globalCount)
+				globalCount += 1
 				count -= 1
 
 		while len(self.evalSet) > 0:
 			self.collectResults()
-			#time.sleep(0.001)
+			time.sleep(0.1)
 
 		if len(self.evalRez) > 0:
 			print "All processes finished"
@@ -165,3 +183,5 @@ class Scenario:
 			self.resultFile.write("All processes finished\n");
 			self.resultFile.write(r)
 			self.resultFile.close()
+		print "Total Scenario Run Time "+self.prettifyTime(time.time() - start)
+#todo: add prints of stdout and err of each process

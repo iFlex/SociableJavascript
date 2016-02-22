@@ -13,7 +13,7 @@ class PlotService:
 	def __init__(self,labels,port):
 		self.ready = False;
 		self.labels = labels;
-		self.maxPlotters = 10
+		self.maxPlotters = 500
 		self.port = port;
 		self.log = 0;
 		#heavy parallel plotting

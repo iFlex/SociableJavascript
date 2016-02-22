@@ -1,11 +1,10 @@
 {
 	"config":{},
 	"run":[
-		[
-		4,[
-		"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
-		"1024",
-		"/home/airjack/level4/SociableJavascript/v8runner/test/binarytree.js"]
-		]
+	{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/v8runner/test/binarytree.js"],
+		"instanceCount":4
+	}
 	]
 }

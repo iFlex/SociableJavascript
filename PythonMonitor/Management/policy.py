@@ -10,7 +10,7 @@ import types
 #todo: implement checks for policy output
 class Policy:
 
-    def __init__(self,monitor,frequency):
+    def __init__(self,monitor,frequency,cfgfile):
         self.monitor = monitor;
         self.interval = 1;
         self.changeSamplingFrequency(frequency)
@@ -24,8 +24,8 @@ class Policy:
         if self.policy == 0:
             print "Could not load default policy. You will need to load one manually using the command line";
 
-        #load default configuration
-        self.ldConfig("/zmonitorConfig.txt");
+        #load default config
+        self.ldConfig(cfgfile)
         self.bytesInMb = 1024*1024
 
         logpath = "./out/logs/"
@@ -179,7 +179,8 @@ class Policy:
                         continue
 
                     if self.validateSuggestions(suggestions,machine["memoryLimit"]):
-                        self.logPolicyInfo(self.policy.name(),"DECISION="+str(suggestions));
+                        #this could become slow if frequencies are high
+                        #self.logPolicyInfo(self.policy.name(),"DECISION="+str(suggestions));
                         for suggestion in suggestions:
                             if "hardHeapLimit" in suggestion:
                                 request  = self.requestBldr.setMaxHeapSize(idd,suggestion["v8Id"],suggestion["id"],suggestion["hardHeapLimit"]/self.bytesInMb,0);

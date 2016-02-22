@@ -44,13 +44,16 @@ class CommandLine:
 				params += " ["+self.commands[key]["param"][i][1]+"("+self.commands[key]["param"][i][0]+")]"
 			print ">> "+key+params;
 			
+			details = ""
 			sf = self.getCommandShortForms(key)
 			if len(sf) > 0:
-				print "   "+self.listNiceFormat(sf," ")
+				details = "   ("+self.listNiceFormat(sf," ")+") "
 			
 			if "desc" in self.commands[key]:
-				print "     "+self.commands[key]["desc"]
-				print ""
+				details += self.commands[key]["desc"]
+			
+			if len(details)>0:
+				print details
 
 		print "_"*80
 

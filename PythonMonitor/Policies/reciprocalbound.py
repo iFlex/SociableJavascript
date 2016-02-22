@@ -14,12 +14,10 @@ def calculate(totalAvailableMemory,isolates,ctx):
 		avg += i["throughput"];
 	avg /= len(isolates)
 	
+	
 	total = 0.0
 	for i in isolates:
 		total += dist(avg,i["throughput"]);
-
-	if total == 0:
-		return "THROUGHPUT SUM:"+str(total)+" > "+str(isolates)
 
 	for i in isolates:
 		i["hardHeapLimit"] = totalAvailableMemory*(dist(avg,i["throughput"])/total)

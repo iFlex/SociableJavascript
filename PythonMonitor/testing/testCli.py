@@ -22,4 +22,4 @@ mon.addV8("127.0.0.2",0);
 mon.addIsolate("127.0.0.2",2);
 mon.addIsolate("127.0.0.2",2);
 
-policy = Policy(mon,1);
+policy = Policy(mon,1,"");
