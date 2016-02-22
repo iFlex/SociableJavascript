@@ -28,13 +28,13 @@ else:
 
 
 r = RequestBuilder(m);
-print r.makeDefaultRequest(id,v8);
-print r.statusReport(id,v8)
-print r.isolateStatusReport(id,v8,isl,0)
+print "Default        Request :"+str(r.makeDefaultRequest(id,v8));
+print "Status         Request :"+str(r.statusReport(id,v8))
+print "Isolate Status Request :"+str(r.isolateStatusReport(id,v8,isl,0))
 
 base = r.isolateStatusReport(id,v8,isl,0)
-print base;
-print ""
+print "Base Request :" + str(base);
+print "Testing Request Builder Append Mode:"
 #
 base = r.recommendHeapSize(id,v8,1,1231,base);
 print base;
