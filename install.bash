@@ -33,9 +33,9 @@ cp ./src/lib_json/libjsoncpp.a $installdr/custom_libs/
 
 cd $installdr
 echo "-- Downloading Modified V8"
-wget  -O $installdr/v8.zip "http://linktov8zipfile"
-unzip v8.zip
-cd v8
+wget  -O $installdr/v8freeze.zip "https://drive.google.com/open?id=0B-5kDNkCYWq5NlhwbTFPdHhUc0U"
+unzip v8freeze.zip
+cd v8freeze
 echo "-- Building V8 ..."
 make native -j8
 
