@@ -1,10 +1,10 @@
-from cli import *
-from communicator import *
-from monitor import *
-from server import *
-from policy import *
+from Management.cli import *
+from Management.Communication.communicator import *
+from Management.monitor import *
+from Management.Communication.server import *
+from Management.policy import *
 
-mon = monitor("ALL");
+mon = monitor("NONE",0);
 
 mon.addMachine("127.0.0.1");
 mon.addV8("127.0.0.1",0);

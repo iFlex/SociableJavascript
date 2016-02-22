@@ -1,4 +1,4 @@
-from plotter import *
+from Plotter.plotter import *
 import time
 import timeit
 import random
