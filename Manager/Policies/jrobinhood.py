@@ -3,6 +3,7 @@
 import math
 
 def init(context):
+	pass
 
 def markIsolates(isolates,totalAvailableMemory):
 	memlim = totalAvailableMemory / len(isolates)
@@ -21,15 +22,18 @@ def markIsolates(isolates,totalAvailableMemory):
 def getNeed(i):
 	return max(0,i["heap"]*(-math.log(i["throughput"])) - i["hardHeapLimit"])
 
+def keyGetter(isolate):
+	return isolate["throughput"]
+
 def calculate(totalAvailableMemory,isolates,ctx):
 
-	if markIsolates(isolates):
+	if markIsolates(isolates,totalAvailableMemory):
 		return isolates
 	
 	isolates.sort(key=keyGetter);
 
 	ln = len(isolates)
-	mid = len(ln)/2;
+	mid = ln/2;
 	if mid > 0:
 		avg = 0.0
 		for i in range(mid,ln):
@@ -47,7 +51,7 @@ def calculate(totalAvailableMemory,isolates,ctx):
 	return isolates;
 
 def name():
-	return "RobinHood v1.0"
+	return "JRobinHood v1.2"
 
 def stats():
 	if total == 0:

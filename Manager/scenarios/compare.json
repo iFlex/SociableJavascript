@@ -1,0 +1,14 @@
+{
+	"config":{},
+	"run":[
+	{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js"],
+		"instanceCount":1
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["5","/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js"],
+		"instanceCount":1
+	}
+	]
+}

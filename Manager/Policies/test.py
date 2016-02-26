@@ -1,4 +1,4 @@
-from inversetpstate import *
+from jrobinhood import *
 
 print "Testing:"+name()
 nrisl = input("Nr Isolates:")
