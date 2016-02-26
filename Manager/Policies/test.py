@@ -1,4 +1,4 @@
-from jrobinhood import *
+from pascal import *
 
 print "Testing:"+name()
 nrisl = input("Nr Isolates:")

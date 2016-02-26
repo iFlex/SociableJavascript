@@ -2,5 +2,5 @@ chhz 10
 setPlotterStartupConfig {"makeCSV":true,"makePNG":true,"makeLiveDrawing":false}
 pm ALL
 togglePlotServiceLogging ON 
-loadpolicy inversetp 
+loadpolicy robinhood 
 echo 0
