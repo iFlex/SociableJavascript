@@ -27,7 +27,7 @@ def calculate(totalAvailableMemory,isolates,ctx):
 
 	for i in isolates:
 		if i["throughput"] < 1:
-			i["hardHeapLimit"] *= 2
+			i["hardHeapLimit"] += 1024*1024; #Add 1MB
 			i["average"] = i["hardHeapLimit"]
 			i["avindex"] = 1
 		else:
