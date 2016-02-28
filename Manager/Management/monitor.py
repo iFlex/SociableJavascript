@@ -289,15 +289,22 @@ class monitor:
             print spaces+items;
             print "_"*45
 
+    def nicePrintMagnitude(self,raw,unit,magnitudes):
+        mp = ["G","M","K"]
+        for i in range(0,len(mp)):
+            if raw >= magnitudes[i]:
+                return str(raw/magnitudes[i])+" "+mp[i]+unit
+        return str(raw)+" "+unit;
+
     def prettyPrint(self,currentM,currentV):
         with self.lock:
             for id in self.STATUS["machines"]:
                 machine = self.STATUS["machines"][id]["v8s"];
-                
+                avmem = self.nicePrintMagnitude(self.STATUS["machines"][id]["memoryLimit"],"B",[1024*1024*1024,1024*1024,1024])
                 if id == currentM:
-                    print "[ MACHINE_"+str(id)+" ]";
+                    print "[ MACHINE_"+str(id)+" ]"+" "+avmem;
                 else:
-                    print "MACHINE_"+str(id);
+                    print "MACHINE_"+str(id)+" "+avmem;
                 
                 for v8 in machine:
                     if v8 == currentV and id == currentM:

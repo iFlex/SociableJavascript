@@ -60,7 +60,7 @@ class Scenario:
 			elog = open(self.logPath+"_"+str(count)+".stderr","w");
 
 			print "Started "+str(descriptor)
-			self.evalSet.append((Popen(descriptor,stdout=slog,stderr=elog),time.time()))
+			self.evalSet.append((Popen(descriptor,stdout=slog,stderr=elog),time.time(),descriptor))
 			
 			if "sequential" in self.config and self.config["sequential"] == True:
 				while len(self.evalSet) > 0:
@@ -98,7 +98,7 @@ class Scenario:
 			labels.append(str(process.pid))
 
 			if process.poll() is not None:
-				self.evalRez.append({"time":time.time() - self.evalSet[i][1],"retcode":process.returncode});
+				self.evalRez.append({"time":time.time() - self.evalSet[i][1],"retcode":process.returncode,"desc":self.evalSet[i][2]});
 				finish = "Failed  "
 				if process.returncode == 0:
 					finish = "Finished"
@@ -140,7 +140,16 @@ class Scenario:
 		if code == 0:
 			return "OK"
 		return "XX"
-		
+	
+	def strDesc(self,desc):
+		if len(desc) == 3:
+			return desc[2][desc[2].rfind("/")+1:]
+		elif len(desc) > 3:
+			return desc[2];
+		else:
+			return str(desc)
+
+	
 	def prettyResult(self):
 		out = ""
 		success = 0
@@ -148,7 +157,7 @@ class Scenario:
 			ret = self.isSuccess(item["retcode"])
 			if ret is "OK":
 				success += 1
-			out += ret +" > "+self.prettifyTime(item["time"])+"\n";
+			out += ret +" > "+self.prettifyTime(item["time"])+"-"+self.strDesc(item["desc"])+"\n";
 		
 		total = len(self.evalRez)
 		out += ("_"*20)+"\nTotal Processes:"+str(len(self.evalRez))+"\nSuccessful:"+str(success)+"("+str(float(success)/total*100)+"%)"+"\nFailed    :"+str(total-success)+"("+str(float(total-success)/total*100)+"%)";

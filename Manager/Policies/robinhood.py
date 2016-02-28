@@ -4,6 +4,9 @@
 
 import math
 from operator import itemgetter
+#MAGIC NUMBERS
+MAX_NEED_COEF = 10 # -log(smallest_possible_throughput)
+STEAL_BUDGET  = 2  # divide the available memory by this to get the maximum stealable amount
 
 def init(context):
 	context["alpha"] = 25*1024*1024; # 25 MB |other values trid 10MB 1MB
@@ -26,19 +29,20 @@ def markIsolates(isolates,totalAvailableMemory):
 def keyExtractor(isolate):
 	return isolate["throughput"]
 
-def sort(isolates):
-	isolates.sort(key=keyExtractor)
-
-def getNeed(i):
-	n = max(0,i["hardHeapLimit"]*(-math.log(i["throughput"])/2) - i["hardHeapLimit"])
-	return min(i["hardHeapLimit"],n)
-
+def getNeed(i,giveBudget):
+	if i["throughput"] == 0:
+		coef = 1
+	else:
+		coef = -math.log(i["throughput"])
+	return max(0,giveBudget*coef/MAX_NEED_COEF)
+	
 def calculate(totalAvailableMemory,isolates,ctx):
 	if markIsolates(isolates,totalAvailableMemory):
 		return isolates
 
-	sort(isolates)
-	
+	#sort descending
+	isolates.sort(key=keyExtractor,reverse=True)
+
 	roblimit = ctx["robLimit"]
 	if roblimit > len(isolates)/2:
 		roblimit = len(isolates)/2;
@@ -46,7 +50,7 @@ def calculate(totalAvailableMemory,isolates,ctx):
 	#enhanced version
 	#successfully packs 5 binarytree.json(203MB min heap) in 1GB
 	if len(isolates) > 1:
-		need = getNeed(isolates[-1])
+		need = getNeed(isolates[-1],isolates[0]["hardHeapLimit"]/STEAL_BUDGET);
 		isolates[0]["hardHeapLimit"] -= need
 		isolates[-1]["hardHeapLimit"] += need
 	

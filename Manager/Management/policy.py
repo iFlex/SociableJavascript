@@ -117,14 +117,15 @@ class Policy:
             return False
 
         sm = 0
+        ss = 0
         for s in suggestions:
-            sm += s["hardHeapLimit"]
-            
             if "hardHeapLimit" in s and s["hardHeapLimit"] > maxMachineMemory:
+                sm += s["hardHeapLimit"]
                 self.logPolicyInfo(self.policy.name(),"ALLOC_ERROR: GIVEN="+str(s["hardHeapLimit"])+" MACHINE_MAX="+str(maxMachineMemory));
                 return False
 
-            if "softHeapLimit" in s and s["softHeapLimit"] > s["hardHeapLimit"]:
+            if "softHeapLimit" in s and "hardHeapLimit" in s and s["softHeapLimit"] > s["hardHeapLimit"]:
+                ss += s["softHeapLimit"]
                 self.logPolicyInfo(self.policy.name(),"SOFT_LIM_ERROR: SOFT="+str(s["softHeapLimit"])+" HARD="+str(s["hardHeapLimit"]));
                 return False
         

@@ -1,4 +1,4 @@
-#Robin Hood Policy
+#Pascal Policy - puts pressure on isolates to use less memory
 #Author@ Milorad Liviu Felix
 import math
 
@@ -26,16 +26,17 @@ def calculate(totalAvailableMemory,isolates,ctx):
 		return isolates;
 
 	for i in isolates:
-		if i["throughput"] < 1:
-			i["hardHeapLimit"] += 1024*1024; #Add 1MB
+		if i["throughput"] < 0.1:
+			i["hardHeapLimit"] *= 2;
 			i["average"] = i["hardHeapLimit"]
 			i["avindex"] = 1
 		else:
 			i["average"] += i["footPrint"];
 			i["avindex"] += 1
-			i["hardHeapLimit"] = int(i["average"]/i["avindex"])
+			mul = 1
+			i["hardHeapLimit"] = int(i["average"]/(i["avindex"]*mul))
 			#i["hardHeapLimit"] /= 2;
-
+			
 	return isolates
 
 def name():

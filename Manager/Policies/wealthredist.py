@@ -30,7 +30,7 @@ def calcRedistribution(isolates):
 		if i["throughput"] < POOR_TRESHOLD:
 			PoorContrib += -math.log(i["throughput"])
 		else:
-			RichContrib += i["throughput"]
+			RichContrib += i["hardHeapLimit"]
 			Redistributable += i["hardHeapLimit"]
 
 	return (RichContrib,PoorContrib,Redistributable)
@@ -40,7 +40,7 @@ def redistribute(isolates,rc,pc,redistribute):
 		if i["throughput"] < POOR_TRESHOLD:
 			i["hardHeapLimit"] += (-math.log(i["throughput"])/pc)*redistribute
 		else:
-			i["hardHeapLimit"] -= (i["throughput"]/rc)*redistribute
+			i["hardHeapLimit"] -= (i["hardHeapLimit"]/rc)*redistribute
 
 def markIsolates(isolates,totalAvailableMemory):
 	memlim = totalAvailableMemory / len(isolates)
@@ -65,7 +65,7 @@ def calculate(totalAvailableMemory,isolates,ctx):
 	gini = getGini(isolates)
 	rc,pc,redist = calcRedistribution(isolates)
 	
-	redist /= 2
+	#redist /= 2
 	redist = min(redist,totalAvailableMemory*gini);
 
 	redistribute(isolates,rc,pc,redist)

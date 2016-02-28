@@ -1,0 +1,31 @@
+{
+	"config":{"sequential":false,"comment":"Fit in 300MB"},
+	"run":[
+	{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/v8runner/test/binarytree.js"],
+		"instanceCount":1,
+		"minimumHeapSize":203
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_BinaryTrees.js"],
+		"instanceCount":1,
+		"minimumHeapSize":9
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_Fasta.js"],
+		"instanceCount":2,
+		"minimumHeapSize":14
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_KNucleotide.js"],
+		"instanceCount":2,
+		"minimumHeapSize":27
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js"],
+		"instanceCount":1,
+		"minimumHeapSize":5
+	}
+	]
+}

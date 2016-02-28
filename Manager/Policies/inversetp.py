@@ -6,8 +6,8 @@ def init(context):
 	pass	
 
 def transform(tp):
-	if tp < 0.0001:
-		tp = 0.0001;
+	if tp < 0.99:
+		tp = 0.01;
 	return -math.log10(tp/1000.0);
 
 def calculate(totalAvailableMemory,isolates,ctx):
@@ -21,7 +21,7 @@ def calculate(totalAvailableMemory,isolates,ctx):
 	return isolates;
 
 def name():
-	return "Inverse Throughput v1.2"
+	return "Inverse Throughput Social v1.0"
 
 def stats():
 	return "No stats available"

@@ -1,0 +1,35 @@
+{
+	"config":{"sequential":false},
+	"run":[
+	{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox",
+		"https://www.youtube.com/watch?v=t3i7XTljFjo"],
+		"instanceCount":1
+	},{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox",
+		"https://www.youtube.com/watch?v=kMhw5MFYU0s"],
+		"instanceCount":1
+	},{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox",
+		"https://www.youtube.com/watch?v=N4efmq7Ez_w"],
+		"instanceCount":1
+	},{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox",
+		"https://www.youtube.com/watch?v=H9jQf-8HyuI"],
+		"instanceCount":1
+	},{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox",
+		"https://www.youtube.com/watch?v=dZTrHp_pJAg"],
+		"instanceCount":1
+	},{
+		"program":"/home/airjack/level4/chrome/src/out/Release/chrome",
+		"params":["--no-sandbox",
+		"https://www.youtube.com/watch?v=yHvFL92RXP4"],
+		"instanceCount":1
+	}]
+}

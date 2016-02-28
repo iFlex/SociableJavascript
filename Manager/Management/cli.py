@@ -172,7 +172,7 @@ class CommandLine:
 		comm.send(self.p.requestBldr.startScript(self.machine_id,self.v8_id,script));
 	
 	def setNewMachineMemoryLimit(self,limit):
-		self.monitor.newMachineMemoryLimit = limit;
+		self.monitor.newMachineMemLimit = limit*1024*1024;
 
 	def setMachineMemoryLimit(self,mid,limit):
 		machine = self.monitor.getMachine(mid);
