@@ -1,5 +1,7 @@
 from Communication.requestbuilder import *
 from cli import *
+from csv import *
+
 from threading import Thread
 import time;
 import imp
@@ -164,7 +166,7 @@ class Policy:
 
                     #init policy state store per machine
                     if "policy_store" not in machine:
-                        machine["policy_store"] = {}
+                        machine["policy_store"] = {"csvlog":CSV(self.policy.name()+".csv")}
                         self.policy.init(machine["policy_store"]);
                     
                     if len(inspectionList) == 0:

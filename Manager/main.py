@@ -16,9 +16,8 @@ if len(sys.argv) > 1:
 #flags
 DEBUG = True
 #Defaults
-pltSvc = PlotService(["heap","footPrint","maxHeapSize","throughput","hardHeapLimit"],15027)
-#pltSvc.doNormalise({"heap":1000000,"suggestedHeapSize":1000000,"maxHeapSize":1000000});
-#pltSvc.doNormalise({"heap":1000000000.0,"suggestedHeapSize":1000000000.0,"maxHeapSize":1000000000.0,"throughput":100.0});
+pltSvc = PlotService(["heap","footPrint","maxHeapSize","throughput"],15027)
+pltSvc.doNormalise({"heap":1024*1024.0,"footPrint":1024*1024.0,"maxHeapSize":1024*1024.0,"throughput":1.0});
 
 print "Initialising Registry..."
 mon = monitor("ISOLATE",pltSvc);

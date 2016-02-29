@@ -21,9 +21,10 @@ def markIsolates(isolates,totalAvailableMemory):
 			isolate["rhMark"] = True;
 			hasNewIsolates = True
 
-	for isolate in isolates:
-		isolate["hardHeapLimit"] = memlim;
-
+	if hasNewIsolates:
+		for isolate in isolates:
+			isolate["hardHeapLimit"] = memlim;
+			
 	return hasNewIsolates
 
 def keyExtractor(isolate):

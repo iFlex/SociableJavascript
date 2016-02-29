@@ -16,9 +16,10 @@ def markIsolates(isolates,totalAvailableMemory):
 			isolate["avindex"] = 0;
 			hasNewIsolates = True
 
-	for isolate in isolates:
-		isolate["hardHeapLimit"] = memlim;
-
+	if hasNewIsolates:
+		for isolate in isolates:
+			isolate["hardHeapLimit"] = memlim;
+			
 	return hasNewIsolates
 
 def calculate(totalAvailableMemory,isolates,ctx):

@@ -1,13 +1,19 @@
 #Wealth Redistribution
 #Author@ Milorad Liviu Felix
 import math
-POOR_TRESHOLD = 0.99
+
+#inspect and fix with extra care
+MAX_THPT = 200.0
+context = {}
 
 def init(context):
-	pass
+	context["poor_treshold"] = 0
+	if "csvlog" in context:
+		context["csvlog"].commitSchema(["totalAvailableMemory","redistributable","RichD","PoorD"])
 
 def throughputRescale(t):
-	return -math.log10(t/200.0);
+	t = max(0.00001,t)
+	return -math.log10(t/MAX_THPT);
 
 def getGini(isolates):
 	sumOfDifferences = 0
@@ -22,25 +28,63 @@ def getGini(isolates):
 
 	return giniIndex;
 
-def calcRedistribution(isolates):
-	RichContrib = 0.0
-	PoorContrib = 0.0
-	Redistributable = 0.0
+def calcPoorTreshold(isolates):
+	sm = 0.0
 	for i in isolates:
-		if i["throughput"] < POOR_TRESHOLD:
-			PoorContrib += -math.log(i["throughput"])
+		sm += throughputRescale(i["throughput"])
+		#sm += i["throughput"]
+	sm = float(sm)/len(isolates);
+
+	return math.pow(10,-sm)
+	#return sm
+
+def calcRedistribution(isolates,poor_treshold):
+	
+	RichContrib     = 0.0
+	PoorContrib     = 0.0
+	Redistributable = 0.0
+	totalUsed       = 0.0 
+	for i in isolates:
+		totalUsed += i["hardHeapLimit"]
+		if i["throughput"] <= poor_treshold:
+			PoorContrib += throughputRescale(i["throughput"])
 		else:
 			RichContrib += i["hardHeapLimit"]
 			Redistributable += i["hardHeapLimit"]
 
-	return (RichContrib,PoorContrib,Redistributable)
+	return (RichContrib,PoorContrib,Redistributable,totalUsed)
 
-def redistribute(isolates,rc,pc,redistribute):
-	for i in isolates:
-		if i["throughput"] < POOR_TRESHOLD:
-			i["hardHeapLimit"] += (-math.log(i["throughput"])/pc)*redistribute
-		else:
-			i["hardHeapLimit"] -= (i["hardHeapLimit"]/rc)*redistribute
+def redistribute(isolates,rc,pc,ac,redistribute,allocatable,poor_treshold):
+	richd = []
+	poord = []
+
+	allocatable += redistribute;
+	#poor and rich exist
+	if rc != 0 and pc != 0:
+		for i in isolates:
+			if i["throughput"] <= poor_treshold:
+				coef = throughputRescale(i["throughput"])/pc;
+				poord.append(coef);
+				i["hardHeapLimit"] += coef*allocatable
+			else:
+				richd.append((i["hardHeapLimit"]/rc))
+				i["hardHeapLimit"] -= (i["hardHeapLimit"]/rc)*redistribute
+	
+	#everyone is rich
+	if pc == 0:
+		allocatable -= redistribute
+		for i in isolates:
+			richd.append((i["hardHeapLimit"]/rc))
+			i["hardHeapLimit"] += (i["hardHeapLimit"]/rc)*allocatable
+	
+	#everyone is poor
+	if rc == 0:
+		allocatable -= redistribute
+		for i in isolates:
+			poord.append((i["hardHeapLimit"]/ac))
+			i["hardHeapLimit"] += (i["hardHeapLimit"]/ac)*allocatable
+				
+	return (richd,poord)
 
 def markIsolates(isolates,totalAvailableMemory):
 	memlim = totalAvailableMemory / len(isolates)
@@ -53,22 +97,52 @@ def markIsolates(isolates,totalAvailableMemory):
 			isolate["avindex"] = 0;
 			hasNewIsolates = True
 
-	for isolate in isolates:
-		isolate["hardHeapLimit"] = memlim;
+	if hasNewIsolates:
+		for isolate in isolates:
+			isolate["hardHeapLimit"] = memlim;
 
 	return hasNewIsolates
 
 def calculate(totalAvailableMemory,isolates,ctx):
+	global context
+	context = ctx
+
 	if markIsolates(isolates,totalAvailableMemory):
 		return isolates;
 
-	gini = getGini(isolates)
-	rc,pc,redist = calcRedistribution(isolates)
+	old = []
+	new = []
 	
-	#redist /= 2
-	redist = min(redist,totalAvailableMemory*gini);
+	for i in isolates:
+		old.append(i["hardHeapLimit"])
 
-	redistribute(isolates,rc,pc,redist)
+	poor_treshold = 0.99 #calcPoorTreshold(isolates);
+	gini = getGini(isolates)
+	rc,pc,redist,totalUsed = calcRedistribution(isolates,poor_treshold)
+	allocatable = totalAvailableMemory - totalUsed;
+	allocatable = max(0,allocatable)
+
+	redist /= 3
+	redist = min(redist,totalAvailableMemory*gini);
+	redist -= allocatable;
+	redist = max(0,redist)
+
+	richd,poord = redistribute(isolates,rc,pc,totalUsed,redist,allocatable,poor_treshold)
+	
+	for i in isolates:
+		new.append(i["hardHeapLimit"])
+
+	if "csvlog" in ctx:
+		richds = "("+str(len(richd))+")"
+		poords = "("+str(len(poord))+")"
+		for i in richd:
+			richds += str(i)+"|"
+		for i in poord:
+			poords += str(i)+"|"
+		ctx["csvlog"].commitLine([totalAvailableMemory,int(redist),richds,poords])
+		ctx["csvlog"].commitLine(old);
+		ctx["csvlog"].commitLine(new);
+		ctx["csvlog"].commitLine(["POOR_TH:"+str(context["poor_treshold"])+" alc:"+str(allocatable)+" rdst:"+str(redist)]);
 
 	return isolates
 
