@@ -10,10 +10,11 @@ else:
 	scenario = Scenario(sys.argv[1],Plotter(100,"ScenarioMemoryUsage",{})) 
 	scenario.run()
 
-	if "collect" in sys.argv:
-		collectPath = raw_input("Collect Path:")
-		if scenario.policyName == "?":
-			scenario.policyName = raw_input("Policy Name:")
+	if len(sys.argv) > 3:
+		print "collect_path:"+sys.argv[2]
+		print "policy_name:"+sys.argv[3]
+		collectPath = sys.argv[2]
+		scenario.policyName = sys.argv[3]
 
 		plotpath = "./out/plots/"+scenario.pStartDate
 		scenfile = sys.argv[1][sys.argv[1].rfind("/")+1:]
