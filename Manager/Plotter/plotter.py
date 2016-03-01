@@ -96,13 +96,17 @@ class Plotter:
             pylab.ylim([0,100])
             pylab.xlim([0,width])
 
-    def reset(self,title):
+    def waitForNextStream(self):
         self.save();
         self.endFullHistoryLog();
+
+    def reset(self,title):
+        self.waitForNextStream()
+
         self.Ydata = []
         self.plotProgress = 0
         self.maxY = 0;
-
+        
         self.setTitle(title)
         self.resetPlotPaths()
 

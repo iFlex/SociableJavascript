@@ -57,6 +57,10 @@ def handleResponse(cmd):
 	try:
 		#handle commands
 		if "action" in cmd:
+			if cmd["action"] == "idle":
+				print "IPC::Plotter going idle..."
+				plotter.waitForNextStream()
+				return False;
 			if cmd["action"] == "close":
 				plotter.save();
 				return True;

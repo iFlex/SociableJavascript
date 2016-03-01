@@ -142,8 +142,7 @@ class PlotService:
 							if key in active_key:
 								self.server.releasePlotter(self.currentPlotData[active_key][0]);
 								self.currentPlotData[active_key][0] = 0;
-								#seld.server.sendTo(key,{"action":"close"})
-								#print self.server.getAvailablePlottersCount();
+								seld.server.sendTo(key,{"action":"idle"});
 								toDel.append(active_key);
 								self.logInfo(active_key,"TERMINATED");
 								
