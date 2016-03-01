@@ -1,4 +1,4 @@
-#!/bin/src/python
+#!/usr/bin/python
 from Management.Communication.server import *
 from Management.monitor import *
 from Management.policy import *

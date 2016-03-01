@@ -1,10 +1,11 @@
 {
-	"config":{"maxMemory":1073741824,"plot":true},
+	"config":{"plot":false,"sequential":false},
 	"run":[
 	{
 		"program":"cat",
 		"params":["~/.bashrc"],
-		"instanceCount":2
+		"instanceCount":2,
+		"minHeapSize":1000
 	}
 	]
 }

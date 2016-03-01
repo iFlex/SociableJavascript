@@ -10,7 +10,7 @@ class Scenario:
 		self.evalRez = []
 		self.evalSet = []
 		self.config = {}
-		self.plotter = 0
+		self.plotter = plotter
 		self.defaultMemoryUsage = 1024*MB
 		self.minHeapSize = 0;
 		self.policyName = "?"
@@ -54,10 +54,16 @@ class Scenario:
 		if "config" in self.scenario:
 			self.config = self.scenario["config"]
 
+
+		if self.plotter == 0:
+			return
+
 		if "plot" in self.config and self.config["plot"] == True:
 			plotter.configure({"fps":64,"makePNG":True,"path":self.logPath});
-			self.plotter = plotter;
-
+		else:
+			plotter.close();
+			self.plotter = 0;
+			
 	def startProcess(self,descriptor,count):
 		try:
 			slog = open(self.logPath+"_"+str(count)+".stdout","w");
@@ -153,6 +159,12 @@ class Scenario:
 		else:
 			return str(desc)
 
+	def nicePrintMagnitude(self,raw,unit,magnitudes):
+		mp = ["G","M","K"]
+		for i in range(0,len(mp)):
+			if raw >= magnitudes[i]:
+				return str(raw/magnitudes[i])+" "+mp[i]+unit
+		return str(raw)+" "+unit;
 	
 	def prettyResult(self):
 		out = ""
@@ -178,8 +190,8 @@ class Scenario:
 			count = process["instanceCount"]
 			self.resultFile.write(str(count)+"x "+process["program"]+" -> "+str(process["params"]))
 			
-			if "minHeapSize" in process:
-				self.minHeapSize += process["minHeapSize"] * count;
+			if "minimumHeapSize" in process:
+				self.minHeapSize += process["minimumHeapSize"] * count;
 			else:
 				self.minHeapSize += self.defaultMemoryUsage * count;
 
@@ -195,8 +207,12 @@ class Scenario:
 			self.collectResults()
 			time.sleep(0.1)
 
+		if self.plotter != 0:
+			self.plotter.close()
+
 		if len(self.evalRez) > 0:
-			print "All processes finished"
+			print "All processes finished - "
+			print "Target Memory Utilisation:"+self.nicePrintMagnitude(self.minHeapSize,"B",[1024*1024*1024,1024*1024,1024])
 			r = self.prettyResult()
 			print r
 

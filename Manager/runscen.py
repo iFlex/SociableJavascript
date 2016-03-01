@@ -1,18 +1,20 @@
+#!/usr/bin/python
 import sys
 import os
 from Scenarios.Scenario import *
 from Plotter.plotter import *
 import subprocess
+import time
 
 if len(sys.argv) < 2:
 	print "USAGE:python runscen.py path_to_scenario_file"
 else:
-	scenario = Scenario(sys.argv[1],Plotter(100,"ScenarioMemoryUsage",{})) 
+	scenario = Scenario(sys.argv[1],0) 
 	scenario.run()
 
 	if len(sys.argv) > 3:
-
-		raw_input("Press any key to collect results...");
+		print "Collecting results..."
+		time.sleep(5)
 		print "collect_path:"+sys.argv[2]
 		print "policy_name:"+sys.argv[3]
 		
