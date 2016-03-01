@@ -1,2 +1,0 @@
-_getHeapSize();
-print("exited");

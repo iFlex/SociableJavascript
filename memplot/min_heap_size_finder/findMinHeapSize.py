@@ -3,9 +3,11 @@ import math
 import subprocess
 import staticPlot
 from datetime import datetime
+import os
 
 MAX_HEAP = 1024
-
+recalcHeapSize = False
+measureTime    = True
 def run(heapSize,program,scripts):
     start_time = datetime.now()
 
@@ -38,27 +40,26 @@ def findHeapCurve(program,script,minheap,increment):
 
 def findMinimumHeapBinSrc(program,scripts):
     maxFailing = 0;
-    size = 1024; #1GB initial  - well over the 750MB default old_space_size v8 sets on 32bit systems
-    lastWorkingUpperLimit = size * 2;
+    size = 1; 
+    lastFailingLimit = 0;
+    lastWorkingLimit = 0;
     report = [];
-    while size != lastWorkingUpperLimit:
+    while size != lastFailingLimit and size < 1024:
         rt = run(size,program,scripts)
         report.append([size,rt[1]]);
-        print str(size)+" - "+str(lastWorkingUpperLimit)+" r:"+str(rt)
+        print str(lastFailingLimit)+" ->("+str(size)+") r:"+str(rt)
 
         if rt[0] == True:
-            lastWorkingUpperLimit = size;
-            size = math.floor(size / 2)
-            
-            if size < maxFailing:
-                size = maxFailing + math.ceil((lastWorkingUpperLimit - maxFailing ) / 2.0)    
+            lastWorkingLimit = size;
+            size = size - math.ceil(( size - lastFailingLimit ) / 2.0)
         else:
-            if maxFailing < size:
-                maxFailing = size;
-
-            size = size + math.ceil(( lastWorkingUpperLimit - size ) / 2.0)
-
-    return (lastWorkingUpperLimit,report);
+            lastFailingLimit = size
+            if lastWorkingLimit == 0:
+                size *= 2
+            else:
+                size += math.ceil((lastWorkingLimit - lastFailingLimit)/2.0)
+            
+    return (size+1,report);
 
 #read config file and start measuring
 cfgfile = raw_input("cfg file:");
@@ -71,19 +72,39 @@ with open(cfgfile, 'r') as content_file:
 cfg = json.loads(content);
 
 results = []
+ti = 1
 for test in cfg["tests"]:
     try:
         #add in the abs location of the scripts
-        scripts = ""
-        for i in range(0,len(test["script"])):
-            scripts += " " + cfg["location"] + test["script"][i];
+        print ">>> "+str(ti)+"/"+str(len(cfg["tests"]))
+        ti += 1
 
+        scripts = ""
+        cont = False
+        for i in range(0,len(test["script"])):
+            path = cfg["location"] + test["script"][i];
+            if not os.path.exists(path):
+                print "Unable to locate file:"+path
+                print "Skipping test..."
+                cont = True
+                break
+            scripts += " "+path
+        if cont:
+            continue
+
+        
         #execute test pack
-        if test.has_key('heapSize'):
-            mhs = findHeapCurve(cfg["location"]+cfg["binary"],scripts,test["heapSize"], 10);
-            staticPlot.save(mhs,"measurements/refined/"+test["alias"]+".png");
+        if test.has_key('heapSize') and (not recalcHeapSize or measureTime):
+            if measureTime:
+                rt = run(test["heapSize"],cfg["binary"],scripts)
+                test["smallHeapTime"] = rt[1];
+                rt = run(1024,cfg["binary"],scripts)
+                test["largeHeapTime"] = rt[1];
+            #mhs = findHeapCurve(cfg["binary"],scripts,test["heapSize"], 10);
+            #staticPlot.save(mhs,"measurements/refined/"+test["alias"]+".png");
+            pass
         else:
-            mhs = findMinimumHeapBinSrc(cfg["location"]+cfg["binary"],scripts);
+            mhs = findMinimumHeapBinSrc(cfg["binary"],scripts);
             test["heapSize"] = mhs[0]
             #staticPlot.plot(mhs[1]);
             staticPlot.save(mhs[1],"measurements/"+test["alias"]+".png");

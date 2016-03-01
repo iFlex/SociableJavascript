@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 import os
-from Scenarios.Scenario import *
+from scenarios.Scenario import *
 from Plotter.plotter import *
 import subprocess
 import time
@@ -31,7 +31,7 @@ else:
 
 		if collectPath[len(collectPath)-1] != "/":
 			collectPath += "/"
-		collectPath += scenario.policyName + "_" + scenfile
+		collectPath += scenfile + "_" + scenario.policyName
 		
 		print "Creating Collection Directory "+str(collectPath)
 		if not os.path.exists(collectPath):

@@ -243,7 +243,7 @@ class CommandLine:
 
 	def runScenario(self,path,cpath):
 		if path.find("/") == -1:
-			path = "./Scenarios/"+path
+			path = "./scenarios/"+path
 		if path.find(".json") == -1:
 			path += ".json"
 
@@ -255,11 +255,19 @@ class CommandLine:
 
 		self.scenario = Popen(["python","runscen.py",path,cpath,polName],0)
 
-	def listScenarios(self):
-		path = "./Scenarios/"
+	def listScen(self,path):
+		accumulator = ""
 		for f in listdir(path):
-			if isfile(join(path, f)) and f.find(".json") > -1:
-				print f;
+			if isfile(join(path, f)):
+				if f.find(".json") > -1:
+					accumulator+= str(join(path, f))+"\n";
+			else:
+				accumulator += self.listScen(join(path, f))
+		return accumulator
+
+	def listScenarios(self):
+		path = "./scenarios/"
+		print self.listScen(path);
 
 	def togglePServiceLogging(self,toggle):
 		self.monitor.plotter.toggleLogging(toggle=="ON")

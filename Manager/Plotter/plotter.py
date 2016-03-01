@@ -26,6 +26,8 @@ class Plotter:
         if not os.path.exists(self.writePath):
             os.makedirs(self.writePath)
 
+        self.status = "READY"
+
     def configure(self,config):    
         if "makeCSV" in config:
             self.makeCSV = config["makeCSV"]
@@ -52,6 +54,7 @@ class Plotter:
 
         SINGLETON = 1
 
+        self.status = "NEW";
         self.makeCSV = True;
         self.makePNG = True;
         self.makeFolders = True;
@@ -97,9 +100,11 @@ class Plotter:
             pylab.xlim([0,width])
 
     def waitForNextStream(self):
-        self.save();
-        self.endFullHistoryLog();
-
+        if self.status != "READY":
+            self.save();
+            self.endFullHistoryLog();
+            self.status = "IDLE"
+            
     def reset(self,title):
         self.waitForNextStream()
 

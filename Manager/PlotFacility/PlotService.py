@@ -140,9 +140,10 @@ class PlotService:
 						toDel = []
 						for active_key in self.currentPlotData.keys():
 							if key in active_key:
+								self.server.sendTo(self.currentPlotData[active_key][0],{"action":"idle"});
 								self.server.releasePlotter(self.currentPlotData[active_key][0]);
 								self.currentPlotData[active_key][0] = 0;
-								seld.server.sendTo(key,{"action":"idle"});
+								
 								toDel.append(active_key);
 								self.logInfo(active_key,"TERMINATED");
 								

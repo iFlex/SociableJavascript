@@ -212,7 +212,7 @@ class Scenario:
 
 		if len(self.evalRez) > 0:
 			print "All processes finished - "
-			print "Target Memory Utilisation:"+self.nicePrintMagnitude(self.minHeapSize,"B",[1024*1024*1024,1024*1024,1024])
+			print "Target Memory Utilisation:"+self.nicePrintMagnitude(self.minHeapSize,"MB",[1024*1024*1024,1024*1024,1024])
 			r = self.prettyResult()
 			print r
 

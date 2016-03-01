@@ -1,242 +1,190 @@
 {
-    "binary": "../../v8runner/v8wrapper.bin", 
+    "binary": "../../v8wrapper.bin", 
     "location": "/home/airjack/level4/SociableJavascript/benchmarks/", 
     "tests": [
         {
             "alias": "splay", 
-            "heapSize": 53.0, 
-            "largeHeapTime": 2.15365, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 4.54099, 
             "script": [
                 "v8/base.js", 
                 "v8/splay.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 4.426244
+            ]
         }, 
         {
             "alias": "crypto", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 4.026595, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 4.036801, 
             "script": [
                 "v8/base.js", 
                 "v8/crypto.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 4.036159
+            ]
         }, 
         {
             "alias": "deltablue", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 2.015469, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 2.014574, 
             "script": [
                 "v8/base.js", 
                 "v8/deltablue.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 2.013394
+            ]
         }, 
         {
             "alias": "earley-boyer", 
-            "heapSize": 6.0, 
-            "largeHeapTime": 4.060627, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 5.117912, 
             "script": [
                 "v8/base.js", 
                 "v8/earley-boyer.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 5.08222
+            ]
         }, 
         {
             "alias": "navier-stokes", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 2.041678, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 2.039324, 
             "script": [
                 "v8/base.js", 
                 "v8/navier-stokes.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 2.036393
+            ]
         }, 
         {
             "alias": "raytrace", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 2.026337, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 2.017924, 
             "script": [
                 "v8/base.js", 
                 "v8/raytrace.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 2.024345
+            ]
         }, 
         {
             "alias": "regexp", 
-            "heapSize": 7.0, 
-            "largeHeapTime": 2.179239, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 2.137254, 
             "script": [
                 "v8/base.js", 
                 "v8/regexp.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 2.125446
+            ]
         }, 
         {
             "alias": "richards", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 2.023336, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 2.024648, 
             "script": [
                 "v8/base.js", 
                 "v8/richards.js", 
                 "v8/run.js"
-            ], 
-            "smallHeapTime": 2.017574
+            ]
         }, 
         {
             "alias": "benchmark", 
-            "heapSize": 6.0, 
-            "largeHeapTime": 16.842087, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 16.940794, 
             "script": [
                 "benchmark.js"
-            ], 
-            "smallHeapTime": 16.674041
+            ]
         }, 
         {
             "alias": "binarytree", 
-            "heapSize": 196.0, 
-            "largeHeapTime": 30.201182, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 53.256271, 
             "script": [
                 "binarytree.js"
-            ], 
-            "smallHeapTime": 57.364028
+            ]
         }, 
         {
             "alias": "aBinaryTree", 
-            "heapSize": 9.0, 
-            "largeHeapTime": 12.273254, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 22.619359, 
             "script": [
                 "a_BinaryTrees.js"
-            ], 
-            "smallHeapTime": 24.971418
+            ]
         }, 
         {
             "alias": "aFasta", 
-            "heapSize": 14.0, 
-            "largeHeapTime": 4.018694, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 4.345006, 
             "script": [
                 "a_Fasta.js"
-            ], 
-            "smallHeapTime": 4.316166
+            ]
         }, 
         {
             "alias": "aKNucleotide", 
-            "heapSize": 25.0, 
-            "largeHeapTime": 99.83969, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 103.207041, 
             "script": [
                 "a_KNucleotide.js"
-            ], 
-            "smallHeapTime": 107.972622
+            ]
         }, 
         {
             "alias": "aRegexDNA", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 16.463741, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 25.584837, 
             "script": [
                 "a_RegexDNA.js"
-            ], 
-            "smallHeapTime": 26.171396
+            ]
         }, 
         {
             "alias": "cDeltaBlue", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 27.381575, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 32.652911, 
             "script": [
                 "c_DeltaBlue.js"
-            ], 
-            "smallHeapTime": 36.549624
+            ]
         }, 
         {
             "alias": "cRichards", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 94.934876, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 70.414565, 
             "script": [
                 "c_Richards.js"
-            ], 
-            "smallHeapTime": 76.920565
+            ]
         }, 
         {
             "alias": "nFannkuchRedux", 
-            "heapSize": 4.0, 
-            "largeHeapTime": 9.413831, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 8.79616, 
             "script": [
                 "n_FannkuchRedux.js"
-            ], 
-            "smallHeapTime": 9.386417
+            ]
         }, 
         {
             "alias": "n_Mandelbrot", 
-            "heapSize": 4.0, 
-            "largeHeapTime": 8.270078, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 5.840146, 
             "script": [
                 "n_Mandelbrot.js"
-            ], 
-            "smallHeapTime": 8.021803
+            ]
         }, 
         {
             "alias": "n_NBody", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 10.199931, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 9.268372, 
             "script": [
                 "n_NBody.js"
-            ], 
-            "smallHeapTime": 10.105939
+            ]
         }, 
         {
             "alias": "n_SpectralNorm", 
-            "heapSize": 5.0, 
-            "largeHeapTime": 26.878451, 
+            "heapSize": 2048, 
             "resolution": "0", 
-            "runningTime": 21.986378, 
             "script": [
                 "n_SpectralNorm.js"
-            ], 
-            "smallHeapTime": 30.242375
+            ]
+        }, 
+        {
+            "alias": "n_RevComp", 
+            "heapSize": 2048, 
+            "resolution": "0", 
+            "script": [
+                "n_RevComp.js"
+            ]
         }
     ]
 }
