@@ -11,8 +11,11 @@ else:
 	scenario.run()
 
 	if len(sys.argv) > 3:
+
+		raw_input("Press any key to collect results...");
 		print "collect_path:"+sys.argv[2]
 		print "policy_name:"+sys.argv[3]
+		
 		collectPath = sys.argv[2]
 		scenario.policyName = sys.argv[3]
 

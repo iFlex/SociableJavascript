@@ -61,6 +61,8 @@ class Policy:
             with open(fileN) as f:
                 content = f.readlines()
                 for line in content:
+                    if line.rfind("\n") == len(line) - 1:
+                        line = line[:-1]
                     self.cli.execute(line)
         except IOError as e:
             pass

@@ -2,6 +2,8 @@ import sys, traceback
 import os
 import json
 from subprocess import *
+from os import listdir
+from os.path import isfile, join
 
 class CommandLine:
 	
@@ -10,7 +12,33 @@ class CommandLine:
 		self.monitor = self.p.monitor;
 		self.echo = True
 		self.initCmds()
-	
+		self.history = []
+
+	def addToHistory(self,cmd):
+		if len(self.history) == 0 or self.history[len(self.history)-1] != cmd:
+			self.history.append(cmd)
+
+		if len(self.history) > 9:
+			self.history.pop(0)
+
+	def execHistory(self,pos):
+		if pos >= 0 and pos <= len(self.history):
+			cmd = self.history[len(self.history) - pos]
+			print cmd
+			self.execute(cmd)
+		else:
+			print "* No such command in history"
+
+	def printHistory(self):
+		cnt = len(self.history)
+		if cnt == 0:
+			print "Empty Command History"
+			return
+
+		for i in self.history:
+			print str(cnt)+":"+i;
+			cnt -= 1
+
 	def toggleEcho(self,toggle):
 		if toggle == 0:
 			self.echo = False;
@@ -97,6 +125,8 @@ class CommandLine:
 					method(actuals[0],actuals[1],actuals[2])
 				elif ln == 4:
 					method(actuals[0],actuals[1],actuals[2],actuals[3])
+
+				self.addToHistory(" ".join(cmd))
 		else:
 			if len(cmd[0]) == 0:
 				self.prettyPrint()
@@ -116,9 +146,17 @@ class CommandLine:
 		self.v8_id      = 1;
 		while True:
 			cmd = raw_input(">");
+			
 			if cmd == "exit":
 			   break;
-			
+
+			if cmd.isdigit():
+				try:
+					self.execHistory(int(cmd));
+				except:
+					pass
+				continue;
+
 			self.execute(cmd);
 
 		self.p.keepRunning = False
@@ -203,11 +241,25 @@ class CommandLine:
 			print str(comm[1])+"_V8_"+str(comm[2])+" "+comm[0].getStrStats()
 		print "_"*60
 
-	def runScenario(self,path):
-		self.scenario = Popen(["python","runscen.py",path],0)
+	def runScenario(self,path,cpath):
+		if path.find("/") == -1:
+			path = "./Scenarios/"+path
+		if path.find(".json") == -1:
+			path += ".json"
+
+		polName = ""
+		try:
+			polName = self.p.policy.name();
+		except:
+			pass
+
+		self.scenario = Popen(["python","runscen.py",path,cpath,polName],0)
 
 	def listScenarios(self):
-		pass
+		path = "./Scenarios/"
+		for f in listdir(path):
+			if isfile(join(path, f)) and f.find(".json") > -1:
+				print f;
 
 	def togglePServiceLogging(self,toggle):
 		self.monitor.plotter.toggleLogging(toggle=="ON")
@@ -333,7 +385,7 @@ class CommandLine:
 								"desc":"Get a summary of the network usage on the registry side"
 							},
 							"testScenario":{
-								"param":[("str","path_to_scenario")],
+								"param":[("str","path_to_scenario"),("str","path_to_collect_in")],
 								"method":self.runScenario,
 								"desc":"Run a testing scenario"
 							},
@@ -346,6 +398,11 @@ class CommandLine:
 								"param":[("str","ON/OFF")],
 								"method":self.togglePServiceLogging,
 								"desc":"Toggle PlotService logging"	
+							},
+							"history":{
+								"param":[],
+								"method":self.printHistory,
+								"desc":"Print command history"	
 							}
 						}
 
@@ -378,5 +435,9 @@ class CommandLine:
 		"rs":"testScenario",
 		"tpsl":"togglePlotServiceLogging",
 		"pslog":"togglePlotServiceLogging",
+		"ls":"listScenarios",
+		"lscen":"listScenarios",
+		"listscen":"listScenarios",
+		"h":"history"
 		}
 #TODO - screenshot all frames, stop plotter, stop all plotters
