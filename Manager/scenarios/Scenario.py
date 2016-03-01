@@ -3,16 +3,19 @@ from subprocess import *
 import time
 import os
 import math
-from Plotter.plotter import *
 
 MB = 1024*1024
 class Scenario:
-	def __init__(self,fileName):
+	def __init__(self,fileName,plotter):
 		self.evalRez = []
 		self.evalSet = []
 		self.config = {}
 		self.plotter = 0
-		
+		self.defaultMemoryUsage = 1024*MB
+		self.minHeapSize = 0;
+		self.policyName = "?"
+		self.pStartDate = ""
+
 		self.logPath = "./out/processlogs/"
 		if not os.path.exists(self.logPath):
 			os.makedirs(self.logPath)
@@ -52,7 +55,8 @@ class Scenario:
 			self.config = self.scenario["config"]
 
 		if "plot" in self.config and self.config["plot"] == True:
-				self.plotter = Plotter(100,"ScenarioMemoryUsage",{"fps":64,"makePNG":True,"path":self.logPath});
+			plotter.configure({"fps":64,"makePNG":True,"path":self.logPath});
+			self.plotter = plotter;
 
 	def startProcess(self,descriptor,count):
 		try:
@@ -174,11 +178,18 @@ class Scenario:
 			count = process["instanceCount"]
 			self.resultFile.write(str(count)+"x "+process["program"]+" -> "+str(process["params"]))
 			
+			if "minHeapSize" in process:
+				self.minHeapSize += process["minHeapSize"] * count;
+			else:
+				self.minHeapSize += self.defaultMemoryUsage * count;
+
 			while count > 0:
 				rundesc = [process["program"]]+process["params"]
 				self.startProcess(rundesc,globalCount)
 				globalCount += 1
 				count -= 1
+
+		self.pStartDate = str(time.strftime("%Y_%b_%d_%H_%M"))
 
 		while len(self.evalSet) > 0:
 			self.collectResults()

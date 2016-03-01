@@ -297,7 +297,7 @@ If the value of the expression above is lower than the minimum heap size, the ne
 \hspace*{3em} A supervisor framework uses insight provided by the running applications to make resource allocation decisions. In a normal setup, this insight is not needed since applications are entitled to an equal share of the system resources by default. This allows any individual application to make demands best suited for its well being without being concerned with the status of the others. Having insight provided by every running applications has the main advantage of allowing a supervisor to work towards the well being of the group rather than of an individual. This way, memory is used more efficiently, more applications can run at the same time and newly started applications are less likely to suffer from memory starvation if the other running applications utilise most of the available memory.
 \section{Related Work}
 \subsection{Virtual Machine Inspectors}
-\hspace*{3em} 
+\hspace*{3em} - already used by industry, too heavy in their analysis - goes too deep - performance cost (proof) or if no performance cost, too much data to analyse.
 \subsection{Directly Related Work}
 FORSETTI
 \chapter{Requirements}
@@ -567,8 +567,45 @@ Steal_i = \textit{StealAllowance} \times L_i
 Give_i = (\textit{GiveAllowance} + \textit{AllocateAllowance}) \times Need_i 
 \end{equation}
 
-\section{Policy 2}
-\section{Policy 3}
+\section{Wealth Redistribution}
+\begin{equation}
+\textit{WelfareIndex}_i = 0.75*1+0.15*1+0.10*1
+\end{equation}
+
+\begin{equation}
+\textit{GivePotential}_i = Max(0,L_1 - h_i)
+\end{equation}
+
+\begin{equation}
+\textit{NeedPotential}_i = 1 - \textit{WelfareIndex}_i
+\end{equation}
+
+\begin{equation}
+\textit{TotalGivePotential} = \sum_{i=0}^{N}\textit{GivePotential}_i
+\end{equation}
+
+\begin{equation}
+\textit{TotalNeedPotential} = \sum_{i=0}^{N}\textit{NeedPotential}_i
+\end{equation}
+
+\begin{equation}
+\textit{Redistribute} = Max(TotalGivePotential,\textit{TotalMachineMemory} \times \textit{gini}(\textit{WelfareIndex}))
+\end{equation}
+
+\begin{equation}
+\textit{Available} = Max(0,\textit{TotalMachineMemory} - \sum_{i=0}^{N}L_i)
+\end{equation}
+
+\begin{equation}
+\textit{Take} = Max(0,\textit{Redistribute} - \textit{Available})
+\end{equation}
+
+\begin{equation}
+L_i = L_i - \frac{\textit{GivePotential}_i}{\textit{TotalGivePotential}} \times Take + \frac{\textit{NeedPotential}_i}{\textit{TotalNeedPotential}}\times (Available + Take) 
+\end{equation}
+
+\section{State Taxation}
+\section{Pascal}
 \chapter{Conclusion}
 \section{Future Work}
 Test
