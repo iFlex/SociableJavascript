@@ -12,7 +12,6 @@
 #include "src/base/platform/time.h"
 #include "src/base/sys-info.h"
 #include "src/libplatform/worker-thread.h"
-
 #include "src/overlord/overlord.h"
 
 namespace v8 {
@@ -43,6 +42,7 @@ DefaultPlatform::DefaultPlatform()
 
 
 DefaultPlatform::~DefaultPlatform() {
+  Overlord::stop();
   base::LockGuard<base::Mutex> guard(&lock_);
   queue_.Terminate();
   if (initialized_) {

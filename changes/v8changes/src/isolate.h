@@ -1356,6 +1356,7 @@ class Isolate {
   //////////////////////////MLF///////////////////////////////////////  
   private:
     int ISOLATE_ID = 0;
+    void calcThroughput();
   public:
     static void addNewIsolate(Isolate *);
     static void removeIsolate(Isolate *);
@@ -1372,7 +1373,7 @@ class Isolate {
     high_resolution_clock::time_point timePrologue,timeEpilogue;
     int gcIndex = 0, sampleLength = 10000;
     int executionTimes[10000], gcTimes[10000];
-    double avgExec, avgGC;
+    double avgExec, avgGC, lastThroughput = 100;//Set to max Throughput
     ////////TODO: make the setTargetHeapSize also set the max heap size
     int targetHeapSize = 1073741824; //recommended heap size starts out at 1GB
     void setTargetHeapSize(int target){ targetHeapSize = target; }
@@ -1386,6 +1387,7 @@ class Isolate {
     
     //metrics getters
     long long getHeapSize();
+    long long getMemoryFootprint();
     long long getAvailableHeapSize();
     double    getThroughput();
     //////////////////////////////////MLF//////////////////////////////////

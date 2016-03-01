@@ -25,4 +25,5 @@ public:
 	Overlord(int,bool);
 	static void * run(void *);
 	static void handleRequest(ControlProtocol::command &, ControlProtocol::command &);
+	static void stop();
 };

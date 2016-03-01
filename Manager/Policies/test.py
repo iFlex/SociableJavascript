@@ -1,4 +1,4 @@
-from wealthredist import *
+from wealthredistribution import *
 
 print "Testing:"+name()
 nrritr = input("Nr Reiterations:")

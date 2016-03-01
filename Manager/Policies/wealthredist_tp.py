@@ -3,36 +3,22 @@
 import math
 
 #inspect and fix with extra care
+MAX_THPT = 100.0
+MIN_TP   = 0.0000001;
 context = {}
-MAX_TP = 100
-DELTA_HEAP_LIMIT    = 0.75
-DELTA_MAX_FOOTPRINT = 0.20
-DELTA_THROUGHPUT    = 0.05
+
 def init(context):
 	if "csvlog" in context:
 		context["csvlog"].commitSchema(["gini","redistribute","available","take","commited2isolates"])
 
-
 def getWelfareIndex(i):
-	hhl = 1 - float(max(0,i["hardHeapLimit"] - i["footPrint"]))/i["hardHeapLimit"]
-	mtp = 1 - float(i["footPrint"])/i["maxFootPrint"]
-	tpt = i["throughput"]/MAX_TP
-
-	return DELTA_HEAP_LIMIT*hhl + DELTA_MAX_FOOTPRINT*mtp + DELTA_THROUGHPUT*tpt
+	return i["throughput"]/MAX_THPT;
 
 def getGivePotential(i):
-	return max(0,i["hardHeapLimit"] - i["heap"]) #getWelfareIndex(i)
+	return getWelfareIndex(i)
 
 def getNeedPotential(i):
 	return 1 - getWelfareIndex(i)
-
-def getMaxFp(isolates):
-	mfp = 0
-	for i in isolates:
-		mfp = max(mfp,i["footPrint"])
-
-	for i in isolates:
-		i["maxFootPrint"] = mfp
 
 def getGini(isolates):
 	sumOfDifferences = 0
@@ -110,11 +96,10 @@ def calculate(totalAvailableMemory,isolates,ctx):
 	if markIsolates(isolates,totalAvailableMemory):
 		return isolates;
 
-	getMaxFp(isolates)
-	gini = getGini(isolates)
+	gini = getGini(isolates)/4
 	give,need,used = calculatePotentials(isolates)
 	
-	Redistribute = min(totalAvailableMemory * gini,give)
+	Redistribute = totalAvailableMemory * gini
 	Available    = max(0,totalAvailableMemory - used)
 	Take         = max(0,Redistribute - Available)
 
@@ -130,7 +115,7 @@ def calculate(totalAvailableMemory,isolates,ctx):
 	return isolates
 
 def name():
-	return "Wealth Redistribution v3.2:"+str(DELTA_HEAP_LIMIT)+":"+str(DELTA_MAX_FOOTPRINT)+":"+str(DELTA_THROUGHPUT)
+	return "Wealth Redistribution v3.0"
 
 def stats():
 	return "No stats available"

@@ -55,7 +55,7 @@ ofstream exec,gc,hpsz,thrpt,ithrpt;
 int opened = 0;
 
 void commit(int iexec, int igc, int sz, double tp, double itp){
-  if(!SINGLE_ISOLATE_MODEL)
+  /*if(!SINGLE_ISOLATE_MODEL)
     return;
 
   if(!opened){
@@ -70,11 +70,11 @@ void commit(int iexec, int igc, int sz, double tp, double itp){
   gc<<igc<<endl;
   hpsz<<sz<<endl;
   thrpt<<tp<<endl;
-  ithrpt<<itp<<endl;
+  ithrpt<<itp<<endl;*/
 }
 
 void closecommit(){
-  if(!SINGLE_ISOLATE_MODEL)
+  /*if(!SINGLE_ISOLATE_MODEL)
     return;
 
   opened = 0;
@@ -82,7 +82,7 @@ void closecommit(){
   gc.close();
   hpsz.close();
   thrpt.close();
-  ithrpt.close();
+  ithrpt.close();*/
 }
 ///////////////////////////////////////////////////
 
@@ -569,38 +569,6 @@ Isolate* Isolate::getIsolate(int id){
   return ret;
 }
 
-void Isolate::adjustHeapSize(){
- //free memory if needed
-  /*if(targetHeapSize){
-    long long size = getHeapSize();
-    if( size > targetHeapSize ) {
-      int diff =  (int)(size - targetHeapSize);
-      
-      cout<<"Diff "<<diff<<" PageSize:"<<Page::kPageSize<<" Freeing ";
-      int count = diff/Page::kPageSize;
-      cout << "Need to free "<< count << " pages"<<endl;
-      
-      if(diff != 0) {
-        while( count > 0 ) {
-          count--;
-          FreeSpace *f = heap_.old_space()->TryRemoveMemory(Page::kPageSize);
-          if( f == nullptr )
-            f = heap_.map_space()->TryRemoveMemory(Page::kPageSize);
-          
-          if( f != nullptr && f->size() >= Page::kPageSize ){
-            cout<<"<#>chunk:"<<f->size()<<" size:"<<getHeapSize()<<endl;
-            memory_allocator()->Free(Page::FromAddress(f->address()));
-            cout<<"New heap size "<<getHeapSize()<<endl;
-          } else if( f!=nullptr ){
-            cout <<"Only found chink of size:"<<f->size()<<endl;
-          }
-        }
-      }
-      targetHeapSize = (int) getHeapSize();
-    }
-  }*/
-}
-
 int executionAverageTime, garbageAverageTime;
 void Isolate::staticGCPrologue(v8::Isolate * isolate, GCType type, GCCallbackFlags flags){
   v8::internal::Isolate *i = reinterpret_cast<v8::internal::Isolate*> (isolate);
@@ -630,10 +598,14 @@ void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
   timeEpilogue = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>( timeEpilogue - timePrologue ).count();
   gcTimes[gcIndex] = (int) duration;
-  garbageAverageTime += (int) duration;
-
-  //printf(" - %d>\n",gcTimes[gcIndex]);
   
+  if(executionTimes[gcIndex] < 0)
+    executionTimes[gcIndex] = gcTimes[gcIndex];
+  
+  calcThroughput();  
+  
+  garbageAverageTime += (int) duration;
+  //printf(" - %d>\n",gcTimes[gcIndex]);
   gcIndex ++;
 
   avgExec = (double)executionAverageTime / (gcIndex-1);
@@ -643,14 +615,26 @@ void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
     commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),getAvailableHeapSize());//((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
   
   gcIndex %= sampleLength;
-  //if( gcIndex % 500 ==  0) {
-  //  cout<<"AvgGC:"<<avgGC<<" AvgExec:"<<avgExec<<" TP:"<<getThroughput()<<" size:"<<getHeapSize()<<" target:"<<targetHeapSize<<endl;
-  //}
-  adjustHeapSize();
 }
 
 long long Isolate::getHeapSize(){
-  return (long long) (heap_.old_space()->Size() + heap_.map_space()->Size());
+  return (long long) (
+    heap_.old_space() ->Size() +
+    heap_.map_space() ->Size() +
+    heap_.new_space() ->Size() +
+    heap_.lo_space()  ->Size() +
+    heap_.code_space()->Size()
+  );
+}
+
+long long Isolate::getMemoryFootprint(){
+  return (long long)(
+    heap_.old_space() ->Capacity() +
+    heap_.map_space() ->Capacity() +
+    heap_.new_space() ->Capacity() +
+    heap_.code_space()->Capacity() +
+    heap_.lo_space()  ->Size()
+  );
 }
 
 long long Isolate::getAvailableHeapSize(){
@@ -661,9 +645,18 @@ long long Isolate::getAvailableHeapSize(){
 //  return avgExec/avgGC;
 //}
 
+void Isolate::calcThroughput(){
+  long long divBy = gcTimes[gcIndex];
+  double tp = 100;
+  
+  if(divBy != 0)
+    tp = ((double)executionTimes[gcIndex])/divBy;
+
+  lastThroughput = (tp > 100)?100:tp;
+}
+
 double Isolate::getThroughput(){
-  return ((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1];
-  //return avgExec/avgGC;
+  return lastThroughput;
 }
 /////////////////////////////////////////////////////////////////////////////////////
 class CaptureStackTraceHelper {
@@ -2026,6 +2019,7 @@ Isolate::Isolate(bool enable_serializer)
   InitializeLoggingAndCounters();
   debug_ = new Debug(this);
 
+  timeEpilogue = high_resolution_clock::now();
   //store pointer to islate
   Isolate::addNewIsolate(this);
   cout<<"Isolate created:"<<this->getIsolateId()<<endl;

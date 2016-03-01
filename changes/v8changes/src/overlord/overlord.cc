@@ -11,9 +11,9 @@ using namespace v8;
 
 #define CMD_SEPARATOR ';'
 
+char keepRunning;
 void handleIsolateRequest(int, action, command &);
 void handleGlobalRequests(command &response, action command);
-
 void overlordTestCli(){
     cout<<"Overlord cli tester"<<endl;
     command rsp;
@@ -85,10 +85,15 @@ class ArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
   virtual void Free(void* data, size_t) { free(data); }
 };
 
+void Overlord::stop(){
+    printf("Stopping overlord...");
+    keepRunning = false;
+}
+
 void * Overlord::run(void * data){
     //overlordTestCli();
+    keepRunning = true;
     int connFd;
-    
     std::string line("127.0.0.1");
     int portNo = 15000;//*((int *)data);
     struct sockaddr_in svrAdd;
@@ -131,10 +136,11 @@ void * Overlord::run(void * data){
     svrAdd.sin_port = htons(portNo);
     
     //serve
-    while(true){
+    while(keepRunning){
         //Keep trying to connect to Monitor
-        while(connect(connFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0){
+        while(connect(connFd, (struct sockaddr *)&svrAdd, sizeof(svrAdd)) < 0 && keepRunning){
             cerr << "Overlord::Could not connect to Monitor "<<ipaddr<<":"<<portNo<<endl;
+            sleep(2); 
         }
 
         cout << "Overlord::connection successful. Awaiting commands..." << endl;
@@ -145,7 +151,7 @@ void * Overlord::run(void * data){
         int strLen = 0,index = 0;
         
         strCmd[0] = 0;    
-        while(loop)
+        while(loop && keepRunning)
         {
             strLen = (int) read(connFd, buffer, 1450);
             if( strLen < 1){
@@ -160,13 +166,16 @@ void * Overlord::run(void * data){
                         cout<<"#PACKET TOO LARGE, len > 2000. Will truncate at 2000 and will not likely decode."<<endl;
                 } else {
                     strCmd[index] = 0;
-                    if(index != 0 && base64::decode(strCmd,(int) strlen(strCmd),jsonStr)) {
+                    if(keepRunning && index != 0 && base64::decode(strCmd,(int) strlen(strCmd),jsonStr)) {
                         //cout<<"Request_JSON:"<<jsonStr<<endl;
 
                         string scommand(jsonStr);
                         command cmd(scommand);
                         command resp;
+                        
+                        if(!keepRunning) break;
                         Overlord::handleRequest(cmd,resp);
+                        
                         string r = resp.serialise();
                         //cout<<"Response_JSON:"<<r<<endl;
                         
@@ -225,6 +234,7 @@ void handleIsolateRequest(int i, action cmd, command &response){
         //v8::Locker l{isol}; - causes deadlock ...
         
         detail->heap       = (int) isl->getHeapSize();
+        detail->footPrint  = (int) isl->getMemoryFootprint();
         detail->throughput = isl->getThroughput();
         detail->available  = (int) isl->getAvailableHeapSize(); 
         detail->maxHeapSize = (int) isl->heap()->getMaxOldGenerationSize();

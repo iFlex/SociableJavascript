@@ -69,7 +69,7 @@ namespace instance {
     create_params.array_buffer_allocator = &allocator;
     
     create_params.constraints.set_max_old_space_size(max_heap);
-    create_params.constraints.set_max_semi_space_size(1);
+    create_params.constraints.set_max_semi_space_size(16);
 
     Isolate* isolate = Isolate::New(create_params);
     {

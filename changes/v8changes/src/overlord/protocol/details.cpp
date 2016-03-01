@@ -18,6 +18,9 @@ namespace ControlProtocol {
 
     if(!obj["heap"].empty())
       heap       = obj["heap"].asInt();
+    
+    if(!obj["footPrint"].empty())
+      footPrint  = obj["footPrint"].asInt();
 
     if(!obj["available"].empty())
       heap       = obj["available"].asInt();
@@ -48,6 +51,9 @@ namespace ControlProtocol {
     if(heap)
       obj["heap"] = heap;
 
+    if(footPrint)
+      obj["footPrint"] = footPrint;
+    
     if(maxHeapSize)
       obj["maxHeapSize"] = maxHeapSize;
 
