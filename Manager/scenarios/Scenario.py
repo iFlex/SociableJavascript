@@ -112,7 +112,7 @@ class Scenario:
 				finish = "Failed  "
 				if process.returncode == 0:
 					finish = "Finished"
-				print "Process("+str(process.pid)+") "+finish+" -> "+self.prettifyTime(self.evalRez[len(self.evalRez)-1]["time"]);
+				print "Process("+str(process.pid)+") "+finish+" -> "+self.prettifyTime(self.evalRez[len(self.evalRez)-1]["time"])+" Remaining:"+str(len(self.evalSet));
 			else:
 				surviving.append(self.evalSet[i])
 		
