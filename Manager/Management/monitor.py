@@ -273,45 +273,59 @@ class monitor:
             
             self.__aggregateMachineInfo(machineId)
 
-
     def __prettyPrintV8(self,machineId,v8Id,spaces):        
         v8 = self.getV8(self.getMachine(machineId),v8Id);
+        s = ""
         if(v8 == 0):
-            print spaces+"Could not find v8 instance";
-            return;
- 
+            return (spaces+"Could not find v8 instance",0);
+
+        v8mem = 0
         for i in v8["isolates"]:
             isolate = v8["isolates"][i];
             items = self.prettifyTime(time.time() - isolate["created"])+" ("+str(isolate["id"])+") "
+            
+            if "footPrint" in isolate:
+                v8mem += isolate["footPrint"]
+            
             for item in isolate:
                 if item != "action" and item != "id" and item != "created":
                     items += str(item)+":"+str(isolate[item])+" "
-            print spaces+items;
-            print "_"*45
+            
+            s += spaces+items+"\n";
+            s +="_"*45+"\n"
+        
+        return (s,v8mem)
 
     def nicePrintMagnitude(self,raw,unit,magnitudes):
         mp = ["G","M","K"]
         for i in range(0,len(mp)):
             if raw >= magnitudes[i]:
-                return str(raw/magnitudes[i])+" "+mp[i]+unit
+                return str(int(raw/magnitudes[i]))+" "+mp[i]+unit
         return str(raw)+" "+unit;
 
-    def prettyPrint(self,currentM,currentV):
+    def prettyPrint(self,currentM,currentV,noV8s,noIsolates):
         with self.lock:
             for id in self.STATUS["machines"]:
                 machine = self.STATUS["machines"][id]["v8s"];
                 avmem = self.nicePrintMagnitude(self.STATUS["machines"][id]["memoryLimit"],"B",[1024*1024*1024,1024*1024,1024])
                 if id == currentM:
-                    print "[ MACHINE_"+str(id)+" ]"+" "+avmem;
+                    print "[ MACHINE_"+str(id)+" ]"+"  "+avmem;
                 else:
-                    print "MACHINE_"+str(id)+" "+avmem;
+                    print "MACHINE_"+str(id)+"  "+avmem;
                 
+                if noV8s:
+                    continue
+
                 for v8 in machine:
+                    s,mem = self.__prettyPrintV8(id,v8," "*2);
+                    umem = self.nicePrintMagnitude(mem,"B",[1024*1024*1024,1024*1024,1024])
                     if v8 == currentV and id == currentM:
-                        print "{ V8_"+str(v8)+" }";
+                        print "{ V8_"+str(v8)+" } "+umem;
                     else:
-                        print " V8_"+str(v8);
-                    self.__prettyPrintV8(id,v8," "*2);
+                        print " V8_"+str(v8)+"   "+umem;
+                    
+                    if not noIsolates:
+                        print s
 
     def debug(self):
         print self.STATUS;

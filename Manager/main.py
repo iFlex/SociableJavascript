@@ -9,19 +9,25 @@ import sys
 
 print "V8 Manager CLI"
 
+port = 15004
 confFile = "default.txt"
-if len(sys.argv) > 1:
-	confFile = sys.argv[1]
-	
-#flags
-DEBUG = True
+
+for i in range(0,len(sys.argv)):
+    if sys.argv[i] == "port" and i+1 < len(sys.argv):
+        port = int(sys.argv[i+1])
+    
+    if "config=" in sys.argv[i]:
+        cfg = sys.argv[i].split("=");
+        if len(cfg) > 1:
+            confFile = cfg[1];
+
 #Defaults
 pltSvc = PlotService(["heap","footPrint","maxHeapSize","throughput"],15027)
 pltSvc.doNormalise({"heap":1024*1024.0,"footPrint":1024*1024.0,"maxHeapSize":1024*1024.0,"throughput":1.0});
 
 print "Initialising Registry..."
 mon = monitor("ISOLATE",pltSvc);
-srv = server(mon,15004);
+srv = server(mon,port);
 
 if srv.start() == False:
     print "Error starting registry server - "+srv.getError();

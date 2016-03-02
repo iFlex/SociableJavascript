@@ -73,11 +73,12 @@ def fakeAnswer(mid,vid,msg):
 
             for i in range(0,lnln):
                 if i < lbln: 
-                    request["isolates"][str(IDs[2])][labels[i]] = int(line[i])*1000000;
+                    request["isolates"][str(IDs[2])][labels[i]] = float(line[i])*1000000;
                     request["isolates"][str(IDs[2])]["action"] = "update";
         else:
             for i in request["isolates"]:
                 request["isolates"][str(IDs[2])]["heap"]       = HEAP;
+                request["isolates"][str(IDs[2])]["footPrint"]  = HEAP+10;
                 request["isolates"][str(IDs[2])]["throughput"] = THROUGHPUT;
                 request["isolates"][str(IDs[2])]["available"]  = AVAILABLE;
                 request["isolates"][str(IDs[2])]["action"]     = "update";

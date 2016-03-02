@@ -162,15 +162,22 @@ class CommandLine:
 		self.p.keepRunning = False
 
 	def prettyPrint(self):
-		os.system('cls')
 		os.system('clear');
-		self.monitor.prettyPrint(self.machine_id,self.v8_id)
+		self.monitor.prettyPrint(self.machine_id,self.v8_id,False,False)
+
+	def printMachines(self):
+		os.system('clear');
+		self.monitor.prettyPrint(self.machine_id,self.v8_id,True,True)
+
+	def printV8s(self):
+		os.system('clear');
+		self.monitor.prettyPrint(self.machine_id,self.v8_id,False,True)
 
 	def nicePrintMagnitude(self,raw,unit,magnitudes):
 		mp = ["G","M","K"]
 		for i in range(0,len(mp)):
 			if raw >= magnitudes[i]:
-				return str(raw/magnitudes[i])+" "+mp[i]+unit
+				return str(int(raw/magnitudes[i]))+" "+mp[i]+unit
 		return str(raw)+" "+unit;
 
 	def hz(self):
@@ -255,19 +262,23 @@ class CommandLine:
 
 		self.scenario = Popen(["python","runscen.py",path,cpath,polName],0)
 
-	def listScen(self,path):
+	def listFiles(self,path,ext):
 		accumulator = ""
 		for f in listdir(path):
 			if isfile(join(path, f)):
-				if f.find(".json") > -1:
+				if f.rfind(ext) > -1 and f.rfind(ext)+len(ext) == len(f):
 					accumulator+= str(join(path, f))+"\n";
 			else:
-				accumulator += self.listScen(join(path, f))
+				accumulator += self.listFiles(join(path, f),ext)
 		return accumulator
 
 	def listScenarios(self):
 		path = "./scenarios/"
-		print self.listScen(path);
+		print self.listFiles(path,".json");
+
+	def listPolicies(self):
+		path = "./Policies/"
+		print self.listFiles(path,".py").replace(path,"");
 
 	def togglePServiceLogging(self,toggle):
 		self.monitor.plotter.toggleLogging(toggle=="ON")
@@ -291,6 +302,14 @@ class CommandLine:
 							"stats":{
 								"param":[],
 								"method":self.prettyPrint,
+								"desc":"Status report of all machines, V8 and isolates."
+							},"machines":{
+								"param":[],
+								"method":self.printMachines,
+								"desc":"Status report of all machines, V8 and isolates."
+							},"v8s":{
+								"param":[],
+								"method":self.printV8s,
 								"desc":"Status report of all machines, V8 and isolates."
 							},
 							"dbg":{
@@ -411,6 +430,11 @@ class CommandLine:
 								"param":[],
 								"method":self.printHistory,
 								"desc":"Print command history"	
+							},
+							"listPolicies":{
+								"param":[],
+								"method":self.listPolicies,
+								"desc":"List available policies"	
 							}
 						}
 
@@ -446,6 +470,9 @@ class CommandLine:
 		"ls":"listScenarios",
 		"lscen":"listScenarios",
 		"listscen":"listScenarios",
-		"h":"history"
+		"h":";history",
+		"lsp":"listPolicies",
+		"m":"machines",
+		"v":"v8s"
 		}
 #TODO - screenshot all frames, stop plotter, stop all plotters
