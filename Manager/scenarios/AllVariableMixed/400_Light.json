@@ -4,7 +4,7 @@
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
 		"params":["1024",
 		"/home/airjack/level4/SociableJavascript/benchmarks/a_BinaryTrees.js"],
-		"instanceCount":12,
+		"instanceCount":5,
 		"minHeapSize":9
 	},{
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
@@ -16,19 +16,19 @@
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
 		"params":["1024",
 		"/home/airjack/level4/SociableJavascript/benchmarks/c_DeltaBlue.js"],
-		"instanceCount":14,
+		"instanceCount":5,
 		"minHeapSize":5
 	},{
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
 		"params":["1024",
 		"/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js"],
-		"instanceCount":14,
+		"instanceCount":6,
 		"minHeapSize":5
 	},{
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
 		"params":["1024",
 		"/home/airjack/level4/SociableJavascript/benchmarks/n_SpectralNorm.js"],
-		"instanceCount":14,
+		"instanceCount":7,
 		"minHeapSize":5
 	},{
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
@@ -36,7 +36,15 @@
 			"/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js",
 			"/home/airjack/level4/SociableJavascript/benchmarks/v8/earley-boyer.js",
 			"/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js"],
-		"instanceCount":12,
+		"instanceCount":7,
 		"minHeapSize":6
+	},{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024",
+			"/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js",
+			"/home/airjack/level4/SociableJavascript/benchmarks/v8/splay.js",
+			"/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js"],
+		"instanceCount":4,
+		"minHeapSize":53
 	}]
 }
