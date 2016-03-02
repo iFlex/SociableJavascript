@@ -176,7 +176,8 @@ class Scenario:
 			out += ret +" > "+self.prettifyTime(item["time"])+"-"+self.strDesc(item["desc"])+"\n";
 		
 		total = len(self.evalRez)
-		out += ("_"*20)+"\nTotal Processes:"+str(len(self.evalRez))+"\nSuccessful:"+str(success)+"("+str(float(success)/total*100)+"%)"+"\nFailed    :"+str(total-success)+"("+str(float(total-success)/total*100)+"%)";
+		out += ("_"*20)+"\nTotal Processes:"+str(len(self.evalRez))+"\nSuccessful:"+str(success)+"("+str(float(success)/total*100)+"%)"+"\nFailed    :"+str(total-success)+"("+str(float(total-success)/total*100)+"%)\n";
+		out += "Minimum Heap Target:"+str(self.minHeapSize)+"MB";
 		return out
 
 	def run(self):
@@ -188,13 +189,18 @@ class Scenario:
 		config = self.scenario["config"];
 		for process in self.scenario["run"]:
 			count = process["instanceCount"]
-			self.resultFile.write(str(count)+"x "+process["program"]+" -> "+str(process["params"]))
-			
-			if "minimumHeapSize" in process:
-				self.minHeapSize += process["minimumHeapSize"] * count;
+
+			mhs = self.defaultMemoryUsage;
+			if "minHeapSize" in process:
+				self.minHeapSize += process["minHeapSize"] * count;
+				mhs = process["minHeapSize"]
 			else:
 				self.minHeapSize += self.defaultMemoryUsage * count;
 
+			if "RunWithMinHeap" in self.config and self.config["RunWithMinHeap"] == True:
+				process["params"][0] = str(mhs)
+
+			self.resultFile.write(str(count)+"x "+process["program"]+" -> "+str(process["params"]))
 			while count > 0:
 				rundesc = [process["program"]]+process["params"]
 				self.startProcess(rundesc,globalCount)
@@ -202,7 +208,8 @@ class Scenario:
 				count -= 1
 
 		self.pStartDate = str(time.strftime("%Y_%b_%d_%H_%M"))
-
+		print "Target Memory Utilisation: "+str(self.minHeapSize)+"MB"
+			
 		while len(self.evalSet) > 0:
 			self.collectResults()
 			time.sleep(0.1)
@@ -212,10 +219,8 @@ class Scenario:
 
 		if len(self.evalRez) > 0:
 			print "All processes finished - "
-			print "Target Memory Utilisation:"+self.nicePrintMagnitude(self.minHeapSize,"MB",[1024*1024*1024,1024*1024,1024])
 			r = self.prettyResult()
 			print r
-
 			self.resultFile.write("All processes finished\n");
 			self.resultFile.write(r)
 			self.resultFile.close()

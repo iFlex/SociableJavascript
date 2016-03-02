@@ -1,9 +1,0 @@
-{
-	"config":{},
-	"run":[{
-		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
-		"params":["25","/home/airjack/level4/SociableJavascript/benchmarks/a_KNucleotide.js"],
-		"instanceCount":16,
-		"minHeapSize":25
-	}]
-}

@@ -1,9 +1,0 @@
-{
-	"config":{},
-	"run":[{
-		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
-		"params":["196","/home/airjack/level4/SociableJavascript/benchmarks/binarytree.js"],
-		"instanceCount":2,
-		"minHeapSize":196
-	}]
-}

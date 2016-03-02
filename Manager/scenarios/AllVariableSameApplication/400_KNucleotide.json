@@ -1,5 +1,5 @@
 {
-	"config":{},
+	"config":{"RunWithMinHeap":true},
 	"run":[{
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
 		"params":["1024","/home/airjack/level4/SociableJavascript/benchmarks/a_KNucleotide.js"],
