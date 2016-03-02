@@ -1,0 +1,12 @@
+{
+	"config":{"RunWithMinHeap":false},
+	"run":[{
+		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
+		"params":["1024",
+			"/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js",
+			"/home/airjack/level4/SociableJavascript/benchmarks/v8/splay.js",
+			"/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js"],
+		"instanceCount":8,
+		"minHeapSize":53
+	}]
+}
