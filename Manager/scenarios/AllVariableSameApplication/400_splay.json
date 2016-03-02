@@ -1,5 +1,5 @@
 {
-	"config":{"RunWithMinHeap":false},
+	"config":{"RunWithMinHeap":true},
 	"run":[{
 		"program":"/home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin",
 		"params":["1024",

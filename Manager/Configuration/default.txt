@@ -3,5 +3,5 @@ setPlotterStartupConfig {"makeCSV":true,"makePNG":false,"makeLiveDrawing":false}
 pm ALL
 togglePlotServiceLogging ON 
 loadpolicy wealthredist
-nmlim 300 
+nmlim 400 
 echo 0

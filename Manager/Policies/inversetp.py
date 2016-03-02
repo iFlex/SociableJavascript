@@ -1,4 +1,4 @@
-#Robin Hood Policy
+#Inverse Throughput
 #Author@ Milorad Liviu Felix
 import math
 

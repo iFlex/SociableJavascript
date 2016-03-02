@@ -6232,7 +6232,8 @@ int Heap::GetStaticVisitorIdForMap(Map* map) {
 }
 
 bool Heap::askedToReduce() const {
-  return (isolate_->getHeapSize() > isolate_->getTargetHeapSize());
+  return (isolate_->getMemoryFootprint() > isolate_->getTargetHeapSize()) ||
+         (isolate_->getMemoryFootprint() > (max_old_generation_size_*3/4));
 }
 
 }  // namespace internal

@@ -1697,11 +1697,11 @@ class Heap {
   }
 
   inline bool ShouldAbortIncrementalMarking() const {
-    return current_gc_flags_ & kAbortIncrementalMarkingMask;
+    return (current_gc_flags_ & kAbortIncrementalMarkingMask);
   }
 
   inline bool ShouldFinalizeIncrementalMarking() const {
-    return current_gc_flags_ & kFinalizeIncrementalMarkingMask;
+    return (askedToReduce()) ? true :(current_gc_flags_ & kFinalizeIncrementalMarkingMask);
   }
 
   void PreprocessStackTraces();
