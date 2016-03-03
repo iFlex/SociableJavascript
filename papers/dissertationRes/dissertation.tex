@@ -12,6 +12,15 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{cleveref}
+\usepackage{lipsum}% http://ctan.org/pkg/lipsum
+\usepackage{algorithm}% http://ctan.org/pkg/algorithm
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+
+\usepackage{subcaption}% http://ctan.org/pkg/subcaption
+\captionsetup{compatibility=false}
+\DeclareCaptionSubType*{algorithm}
+\renewcommand\thesubalgorithm{\thetable\alph{subalgorithm}}
+\DeclareCaptionLabelFormat{alglabel}{Alg.~#2}
 %TODO: relax introduction
 \hypersetup{
   colorlinks   = true, %Colours links instead of ugly boxes
@@ -27,7 +36,7 @@
 \definecolor{editorGray}{rgb}{0.95, 0.95, 0.95}
 \definecolor{editorOcher}{rgb}{1, 0.5, 0} % #FF7F00 -> rgb(239, 169, 0)
 \definecolor{editorGreen}{rgb}{0, 0.5, 0} % #007C00 -> rgb(0, 124, 0)
-\definecolor{orange}{rgb}{1,0.45,0.13}    
+\definecolor{orange}{rgb}{1,0.45,0.13}		
 \definecolor{olive}{rgb}{0.17,0.59,0.20}
 \definecolor{brown}{rgb}{0.69,0.31,0.31}
 \definecolor{purple}{rgb}{0.38,0.18,0.81}
@@ -36,9 +45,17 @@
 \definecolor{background}{HTML}{EEEEEE}
 \definecolor{delim}{RGB}{20,105,176}
 \colorlet{numb}{magenta!60!black}
+%V8 C++
+\lstdefinelanguage{cpp}{
+  morekeywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break,Isolate,CreateParams,New},
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morestring=[b]",
+  morestring=[b]'
+}
 % CSS
 \lstdefinelanguage{CSS}{
-  keywords={color,background-image:,margin,padding,font,weight,display,position,top,left,right,bottom,list,style,border,size,white,space,min,width, transition:, transform:, transition-property, transition-duration, transition-timing-function}, 
+  keywords={color,background-image:,margin,padding,font,weight,display,position,top,left,right,bottom,list,style,border,size,white,space,min,width, transition:, transform:, transition-property, transition-duration, transition-timing-function},	
   sensitive=true,
   morecomment=[l]{//},
   morecomment=[s]{/*}{*/},
@@ -59,24 +76,24 @@
 
 \lstdefinelanguage{HTML5}{
   language=html,
-  sensitive=true, 
-  alsoletter={<>=-},  
+  sensitive=true,	
+  alsoletter={<>=-},	
   morecomment=[s]{<!-}{-->},
   tag=[s],
   otherkeywords={
   % General
   >,
   % Standard tags
-  <!DOCTYPE,
+	<!DOCTYPE,
   </html, <html, <head, <title, </title, <style, </style, <link, </head, <meta, />,
-  % body
-  </body, <body,
-  % Divs
-  </div, <div, </div>, 
-  % Paragraphs
-  </p, <p, </p>,
-  % scripts
-  </script, <script,
+	% body
+	</body, <body,
+	% Divs
+	</div, <div, </div>, 
+	% Paragraphs
+	</p, <p, </p>,
+	% scripts
+	</script, <script,
   % More tags...
   <canvas, /canvas>, <svg, <rect, <animateTransform, </rect>, </svg>, <video, <source, <iframe, </iframe>, </video>, <image, </image>, <header, </header, <article, </article
   },
@@ -89,7 +106,7 @@
   fill=, attributeName=, begin=, dur=, from=, to=, poster=, controls=, x=, y=, repeatCount=, xlink:href=,
   % properties
   margin:, padding:, background-image:, border:, top:, left:, position:, width:, height:, margin-top:, margin-bottom:, font-size:, line-height:,
-  % CSS3 properties
+	% CSS3 properties
   transform:, -moz-transform:, -webkit-transform:,
   animation:, -webkit-animation:,
   transition:,  transition-duration:, transition-property:, transition-timing-function:,
@@ -105,7 +122,7 @@
   numbers=left,
   stepnumber=1,
   firstnumber=1,
-  numberfirstline=true, 
+  numberfirstline=true,	
   % Code design
   identifierstyle=\color{black},
   keywordstyle=\color{blue}\bfseries,
@@ -115,7 +132,7 @@
   % Code
   language=HTML5,
   alsolanguage=JavaScript,
-  alsodigit={.:;},  
+  alsodigit={.:;},	
   tabsize=2,
   showtabs=false,
   showspaces=false,
@@ -161,7 +178,37 @@
       {[}{{{\color{delim}{[}}}}{1}
       {]}{{{\color{delim}{]}}}}{1},
 }
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
 
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,	                   % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Octave,                 % the language of the code
+  otherkeywords={*,...},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
 \begin{document}
 \title{Sociable Javascript}
 \author{Milorad Liviu Felix}
@@ -299,7 +346,9 @@ If the value of the expression above is lower than the minimum heap size, the ne
 \subsection{Virtual Machine Inspectors}
 \hspace*{3em} - already used by industry, too heavy in their analysis - goes too deep - performance cost (proof) or if no performance cost, too much data to analyse.
 \subsection{Directly Related Work}
-FORSETTI
+FORSETTI\\
+Throughput, Heap curve\\
+Control theory?
 \chapter{Requirements}
 %\hspace*{3em} (Does not really make sense, need to rephrase ->)Due to the exploratory nature of the project at hand, some of the functional and non functional requirements of the system have been drawn based on the features offered either by the V8 engine or by the limitations of the technologies used to build the framework. 
 \section{Non-Functional Requirements}
@@ -339,6 +388,7 @@ FORSETTI
 \end{itemize}
 \newpage
 \chapter{Design}
+CHAPTER DESCRIPTION
 \section{Overview}
 
 The overall framework has two main components:
@@ -350,7 +400,7 @@ The overall framework has two main components:
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=0.85\textwidth]{OverallFramework.png}
-  \caption{Overall project diagram detailed.}
+	\caption{Overall project diagram detailed.}
 \end{figure}
 \hspace*{3em} In distributed systems a high per node multi-programming degree translates to high availability. This kind of environment also has potential to behave in an elastic way, making more resources available when the load increases and reducing the utilised resources when it diminishes. This means that our framework would have a greater impact when applied to a cluster of computers running JavaScript applications rather than a single computer.\\
 \hspace*{3em} In order to adapt to this scenario the interaction between the V8 instances and the manager is done through the network, using TCP/IP. This allows the manager process to reside on any machine in a network and coordinate the memory usage of all the V8 instances running within the cluster. This makes the framework very adaptable to various use scenarios. For example: if the frameworks is to be used on a single computer it becomes a special case of the general model, a cluster with one node.
@@ -384,7 +434,7 @@ Here are the possible values that the \textbf{action} fields can have:\\\\
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=0.85\textwidth]{V8Internals.png}
-  \caption{V8 Internal Architecture.}
+	\caption{V8 Internal Architecture.}
 \end{figure}
 
 A \textbf{context} defines a script execution environment by defining an object in an isolate's heap as a global object. Therefore, many contexts can exist in a given isolate and can also share any of their objects easily.
@@ -427,7 +477,7 @@ Mark-Sweep \& Compact !!-!!-!!-!!
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=0.85\textwidth]{V8Modifications.png}
-  \caption{V8 modifications.}
+	\caption{V8 modifications.}
 \end{figure}\\
 \begin{itemize}
 \item \textbf{Heap} modifications allow setting a heap size limit and retrieving information about the memory usage (used memory, available memory and old space size). If the total heap size is larger than the set limit, the garbage collector will try to free as much memory needed to comply with it. Otherwise, when the heap size nears the set limit, garbage collection work intensifies to make sure it stays below the limit.
@@ -442,7 +492,7 @@ Mark-Sweep \& Compact !!-!!-!!-!!
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=1.0\textwidth]{PythonManager.png}
-  \caption{Manager architecture.}
+	\caption{Manager architecture.}
 \end{figure}
 \subsection{Tracking}
 \hspace*{3em} This module is responsible with interacting and keeping track of the active isolates through the coordinated use of its components: \textbf{Registry Server}, \textbf{Communicator} and \textbf{Registry}. From the point of view of the framework, this module offers a means of communication with active isolates.
@@ -452,17 +502,17 @@ Mark-Sweep \& Compact !!-!!-!!-!!
 [{
   "id":"127.0.0.1",
   "v8s":[
-    {"id":1,"isolates":[
-      {"id":1,"heap":40542,"throughput":1.5},
-      {"id":2,"heap":150241,"throughput":15.5},
-    ...]
-  },
-    {"id":2,"isolates":[
-    {"id":1,"heap":20541,"throughput":0.56},
+  	{"id":1,"isolates":[
+  		{"id":1,"heap":40542,"throughput":1.5},
+  		{"id":2,"heap":150241,"throughput":15.5},
+		...]
+	},
+  	{"id":2,"isolates":[
+		{"id":1,"heap":20541,"throughput":0.56},
         {"id":1,"heap":120443,"throughput":5.21},
-    ...]
-  },
-  ...]
+		...]
+	},
+	...]
 }, ... ]
 \end{lstlisting}
 In the case portrayed above, there are two V8 processes running on a the same machine as the manager process, each having two isolates. Using a hierarchical storage structure has the advantages of \textbf{minimal data redundancy}, ease of \textbf{extensibility} and \textbf{high topology fidelity}. The memory limits produced by the manager must not exceed the available memory of each machine, this requires knowing the provenience of each isolate. Each isolate is associated a local ID by its host V8, this is used to send memory limitations and other commands to the correct isolates. In order to send the commands to the right receiver, the active communications channel for each V8 process needs to be stored as well. If a non hierarchical structure such as a list were to be used, the aforementioned aspects would be more difficult to manage: the communication channel would be stored inside each isolate record adding one redundant field (many isolates can have the same host V8 process), mapping isolates to their host V8 processes and to their host machines would add even more redundant fields, determining which isolates belong to the same machine would become less efficient as it would require iterating through the entire list and mapping isolate updates coming from the network to their respective list records would require using a composite key in order to avoid iterating through the list. !!-!
@@ -497,21 +547,100 @@ Pluggability of policy - loose coupling\\
 !!-!!-!!-!!
 \newpage
 \chapter{Implementation}
+CHAPTER DESCRIPTION
 \section{Overview}
-\hspace*{3em} The Google V8 engine is implemented in C++, amounting to 800,000+ lines of code. Changing it requires using the same language which does not allow much freedom of choice. However, the management framework is an independent process and can be implemented in any language. Python was chosen for this task for the following reasons:
+\hspace*{3em} There are three may areas of the implementation
+\begin{itemize}
+\item Building the manager framework
+\item Changing the V8 engine to allow it to be controlled by the framework
+\item Building a V8 wrapper responsible with running JavaScript applications specified through command line arguments.
+\end{itemize}
+\hspace*{3em} A V8 isolate, by itself, is simply an execution environment, the specific script that needs to run has to be \textbf{compiled} and \textbf{loaded} into the isolate. This is done using the functions provided by said isolate. The \textbf{V8 wrapper} is a C++ application that creates one isolate, takes in a list of scripts, compiles them and runs them inside the isolate. It also takes a size expressed in megabytes and sets it as the maximum heap size of the isolate.
+\\\\
+\hspace*{3em} The \textbf{Google V8} engine is implemented in \textbf{C++}, amounting to 800,000+ lines of code. Changing it requires using the same language which does not allow much freedom of choice. However, the management framework is an independent process and can be implemented in any language. \textbf{Python} was chosen for this task for the following reasons:
 \begin{itemize}
 \item It is a high level language with a small code footprint
 \item It is interpreted, which allows loading and executing code at run-time and also eliminates compilation waiting time. (The V8 wrapper, despite its small size, has a compilation delay of around 30 seconds)
 \item It has extended support from its community with plenty of useful libraries available
 \item Has built in support for most of the required constructs to build the management framework including popular data representation protocols such as Base64 and JSON.
 \end{itemize}
-%this might need to go into design
-\hspace*{3em} JSON was used for the communication protocol used by the V8 instances and the management framework because it is human readable and supports nesting well. This is appropriate as project aims for correctness rather than performance at this stage. Human readability allows for easy debugging while nesting support contributes to a clear representation of the environment topology.
+\hspace*{3em} The changes carried out on the V8 engine involve allowing the heap size limit to be set at run-time as well as adding a network client responsible with connecting to the manager framework, applying the limits (or other commands) received from the manager and replying with status updates.
 \\\\
-\hspace*{3em} The manager framework implementation uses built in python functions for JSON and Base64 encoding and decoding while the V8 changes use custom built Base64 functions and a third party JSON C++ library. 
+\hspace*{3em} JSON was used for the communication protocol employed by the V8 instances and the management framework because it is human readable and supports nesting well. This is appropriate as the project aims for correctness rather than performance at this stage. Human readability allows for easy debugging while nesting support contributes to a clear representation of the environment topology.
+\\\\
+\hspace*{3em} The manager framework implementation uses built in python functions for JSON and Base64 encoding and decoding while the V8 changes use custom built Base64 functions and a third party JSON C++ library.
 \section{V8 Client}
-JSON library - awesome decision
+\hspace*{3em} The main responsibility of V8 is to run scripts as efficiently as possible. Any form of \textbf{computation} not related to executing the scripts would be perceived as \textbf{overhead} by the user. Garbage collection is one example of such additional computation as it is responsible with freeing memory rather than advancing the execution of the hosted scripts. For this reason, collection pauses are kept as short and far apart as possible. The \textbf{changes} added to V8 for the purpose of this project are not related to script execution which would classify them as computational overhead. For this reason, the changes were designed to have a \textbf{minimal performance impact}. This was achieved through a set of implementation decisions detailed below.
+
+\subsection{Enforcing Limits}
+\hspace*{3em} By design, each V8 isolate is configured with memory limits for its old space and new space when the isolate is created.
+\begin{lstlisting}[language=cpp]
+Isolate::CreateParams create_params;
+create_params.constraints.set_max_old_space_size(max_heap);
+create_params.constraints.set_max_semi_space_size(16);
+
+Isolate* isolate = Isolate::New(create_params);
+\end{lstlisting}
+\hspace*{3em} The memory spaces constituting the heap are divided into \textbf{1 megabyte pages}. The two functions from the listing above take in values representing a number of megabytes. Since this is an extract from the V8 wrapper, the new space size is set to 16 megabytes, while the old space is set to the value of the first command line argument. This also determines the level of \textbf{granularity} that the manager framework can use to determine memory limits. According to the creators of V8, the maximum amount of memory an isolate can use is \textbf{1 gigabyte}. Any value above that would cause the garbage collector to behave erratically.\cite{v8sizebug} This gives the manager a \textbf{range of 1000} possible memory limit values enforceable by V8.
+\\\\
+\hspace*{3em} When a new isolate is created, the value of the argument passed to set\_max\_old\_space\_size() method is copied into the \textit{max\_old\_generation\_size\_} member variable of the heap class. This class models the heap of a single isolate, it holds pointers to all of the spaces comprising the heap and contains member methods that control garbage collection. The heap is allowed to expand up to the limit set at isolate creation. Normally this limit is larger than the initial heap size. However, if the limit is smaller than the current heap size, the garbage collector will strive to free as much memory as possible in order to comply with it. This enables enforcing heap memory limits at run-time by simply updating the  \textit{max\_old\_generation\_size\_} variable. To do so, a setter method called \textit{setMaxOldGenerationSize(int)} has been added to the heap class.  %CONCURRENCY?
+\\\\
+\hspace*{3em} Another way of enforcing memory limits at run-time would be to modify the garbage collector so that it runs until the size of the heap becomes smaller than the limit or until no more memory can be freed. This is not a preferable solution because it would override the optimisations employed by the designers of V8 by performing long garbage collection runs whenever the limit becomes lower than the current heap size, making them much more obvious to the user. This approach also adds additional computation to the garbage collection process when compared to a simple copy operation employed by the setter function mentioned above.
+\subsection{Measuring Throughput}
+\hspace*{3em} An \textbf{important metric} that needs to be calculated and reported back to the manager is the application \textbf{throughput}:
+\begin{equation}
+throughput = \frac{\textit{Execution interval}}{\textit{Garbage Collection interval}}
+\end{equation}
+\hspace*{3em} This reflects how much time is spent executing JavaScript code versus the time spent performing garbage collection. Therefore, a throughput of 1 means that V8 spends an equal amount of time executing the application and collecting garbage. A value greater than one means more time is spent executing the application while a value lower than 1 means that more time is spent performing garbage collection. The latter implies that the application is somewhat "struggling" to execute, as more work is put into freeing memory rather than execution.
+Ideally, more time should be put into executing the application than garbage collection. This is what V8 normally optimizes for by keeping garbage collection pauses small and far apart. A high throughput implies reduced jank in observed by the user in the browser.
+%Ideally, an application would experience an execution pause only when the operating system performs a context switch in order for other processes to get a chance to run. Garbage collected applications add the overhead of pausing the application in order to collect unreachable memory and make it available to the application or return it to the operating system.
+\subsection{Compiling Status Information}
+text
+\subsection{Server}
+text
+\subsection{Communication Protocol}
+text
 \section{Manager}
+Plotting configuration - makes pictures of the whole graph history and CSV file with entire history
+\\Locks and queues
+\\Data Flow through framework
+\\Frequency of polling - net load estiamte, policy execution, configurability
+\\Logging + configurability
+info
+\begin{table}[H]%
+\begin{subalgorithm}{.5\textwidth}
+\begin{algorithmic}[1]
+  \Procedure{GarbageCollection}{}
+    \State $r\gets a\bmod b$
+    \While{$r\not=0$}
+      \State $a\gets b$
+      \State $b\gets r$
+      \State $r\gets a\bmod b$
+    \EndWhile
+    \State \textbf{return} $b$\Comment{The gcd is b}
+  \EndProcedure
+\end{algorithmic}
+\caption{Euclid’s algorithm}\label{algo1}
+\end{subalgorithm}%
+\begin{subalgorithm}{.5\textwidth}
+\begin{algorithmic}[1]
+  \Procedure{Euclid}{$a,b$}\Comment{The g.c.d. of a and b}
+    \State $r\gets a\bmod b$
+    \While{$r\not=0$}\Comment{We have the answer if r is 0}
+      \State $a\gets b$
+      \State $b\gets r$
+      \State $r\gets a\bmod b$
+    \EndWhile
+    \State \textbf{return} $b$\Comment{The gcd is b}
+  \EndProcedure
+\end{algorithmic}
+\caption{Euclid’s algorithm}\label{algo2}
+\end{subalgorithm}
+\captionsetup{labelformat=alglabel}
+\caption{Two algorithms}%
+\label{tab:1}%
+\end{table}
+Amazing CLI - also enables configuration files applied before framework starts
 \section{Testing}
 Add testing bit
 \\\\
@@ -519,10 +648,12 @@ Add testing bit
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=1.0\textwidth]{ControlWorks.png}
-  \caption{Controlling heap size.}
+	\caption{Controlling heap size.}
 \end{figure}
 
 \chapter{Evaluation}
+How isolates are mapped as individuals, what the gini is applied to.
+Throughput, heap, footprint, limit, distance to limit.
 \section{Equal Share Policy}
 \begin{equation}
 \textit{HardHeapLimit}_i = \textit{MaximumMemoryPerMachine} \times \frac{1}{\textit{NumberOfActiveIsolates}}
@@ -569,11 +700,11 @@ Give_i = (\textit{GiveAllowance} + \textit{AllocateAllowance}) \times Need_i
 
 \section{Wealth Redistribution}
 \begin{equation}
-\textit{WelfareIndex}_i = 0.75*1+0.15*1+0.10*1
+\textit{WelfareIndex}_i = 0.75\times (1 - \frac{max(0,L_i - H_i)}{L_i})+0.20\times (1 - \frac{H_i}{\textit{MaxH}})+0.05\times \frac{t_i}{100}
 \end{equation}
 
 \begin{equation}
-\textit{GivePotential}_i = Max(0,L_1 - h_i)
+\textit{GivePotential}_i = max(0,L_1 - h_i)
 \end{equation}
 
 \begin{equation}
@@ -589,26 +720,28 @@ Give_i = (\textit{GiveAllowance} + \textit{AllocateAllowance}) \times Need_i
 \end{equation}
 
 \begin{equation}
-\textit{Redistribute} = Max(TotalGivePotential,\textit{TotalMachineMemory} \times \textit{gini}(\textit{WelfareIndex}))
+\textit{Redistribute} = min(TotalGivePotential,\textit{TotalMachineMemory} \times \textit{gini}(\textit{WelfareIndex}))
+\end{equation}
+Where MaxH is the maximum observed H (footPrint) and 100 is the maximum throughput that the V8 will report.
+\begin{equation}
+\textit{Available} = max(0,\textit{TotalMachineMemory} - \sum_{i=0}^{N}L_i)
 \end{equation}
 
 \begin{equation}
-\textit{Available} = Max(0,\textit{TotalMachineMemory} - \sum_{i=0}^{N}L_i)
-\end{equation}
-
-\begin{equation}
-\textit{Take} = Max(0,\textit{Redistribute} - \textit{Available})
+\textit{Take} = max(0,\textit{Redistribute} - \textit{Available})
 \end{equation}
 
 \begin{equation}
 L_i = L_i - \frac{\textit{GivePotential}_i}{\textit{TotalGivePotential}} \times Take + \frac{\textit{NeedPotential}_i}{\textit{TotalNeedPotential}}\times (Available + Take) 
 \end{equation}
 
-\section{State Taxation}
 \section{Pascal}
 \chapter{Conclusion}
 \section{Future Work}
-Test
+Attach the 
+Add security
+Control Semi Space?
+State based policy
 
 \begin{appendices}
 \chapter{Benchmark Scripts}
@@ -694,5 +827,8 @@ GitHut, Statistics for GitHub \hspace*{1em} \url{http://githut.info/}
 \bibitem{gcpaper}
 Paul R Wilson. Uniprocessor garbage collection techniques. In Memory Management, pages 1–42.
 Springer, 1992.
+\bibitem{v8sizebug}
+V8 Maximum Memory Amount Per Isolate
+\url{https://bugs.chromium.org/p/v8/issues/detail?id=847}
 \end{thebibliography}
 \end{document}
