@@ -297,6 +297,7 @@ Conclusions and future advances.
 %java script
 %garbage collection
 %v8
+CHAPTER DESCRIPTION
 \section{Welfare Economics}
 \hspace*{3em} \textbf{Welfare economics} is a branch of economics that uses microeconomic techniques to evaluate well-being (welfare) at the aggregate (economy-wide) level.\cite{welfareeconomics} The typical evaluation begins with the derivation of a \textbf{social welfare function}. In welfare economics, a social welfare function is a function that ranks social states (alternative complete descriptions of the society) as less desirable, more desirable, or indifferent for every possible pair of social states. Inputs of the function include any variables considered to affect the economic welfare of a society.\cite{socialwelfarefunction} This is then used to rank economically feasible allocations of resources. JavaScript applications can be modeled as individuals using a a combination of the characteristics of running contexts as input values for the social welfare function. Such characteristics are heap size, available memory, throughput, etc. The exact choice of the social welfare function, selected set of runtime context characteristics and the way these characteristics are mapped to the input values of the function are what we call a \textbf{policy}. This project aims to evaluate the effectiveness of various policies in relation to different types of JavaScript applications: web pages scripts, IO bound standalone applications, computation bound standalone applications. Some policies may be better suited for standalone applications while others may work work well with web-page scripts, some might perform well overall. 
 \section{JavaScript}
@@ -350,6 +351,7 @@ FORSETTI\\
 Throughput, Heap curve\\
 Control theory?
 \chapter{Requirements}
+CHAPTER DESCRIPTION
 %\hspace*{3em} (Does not really make sense, need to rephrase ->)Due to the exploratory nature of the project at hand, some of the functional and non functional requirements of the system have been drawn based on the features offered either by the V8 engine or by the limitations of the technologies used to build the framework. 
 \section{Non-Functional Requirements}
 \begin{itemize}
@@ -494,7 +496,7 @@ Mark-Sweep \& Compact !!-!!-!!-!!
     \includegraphics[width=1.0\textwidth]{PythonManager.png}
 	\caption{Manager architecture.}
 \end{figure}
-\subsection{Tracking}
+\subsection{Tracking} \label{Design:Tracking}
 \hspace*{3em} This module is responsible with interacting and keeping track of the active isolates through the coordinated use of its components: \textbf{Registry Server}, \textbf{Communicator} and \textbf{Registry}. From the point of view of the framework, this module offers a means of communication with active isolates.
 \\\\ %DESIGN_DECISION
 \hspace*{3em} The registry maintains a \textbf{representation of the environment} managed by the application. Isolates are grouped together based on the V8 process they belong to and the machine they run on. The listing below shows the structure of the registry:
@@ -643,20 +645,104 @@ void Isolate::calcThroughput(){
   lastThroughput = (tp > 100)?100:tp;
 }
 \end{lstlisting}
-%Ideally, an application would experience an execution pause only when the operating system performs a context switch in order for other processes to get a chance to run. Garbage collected applications add the overhead of pausing the application in order to collect unreachable memory and make it available to the application or return it to the operating system.
+\hspace*{3em} In the above listing, the time-stamps are stored in vectors because \textbf{initially} the V8 modifications were intended to \textbf{return average values} of the throughput. This approach was \textbf{abandoned} because the \textbf{manager framework} is able to poll V8 instances at configurable frequencies, and also because it \textbf{better suited} to \textbf{decide} what \textbf{alterations} should be performed on the status information in order \textbf{to better reflect} the \textbf{state of the isolate}. This way, the V8 only responsible with returning raw status data, which in turn \textbf{minimises} the \textbf{computational overhead} added by the changes. 
 \subsection{Compiling Status Information}
-text
-\subsection{Server}
-text
+\hspace*{3em} The \textbf{manager} is designed to \textbf{poll} all the tracked V8 instances for \textbf{status updates}. For every isolate belonging to a V8, the manager will send a status \textbf{update request}. Upon receipt of the request, the host V8 process must \textbf{collect status information} for the specified isolate and send it back to the manager. This operation must not be costly in terms of \textbf{computation} as it would \textbf{impact} the \textbf{performance} of the running scripts. This was achieved by adding member variable \textbf{accessor methods} that sum up a small number of values or simply return one value. Some such functions rely on underlying V8 accessor methods which had to be \textbf{carefully selected} because some traverse the pages comprising the heap in order to return the size while others return the value of a member variable. The methods that traverse the heap were avoided because of the considerable performance cost they incur since the aim of the project is to maintain high performance while adding global allocation resource supervision. To illustrate the performance cost of traversing the heap in order to retrieve its size, I have used the D8 (a version of V8 used for debugging JavaScript applications). This program not only retrieves the size of the heap at every garbage collection event, but also traverses it in order to map the objects that are live at that point in time. Below is a listing of the accessor functions added to the isolate class:
+\begin{lstlisting}[language=cpp]
+long long Isolate::getHeapSize(){
+  return (long long) (heap_.old_space() ->Size() + heap_.map_space() ->Size() +
+                      heap_.new_space() ->Size() + heap_.lo_space()  ->Size() +
+                      heap_.code_space()->Size()
+  );
+}
+
+long long Isolate::getMemoryFootprint(){
+  return (long long)(heap_.old_space() ->Capacity() + heap_.map_space() ->Capacity() +
+                     heap_.new_space() ->Capacity() + heap_.code_space()->Capacity() +
+                     heap_.lo_space()  ->Size()
+  );
+}
+
+long long Isolate::getAvailableHeapSize(){
+  return (long long)(heap_.old_space() ->Available() + heap_.map_space() ->Available() +
+                     heap_.new_space() ->Available() + heap_.code_space()->Available()
+  );
+}
+
+double Isolate::getThroughput(){
+  return lastThroughput;
+}
+\end{lstlisting}
+\subsection{Isolate Tracking}
+\hspace*{3em} \textbf{V8} is meant to be \textbf{embedded in larger projects} that employ its functionality. The host project would decide what scripts to run and used V8 to compile and execute them. The isolates would be created outside of the V8 source code as it is simply an engine offering functionality to its host program. Because of this, there there is \textbf{no functionality} that \textbf{tracks} the number of \textbf{active isolates} in V8. The manager framework needs a way to identify and track the active isolates belonging to each V8 process. This can be done either in the V8 source code or in the program it is embedded in (V8 wrapper in the case of this project). The latter involves much less overall V8 code changes but does makes it very hard to adopt modified engine in a different project that makes use of V8, such as NodeJS and Chrome. This is why isolate tracking was added to the V8 source code.
+\\\\
+\hspace*{3em} Upon \textbf{creation}, an isolates is assigned a \textbf{identification number} and a \textbf{pointer} to the isolate object is stored in an array. This number is used by the management framework to \textbf{address the isolate} it wants to control. The V8 network client(detailed below) uses the identification number of the isolate to retrieve the stored object pointer and call the appropriate member functions in order to carry out the command received from the manager. Upon \textbf{disposal} of the isolate, its \textbf{identification number} becomes \textbf{free} and can be used to address another new isolate and the \textbf{pointer} is \textbf{removed} from the array. Below are code extracts demonstrating:
+\begin{lstlisting}[language=cpp]
+int ISOLATE_INDEX = 1;
+std::map<int,Isolate *> allIsolates;
+std::list<int> freeIDs;
+pthread_mutex_t count_mutex = PTHREAD_MUTEX_INITIALIZER;
+...
+Isolate::Isolate(bool enable_serializer){ 
+  //constructor call modified to add isolate pointer to map
+  ...
+  Isolate::addNewIsolate(this);
+}
+Isolate::~Isolate() {
+  //destructor modified to delete pointer to isolate
+  Isolate::removeIsolate(this);
+  ...
+}
+void Isolate::addNewIsolate(Isolate * i){
+  pthread_mutex_lock(&count_mutex);
+
+  int id = 0;  
+  if(freeIDs.empty()){
+    id = ISOLATE_INDEX++;
+  } else {
+    id = freeIDs.front();
+    freeIDs.pop_front();
+  }
+
+  i->setIsolateId(id);
+  allIsolates[id] = i;
+
+  pthread_mutex_unlock(&count_mutex);
+}
+
+void Isolate::removeIsolate(Isolate *i){
+  pthread_mutex_lock(&count_mutex);
+  
+  int id = i->getIsolateId();
+  if(allIsolates.erase(id))
+    freeIDs.push_front(id);
+  
+  pthread_mutex_unlock(&count_mutex);
+}
+\end{lstlisting}
+
+\subsection{Client}
+\hspace*{3em} A \textbf{TCP/IP client} was added as a separate execution thread to the V8 process. Its purpose is to continuously attempt to \textbf{connect} to the \textbf{manager} framework until a successful connection is established, after which it \textbf{waits for commands}, \textbf{applies} then by calling the appropriate V8 API functions and \textbf{responds} with status updates. A \textbf{separate thread} was used in order to allow the \textbf{isolates} to run \textbf{undisturbed} and unaware of the existence of the server. This way, the status updates reflect the \textbf{instantaneous state} of the isolate at the moment when the command arrived. Before starting the client, a file called \textbf{V8RemoteControlConfig.txt} containing the manager \textbf{IP} address and \textbf{port} is parsed. The provided IP and port numbers are used to connect to the manager. If this file does not exist, the server reverts to the \textbf{localhost} address 127.0.0.1 with port 15004 assuming the manager is located on the local machine. A \textbf{file} was used to configure the destination IP and port rather than \textbf{command line arguments}, because in the future, this extension might be included in applications like NodeJS, NWJS and Chrome which would require adding the \textbf{additional command line options} to each of these three projects' source codes. A modified build of the \textbf{Chrome} web browser was created for the purpose of this project. Having the V8 client configure itself using a file eliminated the need to change any additional Chrome specific code, which made the integration of the modified V8 simply a task of replacing the modified files and slightly changing the build procedure to include the new files. %easy peasy I figured out how ninja describes the build process 
 \subsection{Communication Protocol}
-text
+\hspace*{3em} The last set of changes added to the V8 project implement the \textbf{communication protocol}, including \textbf{encoding} and \textbf{decoding} it. The protocol, described at \ref{Design:Tracking}, is based on objects called \textbf{actions}. They can be either \textbf{requests} or \textbf{responses} and can refer to either the \textbf{V8 process} itself (global request or response) or to one of its \textbf{isolates} (local request or response). The action object contains the name of the command to be applied (or the kind of response being returned) and a set of fields containing the required information. A request would be comprised of one global action object and an array of local action objects. The number of local action objects corresponds to the number of isolates the V8 is running. Below is a diagram of the classes that model a protocol message.     
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=0.80\textwidth]{ProtocolClasses.png}
+	\caption{Protocol entities grouped into classes.}
+\end{figure}
+\hspace*{3em} The details class is comprised of public fields representing every possible piece of information that can be put in an action object along with functions used to build the object from a JSON string and to convert it to such a string. Each Action class is comprised of a \textbf{name field}, used to determine what request or response it represents, a \textbf{details object} for the additional information and an \textbf{error object}. The latter is used to represent any kind of error encountered while performing the action. The \textbf{command class} contains an action object representing the \textbf{global action}, array of action objects representing the \textbf{isolate level actions} and an \textbf{error object}. The latter is used to represent errors at a command level. If the array of actions was longer than the array of isolate object pointers, meaning that the manager sent limits for more isolates than are actually active, would qualify as a local error and will be represented in the last action object of the actions array from the command object. If the message received from the network could not be decoded, the global error object of the command will be filled in with information about the error and the execution of the command will be aborted.
 \section{Manager}
-Plotting configuration - makes pictures of the whole graph history and CSV file with entire history
+\subsection{Tracking}
+
+\subsection{Management}
+Frequency of polling - net load estiamte, policy execution, configurability
 \\Locks and queues
-\\Data Flow through framework
-\\Frequency of polling - net load estiamte, policy execution, configurability
+\\command line configuration + running batched commands
+\subsection{Plotting}
+Plotting configuration - makes pictures of the whole graph history and CSV file with entire history
+\subsection{Data Flow}
+Data Flow through framework
 \\Logging + configurability
-info
 \begin{table}[H]%
 \begin{subalgorithm}{.5\textwidth}
 \begin{algorithmic}[1]
@@ -702,6 +788,7 @@ Add testing bit
 \end{figure}
 
 \chapter{Evaluation}
+CHAPTER DESCRIPTION\\
 How isolates are mapped as individuals, what the gini is applied to.
 Throughput, heap, footprint, limit, distance to limit.
 \section{Equal Share Policy}
