@@ -12,9 +12,13 @@ else:
 	scenario = Scenario(sys.argv[1],0) 
 	scenario.run()
 
-	if len(sys.argv) > 3:
+	if len(sys.argv) > 3 :
 		print "Collecting results..."
-		time.sleep(5)
+		if("autoCollect" in sys.argv):
+			time.sleep(5)
+		else:
+			raw_input("Press any key to start collection")
+
 		print "collect_path:"+sys.argv[2]
 		print "policy_name:"+sys.argv[3]
 		

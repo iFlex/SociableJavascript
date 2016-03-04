@@ -1,0 +1,3264 @@
+Running with heap size:1024
+Overlord: Connecting... 15004:15004
+Isolate created:1
+Overlord::connection successful. Awaiting commands...
+Loading scritp:/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js
+Preoading new Isolate JS with:load('/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js');
+>>Compiled
+RUN:250*200000
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+agggtaaa|tttaccct 14
+[cgt]gggtaaa|tttaccc[acg] 51
+a[act]ggtaaa|tttacc[agt]t 168
+ag[act]gtaaa|tttac[agt]ct 116
+agg[act]taaa|ttta[agt]cct 217
+aggg[acg]aaa|ttt[cgt]ccct 61
+agggt[cgt]aa|tt[acg]accct 58
+agggta[cgt]a|t[acg]taccct 65
+agggtaa[cgt]|[acg]ttaccct 87
+
+2033411
+2000000
+2671464
+>>After Run
+>>Before Dispose
+
+ :) Done (: 
+Stopping overlord...
+ :) Done (: 

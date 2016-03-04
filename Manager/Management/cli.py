@@ -260,7 +260,7 @@ class CommandLine:
 		except:
 			pass
 
-		self.scenario = Popen(["python","runscen.py",path,cpath,polName],0)
+		self.scenario = Popen(["python","runscen.py",path,cpath,polName,"autoCollect"],0)
 
 	def listFiles(self,path,ext):
 		accumulator = ""
@@ -470,7 +470,7 @@ class CommandLine:
 		"ls":"listScenarios",
 		"lscen":"listScenarios",
 		"listscen":"listScenarios",
-		"h":";history",
+		"h":"history",
 		"lsp":"listPolicies",
 		"m":"machines",
 		"v":"v8s"

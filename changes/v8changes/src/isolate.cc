@@ -569,7 +569,6 @@ Isolate* Isolate::getIsolate(int id){
   return ret;
 }
 
-int executionAverageTime, garbageAverageTime;
 void Isolate::staticGCPrologue(v8::Isolate * isolate, GCType type, GCCallbackFlags flags){
   v8::internal::Isolate *i = reinterpret_cast<v8::internal::Isolate*> (isolate);
   i->gcPrologue(type,flags);
@@ -584,14 +583,6 @@ void Isolate::gcPrologue(GCType type, GCCallbackFlags flags){
   timePrologue = high_resolution_clock::now();
   auto duration = duration_cast<microseconds>( timePrologue - timeEpilogue ).count();
   executionTimes[gcIndex] = (int) duration;
-  
-  if(gcIndex == 0){
-    executionAverageTime = 0;
-    garbageAverageTime   = 0;
-  } else {
-    executionAverageTime += (int) duration;
-  }
-  //printf("<%d",executionTimes[gcIndex]);
 }
 
 void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
@@ -603,18 +594,21 @@ void Isolate::gcEpilogue(GCType type, GCCallbackFlags flags){
     executionTimes[gcIndex] = gcTimes[gcIndex];
   
   calcThroughput();  
-  
-  garbageAverageTime += (int) duration;
-  //printf(" - %d>\n",gcTimes[gcIndex]);
-  gcIndex ++;
-
-  avgExec = (double)executionAverageTime / (gcIndex-1);
-  avgGC   = (double)garbageAverageTime   / gcIndex;
-
   if(ISOLATE_ID == 1) //prevent parallel access to same files
     commit(executionTimes[gcIndex],gcTimes[gcIndex],(int) getHeapSize(),getThroughput(),getAvailableHeapSize());//((double)executionTimes[gcIndex-1])/gcTimes[gcIndex-1]);
-  
+ 
+  gcIndex ++; 
   gcIndex %= sampleLength;
+}
+
+void Isolate::calcThroughput(){
+  long long divBy = gcTimes[gcIndex];
+  double tp = 100;
+  
+  if(divBy != 0)
+    tp = ((double)executionTimes[gcIndex])/divBy;
+
+  lastThroughput = (tp > 100)?100:tp;
 }
 
 long long Isolate::getHeapSize(){
@@ -638,21 +632,12 @@ long long Isolate::getMemoryFootprint(){
 }
 
 long long Isolate::getAvailableHeapSize(){
-  return (long long) (heap_.old_space()->Available() );//+ heap_.map_space()->Available());
-}
-
-//double Isolate::getAvgThroughput(){
-//  return avgExec/avgGC;
-//}
-
-void Isolate::calcThroughput(){
-  long long divBy = gcTimes[gcIndex];
-  double tp = 100;
-  
-  if(divBy != 0)
-    tp = ((double)executionTimes[gcIndex])/divBy;
-
-  lastThroughput = (tp > 100)?100:tp;
+  return (long long)(
+    heap_.old_space() ->Available() +
+    heap_.map_space() ->Available() +
+    heap_.new_space() ->Available() +
+    heap_.code_space()->Available()
+  );
 }
 
 double Isolate::getThroughput(){
@@ -2019,7 +2004,6 @@ Isolate::Isolate(bool enable_serializer)
   InitializeLoggingAndCounters();
   debug_ = new Debug(this);
 
-  timeEpilogue = high_resolution_clock::now();
   //store pointer to islate
   Isolate::addNewIsolate(this);
   cout<<"Isolate created:"<<this->getIsolateId()<<endl;
@@ -2466,6 +2450,7 @@ bool Isolate::Init(Deserializer* des) {
 
   //////////////////////////////////////////////////////
   // initialise GC hooks
+  timeEpilogue = high_resolution_clock::now();
   this->heap()->AddGCPrologueCallback(staticGCPrologue,GCType::kGCTypeAll,true);
   this->heap()->AddGCEpilogueCallback(staticGCEpilogue,GCType::kGCTypeAll,true);
 

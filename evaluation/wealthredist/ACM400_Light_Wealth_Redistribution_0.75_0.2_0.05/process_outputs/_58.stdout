@@ -1,0 +1,84 @@
+Overlord: Connecting... 15004:15004
+Running with heap size:1024
+Isolate created:1
+Overlord::connection successful. Awaiting commands...
+Loading scritp:/home/airjack/level4/SociableJavascript/benchmarks/n_FannkuchRedux.js
+Preoading new Isolate JS with:load('/home/airjack/level4/SociableJavascript/benchmarks/n_FannkuchRedux.js');
+>>Compiled
+RUN:35*10
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+73196
+Pfannkuchen(10) = 38
+>>After Run
+>>Before Dispose
+
+ :) Done (: 
+Stopping overlord...
+ :) Done (: 

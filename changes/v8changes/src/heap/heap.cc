@@ -4644,8 +4644,8 @@ void Heap::IterateStrongRoots(ObjectVisitor* v, VisitMode mode) {
   // checking of the sync flag in the snapshot would fail.
 }
 
-void Heap:: setMaxOldGenerationSize( int max_old_space ) {
-  if ( max_old_space > 0 ) {
+void Heap:: setMaxOldGenerationSize( long long max_old_space ) {
+  if ( max_old_space >= 0 ) {
     max_old_generation_size_ = static_cast<intptr_t>(max_old_space) * MB;
   }
 }

@@ -1,0 +1,21 @@
+Overlord: Connecting... 15004:15004
+Overlord::connection successful. Awaiting commands...
+Running with heap size:1024
+Isolate created:1
+Loading scritp:/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+Preoading new Isolate JS with:load('/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js');
+>>Compiled
+>>After Run
+Loading scritp:/home/airjack/level4/SociableJavascript/benchmarks/v8/regexp.js
+Preoading new Isolate JS with:load('/home/airjack/level4/SociableJavascript/benchmarks/v8/regexp.js');
+>>Compiled
+>>After Run
+Loading scritp:/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js
+Preoading new Isolate JS with:load('/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js');
+>>Compiled
+>>After Run
+>>Before Dispose
+
+ :) Done (: 
+Stopping overlord...
+ :) Done (: 
