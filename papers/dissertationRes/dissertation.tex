@@ -4,7 +4,6 @@
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
-\usepackage[colorinlistoftodos]{todonotes}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{url}
@@ -12,16 +11,8 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{cleveref}
-\usepackage{lipsum}% http://ctan.org/pkg/lipsum
-\usepackage{algorithm}% http://ctan.org/pkg/algorithm
-\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
 \usepackage{dirtree}
-\usepackage{subcaption}% http://ctan.org/pkg/subcaption
-\captionsetup{compatibility=false}
-\DeclareCaptionSubType*{algorithm}
-\renewcommand\thesubalgorithm{\thetable\alph{subalgorithm}}
-\DeclareCaptionLabelFormat{alglabel}{Alg.~#2}
-%TODO: relax introduction
+
 \hypersetup{
   colorlinks   = true, %Colours links instead of ugly boxes
   urlcolor     = blue, %Colour for external hyperlinks
@@ -495,6 +486,7 @@ Mark-Sweep \& Compact !!-!!-!!-!!
   \centering
     \includegraphics[width=1.0\textwidth]{PythonManager.png}
   \caption{Manager architecture.}
+    \label{overalldesign}
 \end{figure}
 \subsection{Tracking} \label{Design:Tracking}
 \hspace*{3em} This module is responsible with interacting and keeping track of the active isolates through the coordinated use of its components: \textbf{Registry Server}, \textbf{Communicator} and \textbf{Registry}. From the point of view of the framework, this module offers a means of communication with active isolates.
@@ -739,25 +731,84 @@ void Isolate::removeIsolate(Isolate *i){
 \section{Manager}
 \hspace*{3em} The role of the manager framework is to keep track of active isolates, control their memory usage by applying a management policy, give feedback on the status of each isolate to the user and allow the user to control the framework. There are three main modules comprising the framework: \textbf{Tracking}, \textbf{Management} and \textbf{Plotting}. These are divided further into more specialised scripts:
 \dirtree{%
-.1 Management.
-.2 Communication.
-.3 server.
-.3 communicator.
-.3 requestBuilder.
-.2 monitor.
-.2 policy.
-.2 cli.
-.1 Plotter.
-.2 IpcPlotWrapper.
-.2 plotter.
-.1 PlotFacility.
-.2 PlotServer.
-.2 PlotService.
-.1 main.
+.1 \textbf{Management}.
+.2 \textbf{Communication}.
+.3 \text{server.py}.
+.3 \text{communicator.py}.
+.3 \text{requestBuilder.py}.
+.2 \text{monitor.py}.
+.2 \text{policy.py}.
+.2 \text{cli.py}.
+.1 \textbf{Plotter}.
+.2 \text{IpcPlotWrapper.py}.
+.2 \text{plotter.py}.
+.1 \textbf{PlotFacility}.
+.2 \text{PlotServer.py}.
+.2 \text{PlotService.py}.
+.1 \text{main.py}.
 }
+\hspace*{3em} Tracking and Management share a \textbf{core component}: the \textbf{registry} (implemented in monitor.py). Tracking accepts connections from V8 instances, creates and associates a communicator instance with each newly open connection and updates the registry to reflect the changes. Any message received by a communicator from its associated V8 updates the corresponding registry record. When a connection is closed, its corresponding communicator automatically updates the registry. The management module scans the registry for active isolates and sends them update requests, it also groups isolates by the machine they belong to and sends them heap limit values. Because of the dependence of the management module on the tracking, the latter has been embedded into management as a sub-module named Communication. However, the plotting module has been divided in two: Plotter and PlotFacility in order to reflect the underlying architecture. The external plotter process from \cref{overalldesign} was implemented in the Plotter module as a standalone application while the remaining functionality was implemented by the scripts in PlotFacility. 
+%more info on how they get wired
 \subsection{Tracking}
+\hspace*{3em} The \textbf{registry} keeps track of the state of the monitored environment. It uses a hierarchical model implemented using a python dictionary:
+\dirtree{%
+.1 machines.
+.2 \text{Machine\_1}.
+.3 \text{V8\_1}.
+.4 \text{Isolate\_1}.
+.4 \text{Isolate\_2}.
+.3 \text{V8\_2}.
+.4 \text{Isolate\_1}.
+.2 \text{Machine\_2}.
+.3 \text{V8\_1}.
+.4 \text{Isolate\_1}.
+}
+The dictionary nodes representing each of the types of nodes show above (machine, v8, isolate) have the following structure: 
+\begin{lstlisting}[language=python]
+machine = {"FreeList":list(),"v8s":dict(),"id":"0", "memoryLimit":self.newMachineMemLimit}
+v8      = {"FreeList":list(),"isolates":dict(),"id":0}
+isolate = {"id":0,"created":time.time()}
+\end{lstlisting}
+\hspace*{3em} When a new machine is added to the registry, its IP address is used as a value for the id field. New V8 and Isolate instances are automatically assigned identification numbers which are unique within the context of the parent node. V8 ids are unique within the context of their host machine, while Isolate ids are unique within the context of their host V8 processes. The IDs are chosen by finding the smallest number not in used by another instance within the same context. When an Isolate instance is removed, its ID is stored in the free list of its parent V8. When a V8 instance is removed, its ID is stored in the free list of its host machine. This is how free IDs are being managed.
+\\\\
+\hspace*{3em} A mutex lock is used to ensure concurrent changes are carried out safely. Operations that are used by external components such as the communicator and policy executor are considered potentially unsafe and therefore the mutex is used to ensure safety. Functions meant to be called internally do not use the mutex in order to optimise execution speed since locking and unlocking mutexes adds considerable overhead.
+\\\\
+\hspace*{3em} The \textbf{server} runs in a separate thread that has the responsibility of accepting incoming TCP/IP connections, creating a new communicator object for each new connection and adding the machine that has initiated the connection to the registry if it was not added already.
+\begin{lstlisting}[language=python]
+soc,addr = self.soc.accept()
+addr = str(addr[0])
+machineId = self.monitor.getMachine(addr);
+if machineId == 0:
+  machineId = self.monitor.addMachine(addr); 
+else:
+  machineId = machineId["id"];
+communicator(soc,self.monitor,machineId,self.monitor.update);
+\end{lstlisting}
+\hspace*{3em} \textbf{Communicators} represent a communication channel to a single V8 instance. Hence, they require a reference to the registry in order to add a new V8 record to it. This reference is passed at the constructor call (self.monitor from the above listing). A new communicator creates a separate thread that listens for messages from the remote V8. As soon as a message arrives a method from the registry's interface is called in order to directly update the relevant record. A send function is also part of the communicator interface. This allows other components to send messages to the V8 instances managed by the system. Each registry record of a V8 has a reference to its associated communicator in order for other components to be able to contact the V8 process. Getting a V8's communicator requires calling a registry method and providing a machine id and a V8 id: \textit{getV8Comm(machineId,v8Id)}.
+%requestbuilder?
 
 \subsection{Management}
+\hspace*{3em} The center piece of the management module is the \textbf{policy executor} (policy.py). This script is responsible with gathering status updates from every managed isolate and applying a selected policy to the groups of isolates belonging to each machine connected to the manager. It also validates the output produced by the policy script and implements functionality for loading a policy script at run-time as well as changing the polling frequency. This functionality is exposed to the command line module to enable the user to change the policy and polling frequency at run time. Below is an outline of the policy executor methods:
+\begin{lstlisting}[language=python]
+class Policy:
+    def __init__(self,monitor,frequency,cfgfile)
+    def ldConfig(self,fileN)
+    def changeSamplingFrequency(self,hz)
+    def __loadModule(self,filepath)
+    def loadPolicy(self,policyName)
+    def logPolicyInfo(self,name,msg)
+    def validateSuggestions(self,suggestions,maxMachineMemory)
+    def run(self)
+\end{lstlisting}
+\hspace*{3em} Because policy implementations are intended to be modular and interchangeable, in order to allow the system to load policies at run-time, a standard for implementing one has been outlined. A policy script must implement every method below in order to be successfully loaded and used by the framework. 
+\begin{itemize}
+\item \textit{init(context)} - called when the policy is applied for the first time to the isolates of a machine.
+\item \textit{calculate(totalAvailableMemory,isolates,context)} - this method computes the memory limits. It is called at the same frequency as the status polling. The input parameters are a maximum memory limit, a list of isolates with status information and the return value is a list of the memory limits.
+\item \textit{name()} - returns a string containing the name of the policy
+\item \textit{stats()} - if the policy maintains any status information, returns a string with that information.
+\end{itemize}
+\hspace*{3em} The \textbf{command line interface} (cli.py) allows the user to control the framework through the use of text commands. A total of  
+
 Frequency of polling - net load estiamte, policy execution, configurability
 \\Locks and queues
 \\command line configuration + running batched commands
@@ -766,40 +817,8 @@ Plotting configuration - makes pictures of the whole graph history and CSV file 
 \subsection{Data Flow}
 Data Flow through framework
 \\Logging + configurability
-\begin{table}[H]%
-\begin{subalgorithm}{.5\textwidth}
-\begin{algorithmic}[1]
-  \Procedure{GarbageCollection}{}
-    \State $r\gets a\bmod b$
-    \While{$r\not=0$}
-      \State $a\gets b$
-      \State $b\gets r$
-      \State $r\gets a\bmod b$
-    \EndWhile
-    \State \textbf{return} $b$\Comment{The gcd is b}
-  \EndProcedure
-\end{algorithmic}
-\caption{Euclid’s algorithm}\label{algo1}
-\end{subalgorithm}%
-\begin{subalgorithm}{.5\textwidth}
-\begin{algorithmic}[1]
-  \Procedure{Euclid}{$a,b$}\Comment{The g.c.d. of a and b}
-    \State $r\gets a\bmod b$
-    \While{$r\not=0$}\Comment{We have the answer if r is 0}
-      \State $a\gets b$
-      \State $b\gets r$
-      \State $r\gets a\bmod b$
-    \EndWhile
-    \State \textbf{return} $b$\Comment{The gcd is b}
-  \EndProcedure
-\end{algorithmic}
-\caption{Euclid’s algorithm}\label{algo2}
-\end{subalgorithm}
-\captionsetup{labelformat=alglabel}
-\caption{Two algorithms}%
-\label{tab:1}%
-\end{table}
 Amazing CLI - also enables configuration files applied before framework starts
+Ability to change policy at runtime
 \section{Testing}
 Add testing bit
 \\\\
@@ -930,6 +949,19 @@ The contents...
   \centering
     \includegraphics[width=0.95\textwidth]{MHCmpRegexDNA.png}
     \caption{RegexDNA Benchmark.}
+\end{figure}
+\chapter{Policy Comparison}
+Wealth Redistribution for 2 Binarytree benchmarks running in parallel limited at 400MB
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=1\textwidth]{binarytree400MLeft.png}
+    \caption{Binary Tree 1}
+\end{figure}
+
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=0.95\textwidth]{binarytree400Mright.png}
+    \caption{Binary Tree 2.}
 \end{figure}
 
 \end{appendices}
