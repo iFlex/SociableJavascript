@@ -4,7 +4,6 @@
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
-\usepackage[colorinlistoftodos]{todonotes}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{url}
@@ -12,16 +11,8 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{cleveref}
-\usepackage{lipsum}% http://ctan.org/pkg/lipsum
-\usepackage{algorithm}% http://ctan.org/pkg/algorithm
-\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\usepackage{dirtree}
 
-\usepackage{subcaption}% http://ctan.org/pkg/subcaption
-\captionsetup{compatibility=false}
-\DeclareCaptionSubType*{algorithm}
-\renewcommand\thesubalgorithm{\thetable\alph{subalgorithm}}
-\DeclareCaptionLabelFormat{alglabel}{Alg.~#2}
-%TODO: relax introduction
 \hypersetup{
   colorlinks   = true, %Colours links instead of ugly boxes
   urlcolor     = blue, %Colour for external hyperlinks
@@ -297,6 +288,7 @@ Conclusions and future advances.
 %java script
 %garbage collection
 %v8
+CHAPTER DESCRIPTION
 \section{Welfare Economics}
 \hspace*{3em} \textbf{Welfare economics} is a branch of economics that uses microeconomic techniques to evaluate well-being (welfare) at the aggregate (economy-wide) level.\cite{welfareeconomics} The typical evaluation begins with the derivation of a \textbf{social welfare function}. In welfare economics, a social welfare function is a function that ranks social states (alternative complete descriptions of the society) as less desirable, more desirable, or indifferent for every possible pair of social states. Inputs of the function include any variables considered to affect the economic welfare of a society.\cite{socialwelfarefunction} This is then used to rank economically feasible allocations of resources. JavaScript applications can be modeled as individuals using a a combination of the characteristics of running contexts as input values for the social welfare function. Such characteristics are heap size, available memory, throughput, etc. The exact choice of the social welfare function, selected set of runtime context characteristics and the way these characteristics are mapped to the input values of the function are what we call a \textbf{policy}. This project aims to evaluate the effectiveness of various policies in relation to different types of JavaScript applications: web pages scripts, IO bound standalone applications, computation bound standalone applications. Some policies may be better suited for standalone applications while others may work work well with web-page scripts, some might perform well overall. 
 \section{JavaScript}
@@ -350,6 +342,7 @@ FORSETTI\\
 Throughput, Heap curve\\
 Control theory?
 \chapter{Requirements}
+CHAPTER DESCRIPTION
 %\hspace*{3em} (Does not really make sense, need to rephrase ->)Due to the exploratory nature of the project at hand, some of the functional and non functional requirements of the system have been drawn based on the features offered either by the V8 engine or by the limitations of the technologies used to build the framework. 
 \section{Non-Functional Requirements}
 \begin{itemize}
@@ -493,8 +486,9 @@ Mark-Sweep \& Compact !!-!!-!!-!!
   \centering
     \includegraphics[width=1.0\textwidth]{PythonManager.png}
 	\caption{Manager architecture.}
+    \label{overalldesign}
 \end{figure}
-\subsection{Tracking}
+\subsection{Tracking} \label{Design:Tracking}
 \hspace*{3em} This module is responsible with interacting and keeping track of the active isolates through the coordinated use of its components: \textbf{Registry Server}, \textbf{Communicator} and \textbf{Registry}. From the point of view of the framework, this module offers a means of communication with active isolates.
 \\\\ %DESIGN_DECISION
 \hspace*{3em} The registry maintains a \textbf{representation of the environment} managed by the application. Isolates are grouped together based on the V8 process they belong to and the machine they run on. The listing below shows the structure of the registry:
@@ -643,58 +637,234 @@ void Isolate::calcThroughput(){
   lastThroughput = (tp > 100)?100:tp;
 }
 \end{lstlisting}
-%Ideally, an application would experience an execution pause only when the operating system performs a context switch in order for other processes to get a chance to run. Garbage collected applications add the overhead of pausing the application in order to collect unreachable memory and make it available to the application or return it to the operating system.
+\hspace*{3em} In the above listing, the time-stamps are stored in vectors because \textbf{initially} the V8 modifications were intended to \textbf{return average values} of the throughput. This approach was \textbf{abandoned} because the \textbf{manager framework} is able to poll V8 instances at configurable frequencies, and also because it \textbf{better suited} to \textbf{decide} what \textbf{alterations} should be performed on the status information in order \textbf{to better reflect} the \textbf{state of the isolate}. This way, the V8 only responsible with returning raw status data, which in turn \textbf{minimises} the \textbf{computational overhead} added by the changes. 
 \subsection{Compiling Status Information}
-text
-\subsection{Server}
-text
-\subsection{Communication Protocol}
-text
-\section{Manager}
-Plotting configuration - makes pictures of the whole graph history and CSV file with entire history
-\\Locks and queues
-\\Data Flow through framework
-\\Frequency of polling - net load estiamte, policy execution, configurability
-\\Logging + configurability
-info
-\begin{table}[H]%
-\begin{subalgorithm}{.5\textwidth}
-\begin{algorithmic}[1]
-  \Procedure{GarbageCollection}{}
-    \State $r\gets a\bmod b$
-    \While{$r\not=0$}
-      \State $a\gets b$
-      \State $b\gets r$
-      \State $r\gets a\bmod b$
-    \EndWhile
-    \State \textbf{return} $b$\Comment{The gcd is b}
-  \EndProcedure
-\end{algorithmic}
-\caption{Euclid’s algorithm}\label{algo1}
-\end{subalgorithm}%
-\begin{subalgorithm}{.5\textwidth}
-\begin{algorithmic}[1]
-  \Procedure{Euclid}{$a,b$}\Comment{The g.c.d. of a and b}
-    \State $r\gets a\bmod b$
-    \While{$r\not=0$}\Comment{We have the answer if r is 0}
-      \State $a\gets b$
-      \State $b\gets r$
-      \State $r\gets a\bmod b$
-    \EndWhile
-    \State \textbf{return} $b$\Comment{The gcd is b}
-  \EndProcedure
-\end{algorithmic}
-\caption{Euclid’s algorithm}\label{algo2}
-\end{subalgorithm}
-\captionsetup{labelformat=alglabel}
-\caption{Two algorithms}%
-\label{tab:1}%
-\end{table}
-Amazing CLI - also enables configuration files applied before framework starts
-\section{Testing}
-Add testing bit
+\hspace*{3em} The \textbf{manager} is designed to \textbf{poll} all the tracked V8 instances for \textbf{status updates}. For every isolate belonging to a V8, the manager will send a status \textbf{update request}. Upon receipt of the request, the host V8 process must \textbf{collect status information} for the specified isolate and send it back to the manager. This operation must not be costly in terms of \textbf{computation} as it would \textbf{impact} the \textbf{performance} of the running scripts. This was achieved by adding member variable \textbf{accessor methods} that sum up a small number of values or simply return one value. Some such functions rely on underlying V8 accessor methods which had to be \textbf{carefully selected} because some traverse the pages comprising the heap in order to return the size while others return the value of a member variable. The methods that traverse the heap were avoided because of the considerable performance cost they incur since the aim of the project is to maintain high performance while adding global allocation resource supervision. To illustrate the performance cost of traversing the heap in order to retrieve its size, I have used the D8 (a version of V8 used for debugging JavaScript applications). This program not only retrieves the size of the heap at every garbage collection event, but also traverses it in order to map the objects that are live at that point in time. Below is a listing of the accessor functions added to the isolate class:
+\begin{lstlisting}[language=cpp]
+long long Isolate::getHeapSize(){
+  return (long long) (heap_.old_space() ->Size() + heap_.map_space() ->Size() +
+                      heap_.new_space() ->Size() + heap_.lo_space()  ->Size() +
+                      heap_.code_space()->Size()
+  );
+}
+
+long long Isolate::getMemoryFootprint(){
+  return (long long)(heap_.old_space() ->Capacity() + heap_.map_space() ->Capacity() +
+                     heap_.new_space() ->Capacity() + heap_.code_space()->Capacity() +
+                     heap_.lo_space()  ->Size()
+  );
+}
+
+long long Isolate::getAvailableHeapSize(){
+  return (long long)(heap_.old_space() ->Available() + heap_.map_space() ->Available() +
+                     heap_.new_space() ->Available() + heap_.code_space()->Available()
+  );
+}
+
+double Isolate::getThroughput(){
+  return lastThroughput;
+}
+\end{lstlisting}
+\subsection{Isolate Tracking}
+\hspace*{3em} \textbf{V8} is meant to be \textbf{embedded in larger projects} that employ its functionality. The host project would decide what scripts to run and used V8 to compile and execute them. The isolates would be created outside of the V8 source code as it is simply an engine offering functionality to its host program. Because of this, there there is \textbf{no functionality} that \textbf{tracks} the number of \textbf{active isolates} in V8. The manager framework needs a way to identify and track the active isolates belonging to each V8 process. This can be done either in the V8 source code or in the program it is embedded in (V8 wrapper in the case of this project). The latter involves much less overall V8 code changes but does makes it very hard to adopt modified engine in a different project that makes use of V8, such as NodeJS and Chrome. This is why isolate tracking was added to the V8 source code.
 \\\\
-\hspace*{3em} After modular testing was completed the final step was to ensure that the manager framework worked as a whole and did indeed affect the amount of memory an isolate could utilise. The graph below shows the evolution of the heap size of an isolate controlled with the manager framework:
+\hspace*{3em} Upon \textbf{creation}, an isolates is assigned a \textbf{identification number} and a \textbf{pointer} to the isolate object is stored in an array. This number is used by the management framework to \textbf{address the isolate} it wants to control. The V8 network client(detailed below) uses the identification number of the isolate to retrieve the stored object pointer and call the appropriate member functions in order to carry out the command received from the manager. Upon \textbf{disposal} of the isolate, its \textbf{identification number} becomes \textbf{free} and can be used to address another new isolate and the \textbf{pointer} is \textbf{removed} from the array. Below are code extracts demonstrating:
+\begin{lstlisting}[language=cpp]
+int ISOLATE_INDEX = 1;
+std::map<int,Isolate *> allIsolates;
+std::list<int> freeIDs;
+pthread_mutex_t count_mutex = PTHREAD_MUTEX_INITIALIZER;
+...
+Isolate::Isolate(bool enable_serializer){ 
+  //constructor call modified to add isolate pointer to map
+  ...
+  Isolate::addNewIsolate(this);
+}
+Isolate::~Isolate() {
+  //destructor modified to delete pointer to isolate
+  Isolate::removeIsolate(this);
+  ...
+}
+void Isolate::addNewIsolate(Isolate * i){
+  pthread_mutex_lock(&count_mutex);
+
+  int id = 0;  
+  if(freeIDs.empty()){
+    id = ISOLATE_INDEX++;
+  } else {
+    id = freeIDs.front();
+    freeIDs.pop_front();
+  }
+
+  i->setIsolateId(id);
+  allIsolates[id] = i;
+
+  pthread_mutex_unlock(&count_mutex);
+}
+
+void Isolate::removeIsolate(Isolate *i){
+  pthread_mutex_lock(&count_mutex);
+  
+  int id = i->getIsolateId();
+  if(allIsolates.erase(id))
+    freeIDs.push_front(id);
+  
+  pthread_mutex_unlock(&count_mutex);
+}
+\end{lstlisting}
+
+\subsection{Client}
+\hspace*{3em} A \textbf{TCP/IP client} was added as a separate execution thread to the V8 process. Its purpose is to continuously attempt to \textbf{connect} to the \textbf{manager} framework until a successful connection is established, after which it \textbf{waits for commands}, \textbf{applies} then by calling the appropriate V8 API functions and \textbf{responds} with status updates. A \textbf{separate thread} was used in order to allow the \textbf{isolates} to run \textbf{undisturbed} and unaware of the existence of the server. This way, the status updates reflect the \textbf{instantaneous state} of the isolate at the moment when the command arrived. Before starting the client, a file called \textbf{V8RemoteControlConfig.txt} containing the manager \textbf{IP} address and \textbf{port} is parsed. The provided IP and port numbers are used to connect to the manager. If this file does not exist, the server reverts to the \textbf{localhost} address 127.0.0.1 with port 15004 assuming the manager is located on the local machine. A \textbf{file} was used to configure the destination IP and port rather than \textbf{command line arguments}, because in the future, this extension might be included in applications like NodeJS, NWJS and Chrome which would require adding the \textbf{additional command line options} to each of these three projects' source codes. A modified build of the \textbf{Chrome} web browser was created for the purpose of this project. Having the V8 client configure itself using a file eliminated the need to change any additional Chrome specific code, which made the integration of the modified V8 simply a task of replacing the modified files and slightly changing the build procedure to include the new files. %easy peasy I figured out how ninja describes the build process 
+\subsection{Communication Protocol}
+\hspace*{3em} The last set of changes added to the V8 project implement the \textbf{communication protocol}, including \textbf{encoding} and \textbf{decoding} it. The protocol, described at \ref{Design:Tracking}, is based on objects called \textbf{actions}. They can be either \textbf{requests} or \textbf{responses} and can refer to either the \textbf{V8 process} itself (global request or response) or to one of its \textbf{isolates} (local request or response). The action object contains the name of the command to be applied (or the kind of response being returned) and a set of fields containing the required information. A request would be comprised of one global action object and an array of local action objects. The number of local action objects corresponds to the number of isolates the V8 is running. Below is a diagram of the classes that model a protocol message.     
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=0.80\textwidth]{ProtocolClasses.png}
+	\caption{Protocol entities grouped into classes.}
+\end{figure}
+\\
+\hspace*{3em} The \textbf{details class} is comprised of public fields representing every possible piece of information that can be put in an action object along with functions used to build the object from a JSON string and to convert it to such a string. Each Action class is comprised of a \textbf{name field}, used to determine what request or response it represents, a \textbf{details object} for the additional information and an \textbf{error object}. The latter is used to represent any kind of error encountered while performing the action. The \textbf{command class} contains an action object representing the \textbf{global action}, array of action objects representing the \textbf{isolate level actions} and an \textbf{error object}. The latter is used to represent errors at a command level. If the array of actions was longer than the array of isolate object pointers, meaning that the manager sent limits for more isolates than are actually active, would qualify as a local error and will be represented in the last action object of the actions array from the command object. If the message received from the network could not be decoded, the global error object of the command will be filled in with information about the error and the execution of the command will be aborted.
+\\\\
+\hspace*{3em} A \textbf{third party library} called \textbf{JsonCpp} was added to V8 in order to handle encoding and decoding JSON. The V8 engine does support JSON, since it stands for Java Script Object Notation, but it is implemented in JavaScript. This means that in order to encode or decode JSON, JavaScript code would have to be run in one of the available isolates or in its own one. This would cause framework related code to compete with hosted application code for execution time. The third party library code will run in the separate thread of the network client and therefore would not directly impact the execution time of the hosted applications. JsonCpp parses JSON strings and produces \textit{Json::Value} objects. These are then passed to the appropriate instances of the protocol classes in order to load the values into the appropriate member variables. Every class comprising the protocol implementation with the exception of the Command class has a \textit{void deserialise(Json::Value obj);} method which loads values from a JSON object. Conversely, a \textit{void serialise(Json::Value \&obj);} method does the opposite operation when the protocol message needs to be encoded in order to be sent to the manager. The Command class is responsible with performing encoding and decoding from and to string, it also has the two aforementioned methods but in the following format: \textit{std::string serialise();} and \textit{void deserialise(std::string);}. This makes the decoding of a JSON string received over the network from the manager as simple as calling one function: \textbf{command.deserialise(string);}.
+\\\\
+\hspace*{3em} Base64 encoding and decoding procedures were added to the V8 project for the same reason the built in methods were not used to parsing JSON. Handling messages from the manager requires reading data from the network in a string until the separator is read, instantiating a Command object, decoding the string received over the network using Base64 and then passing it to \textit{command.deserialise();}. Similarly, sending a response to the manager requires modifying the command object to reflect the state of the last performed action, calling \textit{command.serialise()}, base64 encoding the resulting string, appending the separator and sending it over the network.
+\section{Manager}
+\hspace*{3em} The role of the manager framework is to keep track of active isolates, control their memory usage by applying a management policy, give feedback on the status of each isolate to the user and allow the user to control the framework. There are three main modules comprising the framework: \textbf{Tracking}, \textbf{Management} and \textbf{Plotting}. These are divided further into more specialised scripts:
+\dirtree{%
+.1 \textbf{Management}.
+.2 \textbf{Communication}.
+.3 \text{server.py}.
+.3 \text{communicator.py}.
+.3 \text{requestBuilder.py}.
+.2 \text{monitor.py}.
+.2 \text{policy.py}.
+.2 \text{cli.py}.
+.1 \textbf{Plotter}.
+.2 \text{IpcPlotWrapper.py}.
+.2 \text{plotter.py}.
+.1 \textbf{PlotFacility}.
+.2 \text{PlotServer.py}.
+.2 \text{PlotService.py}.
+.1 \text{main.py}.
+}
+\hspace*{3em} Tracking and Management share a \textbf{core component}: the \textbf{registry} (implemented in monitor.py). Tracking accepts connections from V8 instances, creates and associates a communicator instance with each newly open connection and updates the registry to reflect the changes. Any message received by a communicator from its associated V8 updates the corresponding registry record. When a connection is closed, its corresponding communicator automatically updates the registry. The management module scans the registry for active isolates and sends them update requests, it also groups isolates by the machine they belong to and sends them heap limit values. Because of the dependence of the management module on the tracking, the latter has been embedded into management as a sub-module named Communication. However, the plotting module has been divided in two: Plotter and PlotFacility in order to reflect the underlying architecture. The external plotter process from \cref{overalldesign} was implemented in the Plotter module as a standalone application while the remaining functionality was implemented by the scripts in PlotFacility. 
+%more info on how they get wired
+\subsection{Tracking}
+\hspace*{3em} The \textbf{registry} keeps track of the state of the monitored environment. It uses a hierarchical model implemented using a python dictionary:
+\dirtree{%
+.1 machines.
+.2 \text{Machine\_1}.
+.3 \text{V8\_1}.
+.4 \text{Isolate\_1}.
+.4 \text{Isolate\_2}.
+.3 \text{V8\_2}.
+.4 \text{Isolate\_1}.
+.2 \text{Machine\_2}.
+.3 \text{V8\_1}.
+.4 \text{Isolate\_1}.
+}
+The dictionary nodes representing each of the types of nodes show above (machine, v8, isolate) have the following structure: 
+\begin{lstlisting}[language=python]
+machine = {"FreeList":list(),"v8s":dict(),"id":"0", "memoryLimit":self.newMachineMemLimit}
+v8      = {"FreeList":list(),"isolates":dict(),"id":0}
+isolate = {"id":0,"created":time.time()}
+\end{lstlisting}
+\hspace*{3em} When a new machine is added to the registry, its IP address is used as a value for the id field. New V8 and Isolate instances are automatically assigned identification numbers which are unique within the context of the parent node. V8 ids are unique within the context of their host machine, while Isolate ids are unique within the context of their host V8 processes. The IDs are chosen by finding the smallest number not in used by another instance within the same context. When an Isolate instance is removed, its ID is stored in the free list of its parent V8. When a V8 instance is removed, its ID is stored in the free list of its host machine. This is how free IDs are being managed.
+\\\\
+\hspace*{3em} A mutex lock is used to ensure concurrent changes are carried out safely. Operations that are used by external components such as the communicator and policy executor are considered potentially unsafe and therefore the mutex is used to ensure safety. Functions meant to be called internally do not use the mutex in order to optimise execution speed since locking and unlocking mutexes adds considerable overhead.
+\\\\
+\hspace*{3em} The \textbf{server} runs in a separate thread that has the responsibility of accepting incoming TCP/IP connections, creating a new communicator object for each new connection and adding the machine that has initiated the connection to the registry if it was not added already.
+\begin{lstlisting}[language=python]
+soc,addr = self.soc.accept()
+addr = str(addr[0])
+machineId = self.monitor.getMachine(addr);
+if machineId == 0:
+	machineId = self.monitor.addMachine(addr); 
+else:
+	machineId = machineId["id"];
+communicator(soc,self.monitor,machineId,self.monitor.update);
+\end{lstlisting}
+\hspace*{3em} \textbf{Communicators} represent a communication channel to a single V8 instance. Hence, they require a reference to the registry in order to add a new V8 record to it. This reference is passed at the constructor call (self.monitor from the above listing). A new communicator creates a separate thread that listens for messages from the remote V8. As soon as a message arrives a method from the registry's interface is called in order to directly update the relevant record. A send function is also part of the communicator interface. This allows other components to send messages to the V8 instances managed by the system. Each registry record of a V8 has a reference to its associated communicator in order for other components to be able to contact the V8 process. Getting a V8's communicator requires calling a registry method and providing a machine id and a V8 id: \textit{getV8Comm(machineId,v8Id)}.
+%requestbuilder?
+
+\subsection{Management}
+\hspace*{3em} The center piece of the management module is the \textbf{policy executor} (policy.py). This script is responsible with gathering status updates from every managed isolate and applying a selected policy to the groups of isolates belonging to each machine connected to the manager. It also validates the output produced by the policy script and implements functionality for loading a policy script at run-time as well as changing the polling frequency. This functionality is exposed to the command line module to enable the user to change the policy and polling frequency at run time. Below is an outline of the policy executor methods:
+\begin{lstlisting}[language=python]
+class Policy:
+    def __init__(self,monitor,frequency,cfgfile)
+    def ldConfig(self,fileN)
+    def changeSamplingFrequency(self,hz)
+    def __loadModule(self,filepath)
+    def loadPolicy(self,policyName)
+    def logPolicyInfo(self,name,msg)
+    def validateSuggestions(self,suggestions,maxMachineMemory)
+    def run(self)
+\end{lstlisting}
+\hspace*{3em} Because policy implementations are intended to be modular and interchangeable, in order to allow the system to load policies at run-time, a standard for implementing one has been outlined. A policy script must implement every method below in order to be successfully loaded and used by the framework. 
+\begin{itemize}
+\item \textit{init(context)} - called when the policy is applied for the first time to the isolates of a machine.
+\item \textit{calculate(totalAvailableMemory,isolates,context)} - this method computes the memory limits. It is called at the same frequency as the status polling. The input parameters are a maximum memory limit, a list of isolates with status information and the return value is a list of the memory limits.
+\item \textit{name()} - returns a string containing the name of the policy
+\item \textit{stats()} - if the policy maintains any status information, returns a string with that information.
+\end{itemize}
+\hspace*{3em} The \textbf{command line interface} (cli.py) allows the user to control the framework through the use of text commands. A total of 31 commands are available with functions ranging from simply listing the connected isolates, changing the polling frequency, listing available policy scripts to changing the currently running policy script, manually sending memory limits to isolates, changing the total memory limits on machines and determining whether the status information is plotted live on the screen or simply saved to a file for post execution analysis. A listing of the full list of commands can be found in \cref{allcommands}.Below is listing of the command line showing the connected
+isolates:
+\begin{lstlisting}
+[ MACHINE_127.0.0.1 ]  400 MB
+{ V8_1 } 1 MB
+  0:0:33.0 (1) available:1048576 average:0 maxFootPrint:1048586 avindex:0 footPrint:1048586 throughput:1.0 v8Id:1 heap:1048576 hardHeapLimit:209715200.0 pMark:True 
+_____________________________________________
+
+ V8_2   1 MB
+  0:0:6.0 (1) available:1048576 average:0 maxFootPrint:1048586 avindex:0 footPrint:1048586 throughput:1.0 v8Id:2 heap:1048576 hardHeapLimit:209715200.0 pMark:True 
+_____________________________________________
+\end{lstlisting}
+\hspace*{3em} The [] brackets denote the current machine and the \{\} brackets denote the current V8 that the command line is pointing at. Commands regarding isolates go to the V8 highlighted above. The CLI is \textbf{versatile} enough to be used to \textbf{configure the environment}. This is done using text configuration files which contain commands (one per line). These are applied sequentially when the policy executor object initialises. Configuration files are found in the configuration folder. Here's an example of how to start the manager with a configuration file other than default.txt: \textbf{./main.py config=fullFeatures.txt} 
+
+\subsection{Plotting}
+\hspace*{3em} The main \textbf{feedback} mechanism for the frameworks is \textbf{plotting status information}, such as heap size, throughput, imposed memory limit, received from isolates. This is done using the python matplotlib library \cite{matplotlib}. The framework creates a plot window for each isolate that is being controlled and sends the isolate status fields to the corresponding windows as soon as they arrive from the host V8 instances. This is done through registry code: as soon as an update comes on the network, after the registry has been updated, the information is also set to the plotting facility.
+\\\\
+\hspace*{3em} Plotting involves associating each isolate with a plot window, sending the information concerning an isolate to the correct window and plotting it. To handle this, the plotting module has been split in two sub-modules:
+\begin{itemize}
+\item \textbf{Plot Facility} - responsible with creating new plotter windows when needed, associating isolates with plotter windows and sending status information to the correct window. 
+\item \textbf{Plotter} - is a separate process instantiated by the plot facility on demand, responsible with receiving plot data and drawing it on the screen.
+\end{itemize}
+\hspace*{3em} The plotter also saves the data it receives in two types of files: a full history of the status information stored in a CSV file and a sequence of PNG files. The latter are captured when the plot data fills the entire surface of the window or when the isolate finishes execution.
+\\\\
+\hspace*{3em} \textbf{Plotting} while the framework controls isolates comes with \textbf{considerable overhead}. Operations such as redrawing the lines on the screen as well as starting new plotter processes (which start plotting windows) are quire costly in terms of computation and therefore need to be handled with care. In order to minimise the overhead brought by such operations a number of \textbf{optimisations} have been implemented:
+\begin{itemize}
+\item \textbf{Reusing Plot Windows} - when an isolate finishes execution its corresponding plotter window is put in an idle state. Idle windows are stored in a stack by the Plot Facility to be reused when new isolates begin execution. This way some of the overhead of creating new windows is circumvented. 
+
+\item \textbf{Skipping Render Steps} - by default, the policy executor asks for status updates at a frequency of 10Hz. Receiving data at high frequency causes the cause the plot library to do a large amount of computation because it has to redraw the whole graph surface. This causes it to fail to show an up-to-date view of the isolate's state, because previous plotting operations have not yet finished before the availability of new data. To mitigate this, the plotter is configured with a target time interval between plot updates. It then measures the time taken to plot updates. If this time is larger than the configured interval then some of the upcoming updates would not be drawn on screen, creating a skip-ahead effect that ensures the plot window does not lag behind.
+\begin{equation}
+	\textit{NumberOfUpdatesToSkip} = floor(\frac{\textit{DrawDuration}}{\textit{ConfiguredInterval}})
+\end{equation}
+
+\item \textbf{Post Execution Analysis} - Live updating can be costly even with the above optimisations. Depending on the nature of the experiments being carried out, live plotting can be deactivated in favour of saving the full plot history of one isolate in a CSV file. The data in this file can be plotted after execution has finished. This completely eliminates the overhead of redrawing plot lines as well as creating graphical plot windows. 
+\end{itemize}
+
+\subsection{Data Flow}
+\hspace*{3em} Data flows through the system from the Tracker through Management to Plotting. The policy executor will send out status update requests for each tracked V8 through its associated communicator then it will group isolates belonging to the same machine, calculate memory limits for them and send them out through their host V8 communicators. Blow is an diagram illustrating the flow of data through the framework:
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=1.0\textwidth]{DataFlow.png}
+	\caption{Flow of data through the framework.}
+    \label{dataflow}
+\end{figure}
+\\\\
+\hspace*{3em} The main priority of the manager is to calculate memory limits and send them to the isolates quickly. This is why status polling and the calculating the memory limit happen on the same thread (policy executor thread). Updates from the network are handled by the execution thread of the receiving communicator. This thread handles updating the registry and also sends the update to the plotting facility if this feature is enabled. Because updates come at a relatively high frequency the amount of computation needed to handle one request needs to be kept relatively small. For this reason, the functionality illustrated in \cref{dataflow} (bottom right) has been put in a separate thread. The communicator thread simply adds the new update to a queue to be processes by the plot facility thread. This ensures the communicator handler only carries out critical operations such as updating the registry. Safe operations is ensured by mutex locks implemented by the registry and the plot facility.
+\\\\
+\hspace*{3em} The manager framework is mean to run for prolonged amounts of time and process high volumes of data. Debugging the application becomes difficult if all error messages are passed to process standard output. \textbf{Logging} has been added to the system in order to keep a record of the framework status and errors encountered. Each module discussed in this chapter should maintain a log of its own, but due to time constraints logging has been added only to the policy executor and plot facility modules. The policy executor log is key to debugging policy scripts as it is the file that stores the errors and warnings for the current policy script. Third party developers could create new such scripts and use the log to check if they exhibit correct behaviour.
+\section{Testing}
+\hspace*{3em} Testing was facilitated by additional scripts that instantiate the components to be tested and call the relevant member functions. If any errors are encountered, this would indicate there is a flaw in the scrutinized component. Trace-backs will indicate where the problem originates, aiding the solving process. %implement an automated check for the registry structure and packet builder
+\\\\
+\hspace*{3em} The most critical part of the system is the registry.
+\\\\
+\hspace*{3em} Packetisation
+\\\\
+\hspace*{3em} Policy Testing - specify policy, auto load, manual input, replay collected data, collect results in file through pipe-ing
+\\\\
+\hspace*{3em} After the critical components have been tested, final step was to ensure that the manager framework worked as a whole and did indeed affect the amount of memory an isolate could utilise. To do this, the framework was started along with a V8 isolate running the binary tree benchmark. At different intervals of time memory limits were set, using the command line interface, and the memory utilisation was observed. The graph below shows the evolution of the heap size of an isolate controlled with the manager framework:
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=1.0\textwidth]{ControlWorks.png}
@@ -702,6 +872,7 @@ Add testing bit
 \end{figure}
 
 \chapter{Evaluation}
+CHAPTER DESCRIPTION\\
 How isolates are mapped as individuals, what the gini is applied to.
 Throughput, heap, footprint, limit, distance to limit.
 \section{Equal Share Policy}
@@ -821,7 +992,88 @@ The contents...
     \includegraphics[width=0.95\textwidth]{MHCmpRegexDNA.png}
     \caption{RegexDNA Benchmark.}
 \end{figure}
+\chapter{Policy Comparison}
+Wealth Redistribution for 2 Binarytree benchmarks running in parallel limited at 400MB
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=1\textwidth]{binarytree400MLeft.png}
+    \caption{Binary Tree 1}
+\end{figure}
 
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[width=0.95\textwidth]{binarytree400Mright.png}
+    \caption{Binary Tree 2.}
+\end{figure}
+\chapter{Command Line}
+\label{allcommands}
+\begin{lstlisting}
+Manager Commands 
+________________________________________________________________________________
+>> chhz [frequency in Hz(float)]
+Change the machine polling frequency.
+>> chv8 [V8Id(int)]
+Change the V8 that the shell is set to.
+>> dbg
+>> echo [0/1 off/on(int)]
+Toggle echo function on or off
+>> help
+   (? ) 
+>> history
+   (h ) Print command history
+>> hz
+Get the current polling frequency
+>> listPolicies
+   (lsp ) List available policies
+>> listScenarios
+   (listscen lscen ls ) Show a listiong of all scenarios
+>> loadConfig [configuration(str)]
+   (conf lc ) Load and apply configuration file
+>> loadpolicy [policy name(str)]
+   (ldp ) Load a difference memory management ploicy.
+>> machines
+   (m ) Status report of all machines, V8 and isolates.
+>> policyname
+   (p? ) Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)
+>> policystats
+   (ps ) Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)
+>> registryIO
+   (rio r? ) Get a summary of the network usage on the registry side
+>> run [script(str)]
+   (r ) Run a JS script on the V8 the shell is set to.
+>> setMachineMemoryLimit [machine_id(str)] [memory_limit_in_MB(int)]
+   (mlim ) Set the global memory limit for all JS instances per machine
+>> setmax [isolateId(int)] [heap size in bytes(int)]
+   (hard ) Set hard limit reccodendation to the isolate from the V8 the shell is set to.
+>> setMaxPlotters [max(int)]
+   (maxPlt mp ) Set maximum plotter windows allowed
+>> setNewMachineMemoryLimit [memory_limit_in_MB(int)]
+   (nmlim ) Set the global memory limit for all JS instances for new machines that connect
+>> setPlotMode [mode(str)]
+   (pmode pm ) Set the plot mode: NONE,MACHINE,ISOLATE,ALL
+>> setPlotServerPort [port(int)]
+   (plotport pp ) Restart the plotter server on a different port
+>> setPlotterStartupConfig [JSON config(str)]
+   (pltsconf ) Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)
+>> snapshot [isolateId(int)]
+Take a snapshot of an isolate form the V8 the shell is set to.
+>> stats
+Status report of all machines, V8 and isolates.
+>> suggest [isolateId(int)] [heap size in bytes(int)]
+   (s soft ) Send hard limmit reccomendation to the isolate from the V8 the shell is set to.
+>> switch [machineId(str)] [V8Id(int)]
+Change the machine and V8 that the shell is set to.
+>> testScenario [path_to_scenario(str)] [path_to_collect_in(str)]
+   (scenario rs t ) Run a testing scenario
+>> togglePlotServiceLogging [ON/OFF(str)]
+   (pslog tpsl ) Toggle PlotService logging
+>> v8s
+   (v ) Status report of all machines, V8 and isolates.
+>> where
+What V8 from what machine the shell is set to at the moment.
+________________________________________________________________________________
+\end{lstlisting}
+Strings in () brackets are short forms for the command. 
 \end{appendices}
 
 %more accurate biblio
@@ -881,7 +1133,8 @@ Springer, 1992.
 V8 Maximum Memory Amount Per Isolate
 \url{https://bugs.chromium.org/p/v8/issues/detail?id=847}
 \end{thebibliography}
-\end{document}\pdfoutput=1
+\end{document}
+\pdfoutput=1
 
 \documentclass{l4proj}
 \usepackage[english]{babel}
@@ -1713,5 +1966,8 @@ Springer, 1992.
 \bibitem{v8sizebug}
 V8 Maximum Memory Amount Per Isolate
 \url{https://bugs.chromium.org/p/v8/issues/detail?id=847}
+\bibitem{matplotlib}
+Matplotlib library for python
+\url{http://matplotlib.org/}
 \end{thebibliography}
 \end{document}

@@ -7,7 +7,7 @@ import subprocess
 import time
 
 if len(sys.argv) < 2:
-	print "USAGE:python runscen.py path_to_scenario_file"
+	print "USAGE:python runscen.py path_to_scenario_file collection_path(*optional) policy_name(*optional)"
 else:
 	scenario = Scenario(sys.argv[1],0) 
 	scenario.run()
