@@ -1,0 +1,36 @@
+28x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/a_Fasta.js']All processes finished
+OK > 0:1:12.0-a_Fasta.js
+OK > 0:1:15.0-a_Fasta.js
+OK > 0:1:14.0-a_Fasta.js
+OK > 0:1:16.0-a_Fasta.js
+OK > 0:1:15.0-a_Fasta.js
+OK > 0:1:15.0-a_Fasta.js
+OK > 0:1:16.0-a_Fasta.js
+OK > 0:1:18.0-a_Fasta.js
+OK > 0:1:19.0-a_Fasta.js
+OK > 0:1:19.0-a_Fasta.js
+OK > 0:1:19.0-a_Fasta.js
+OK > 0:1:20.0-a_Fasta.js
+OK > 0:1:21.0-a_Fasta.js
+XX > 0:1:20.0-a_Fasta.js
+OK > 0:1:21.0-a_Fasta.js
+OK > 0:1:20.0-a_Fasta.js
+OK > 0:1:20.0-a_Fasta.js
+OK > 0:1:21.0-a_Fasta.js
+OK > 0:1:22.0-a_Fasta.js
+OK > 0:1:22.0-a_Fasta.js
+OK > 0:1:22.0-a_Fasta.js
+OK > 0:1:22.0-a_Fasta.js
+OK > 0:1:23.0-a_Fasta.js
+OK > 0:1:23.0-a_Fasta.js
+OK > 0:1:22.0-a_Fasta.js
+OK > 0:1:22.0-a_Fasta.js
+OK > 0:1:23.0-a_Fasta.js
+OK > 0:1:22.0-a_Fasta.js
+____________________
+Total Processes:28
+Successful:28(100%)
+Failed    :0(0%)
+Minimum Heap Target:392MB
+
+1 missadvertised

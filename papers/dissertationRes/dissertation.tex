@@ -807,14 +807,24 @@ class Policy:
 \item \textit{name()} - returns a string containing the name of the policy
 \item \textit{stats()} - if the policy maintains any status information, returns a string with that information.
 \end{itemize}
-\hspace*{3em} The \textbf{command line interface} (cli.py) allows the user to control the framework through the use of text commands. A total of  
+\hspace*{3em} The \textbf{command line interface} (cli.py) allows the user to control the framework through the use of text commands. A total of 31 commands are available with functions ranging from simply listing the connected isolates, changing the polling frequency, listing available policy scripts to changing the currently running policy script, manually sending memory limits to isolates, changing the total memory limits on machines and determining whether the status information is plotted live on the screen or simply saved to a file for post execution analysis. A listing of the full list of commands can be found in \cref{allcommands}.Below is listing of the command line showing the connected
+isolates:
+\begin{lstlisting}
+[ MACHINE_127.0.0.1 ]  400 MB
+{ V8_1 } 1 MB
+  0:0:33.0 (1) available:1048576 average:0 maxFootPrint:1048586 avindex:0 footPrint:1048586 throughput:1.0 v8Id:1 heap:1048576 hardHeapLimit:209715200.0 pMark:True 
+_____________________________________________
 
-Frequency of polling - net load estiamte, policy execution, configurability
-\\Locks and queues
-\\command line configuration + running batched commands
+ V8_2   1 MB
+  0:0:6.0 (1) available:1048576 average:0 maxFootPrint:1048586 avindex:0 footPrint:1048586 throughput:1.0 v8Id:2 heap:1048576 hardHeapLimit:209715200.0 pMark:True 
+_____________________________________________
+\end{lstlisting}
+\hspace*{3em} The [] brackets denote the current machine and the \{\} brackets denote the current V8 that the command line is pointing at. Commands regarding isolates go to the V8 highlighted above. The CLI is \textbf{versatile} enough to be used to \textbf{configure the environment}. This is done using text configuration files which contain commands (one per line). These are applied sequentially when the policy executor object initialises. Configuration files are found in the configuration folder. Here's an example of how to start the manager with a configuration file other than default.txt: \textbf{./main.py config=fullFeatures.txt} 
+
 \subsection{Plotting}
 Plotting configuration - makes pictures of the whole graph history and CSV file with entire history
 \subsection{Data Flow}
+Locks and queues
 Data Flow through framework
 \\Logging + configurability
 Amazing CLI - also enables configuration files applied before framework starts
@@ -963,7 +973,75 @@ Wealth Redistribution for 2 Binarytree benchmarks running in parallel limited at
     \includegraphics[width=0.95\textwidth]{binarytree400Mright.png}
     \caption{Binary Tree 2.}
 \end{figure}
-
+\chapter{Command Line}
+\label{allcommands}
+\begin{lstlisting}
+Manager Commands 
+________________________________________________________________________________
+>> chhz [frequency in Hz(float)]
+Change the machine polling frequency.
+>> chv8 [V8Id(int)]
+Change the V8 that the shell is set to.
+>> dbg
+>> echo [0/1 off/on(int)]
+Toggle echo function on or off
+>> help
+   (? ) 
+>> history
+   (h ) Print command history
+>> hz
+Get the current polling frequency
+>> listPolicies
+   (lsp ) List available policies
+>> listScenarios
+   (listscen lscen ls ) Show a listiong of all scenarios
+>> loadConfig [configuration(str)]
+   (conf lc ) Load and apply configuration file
+>> loadpolicy [policy name(str)]
+   (ldp ) Load a difference memory management ploicy.
+>> machines
+   (m ) Status report of all machines, V8 and isolates.
+>> policyname
+   (p? ) Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)
+>> policystats
+   (ps ) Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)
+>> registryIO
+   (rio r? ) Get a summary of the network usage on the registry side
+>> run [script(str)]
+   (r ) Run a JS script on the V8 the shell is set to.
+>> setMachineMemoryLimit [machine_id(str)] [memory_limit_in_MB(int)]
+   (mlim ) Set the global memory limit for all JS instances per machine
+>> setmax [isolateId(int)] [heap size in bytes(int)]
+   (hard ) Set hard limit reccodendation to the isolate from the V8 the shell is set to.
+>> setMaxPlotters [max(int)]
+   (maxPlt mp ) Set maximum plotter windows allowed
+>> setNewMachineMemoryLimit [memory_limit_in_MB(int)]
+   (nmlim ) Set the global memory limit for all JS instances for new machines that connect
+>> setPlotMode [mode(str)]
+   (pmode pm ) Set the plot mode: NONE,MACHINE,ISOLATE,ALL
+>> setPlotServerPort [port(int)]
+   (plotport pp ) Restart the plotter server on a different port
+>> setPlotterStartupConfig [JSON config(str)]
+   (pltsconf ) Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)
+>> snapshot [isolateId(int)]
+Take a snapshot of an isolate form the V8 the shell is set to.
+>> stats
+Status report of all machines, V8 and isolates.
+>> suggest [isolateId(int)] [heap size in bytes(int)]
+   (s soft ) Send hard limmit reccomendation to the isolate from the V8 the shell is set to.
+>> switch [machineId(str)] [V8Id(int)]
+Change the machine and V8 that the shell is set to.
+>> testScenario [path_to_scenario(str)] [path_to_collect_in(str)]
+   (scenario rs t ) Run a testing scenario
+>> togglePlotServiceLogging [ON/OFF(str)]
+   (pslog tpsl ) Toggle PlotService logging
+>> v8s
+   (v ) Status report of all machines, V8 and isolates.
+>> where
+What V8 from what machine the shell is set to at the moment.
+________________________________________________________________________________
+\end{lstlisting}
+Strings in () brackets are short forms for the command. 
 \end{appendices}
 
 %more accurate biblio
