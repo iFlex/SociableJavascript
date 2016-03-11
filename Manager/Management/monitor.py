@@ -85,7 +85,7 @@ class monitor:
                 del machines[machineId];
                 self.FreeMachineIDS.append(machineId);
                 mid = machineId;
-                print "RemovedMachine"+machineId
+                #print "RemovedMachine"+machineId
         return mid;
 
     def getMachine(self,machineId):
@@ -151,7 +151,7 @@ class monitor:
             freeIDs = machine["FreeList"]
             freeIDs.append(v8Id);
             
-            print "removed v8:"+machineId+"_"+str(v8Id);
+            #print "removed v8:"+machineId+"_"+str(v8Id);
             #no more V8s for this machine, delete machine
             if len(machine["v8s"].keys()) == 0:
                 self.removeMachine(machineId);
@@ -195,12 +195,13 @@ class monitor:
         retval = 0;
         with self.lock:
             if isolateId in v8["isolates"]:
-                print "(X)"+machineId+"_"+str(v8Id)+"_"+str(isolateId)+" LIVED:"+str(self.prettifyTime(time.time() - v8["isolates"][isolateId]["created"]))
+                #print "(X)"+machineId+"_"+str(v8Id)+"_"+str(isolateId)+" LIVED:"+str(self.prettifyTime(time.time() - v8["isolates"][isolateId]["created"]))
                 del v8["isolates"][isolateId];
                 freeIDs = v8["FreeList"];
                 freeIDs.append(isolateId)
                 retval = isolateId;
-                print "removed isolate:"+machineId+"_"+str(v8Id)+"_"+str(isolateId)
+                #print "removed isolate:"+machineId+"_"+str(v8Id)+"_"+str(isolateId)
+        
         if self.plotMode > 1:
             self.plotter.update("Machine_"+machineId+"_V8_"+str(v8Id)+"_isl_"+str(isolateId),{"action":"died"});
         
