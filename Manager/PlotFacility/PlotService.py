@@ -177,7 +177,7 @@ class PlotService:
 
 			print "Closing plot server";
 			self.server.close();
-			print "plot:ktnxbay";
+			print "plot:SHUTDOWN COMPLETE";
 
 	def takeSnapshot(self,key):
 		if self.ready and key in self.currentPlotData:

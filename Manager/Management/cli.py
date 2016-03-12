@@ -222,7 +222,7 @@ class CommandLine:
 	def setMachineMemoryLimit(self,mid,limit):
 		machine = self.monitor.getMachine(mid);
 		if machine != 0:
-			machine["memoryLimit"] = limit;
+			machine["memoryLimit"] = limit*1024*1024;
 			return True;
 		return False;
 

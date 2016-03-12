@@ -87,4 +87,4 @@ if len(sys.argv) < 4:
 files = getFiles(sys.argv[1],".csv")
 loadSchemas(files)
 merge(sys.argv[2].split(","),sys.argv[3]);
-print "ktnxbay"
+print "COMPLETE"

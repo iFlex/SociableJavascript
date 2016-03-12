@@ -15,9 +15,9 @@ labels = 0
 csv = 0
 terminate = False
 #Machine properties
-HEAP = 1024*1024      # 1MB
-AVAILABLE = 1024*1024 # 1MB
-THROUGHPUT = 1.0      #
+HEAP       = 1024*1024 # 1MB
+AVAILABLE  = 1024*1024 # 1MB
+THROUGHPUT = 1.0       #
 #CLI args
 try:
     for cmd in sys.argv:
@@ -123,4 +123,4 @@ while not terminate:
     time.sleep(3);
 print "Closing last communicator"
 comm.close()
-print "ktnxbay"
+print "<>SHUTDOWN COMPLETE<>"

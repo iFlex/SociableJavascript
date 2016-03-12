@@ -106,7 +106,7 @@ def keepReceiving():
 				break;
 			request = ""
 		
-	print "IPC::Closing down the shop...";
+	print "IPC::Shutting down net socket...";
 	plotter.close();
 	try:
 		soc.shutdown(SHUT_RDWR);
@@ -117,4 +117,4 @@ def keepReceiving():
 
 keepReceiving();
 
-print "IPC::ktnxbay"
+print "IPC::<>SHUTDOWN COMPLETE<>"

@@ -1,0 +1,7 @@
+
+#
+# Fatal error in MarkCompactCollector: semi-space copy, fallback in old gen
+
+# Allocation failed - process out of memory
+#
+

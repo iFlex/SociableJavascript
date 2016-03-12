@@ -41,4 +41,4 @@ else:
     print "Shutting Down..."
     srv.close();
     mon.close();    
-print "ktnxbai";
+print "<>SHUTDOWN COMPLETE<>";

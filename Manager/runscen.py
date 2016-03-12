@@ -62,4 +62,4 @@ else:
 		print "Making aggregate of memory FootPrint for correctness checkin:"
 		print subprocess.check_call(["python","./tools/csvjoin.py",collectPath+"/"+scenario.pStartDate,"footPrint",collectPath+"/footprint.csv"]);
 
-		print "Enjoy results at:"+collectPath
+		print "Results at:"+collectPath
