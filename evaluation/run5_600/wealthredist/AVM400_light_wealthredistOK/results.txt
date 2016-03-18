@@ -1,0 +1,42 @@
+5x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/a_BinaryTrees.js']2x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/c_Richards.js']5x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/c_DeltaBlue.js']6x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js']7x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/n_SpectralNorm.js']7x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/earley-boyer.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js']4x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/splay.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js']All processes finished
+XX > 0:0:1.0-c_DeltaBlue.js
+XX > 0:0:5.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+XX > 0:0:6.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+XX > 0:0:6.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:18.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:19.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:20.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:21.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:21.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:24.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:25.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:34.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:4:19.0-a_RegexDNA.js
+OK > 0:4:30.0-a_BinaryTrees.js
+OK > 0:4:30.0-a_RegexDNA.js
+OK > 0:4:46.0-a_BinaryTrees.js
+OK > 0:4:48.0-a_BinaryTrees.js
+OK > 0:4:48.0-a_RegexDNA.js
+OK > 0:4:48.0-a_RegexDNA.js
+OK > 0:4:54.0-a_BinaryTrees.js
+OK > 0:4:55.0-a_RegexDNA.js
+OK > 0:4:55.0-a_RegexDNA.js
+OK > 0:4:59.0-a_BinaryTrees.js
+OK > 0:6:20.0-n_SpectralNorm.js
+OK > 0:6:32.0-n_SpectralNorm.js
+OK > 0:6:35.0-c_DeltaBlue.js
+OK > 0:6:41.0-c_DeltaBlue.js
+OK > 0:6:41.0-c_DeltaBlue.js
+OK > 0:6:40.0-n_SpectralNorm.js
+OK > 0:6:43.0-n_SpectralNorm.js
+OK > 0:6:43.0-n_SpectralNorm.js
+OK > 0:6:43.0-n_SpectralNorm.js
+OK > 0:6:44.0-n_SpectralNorm.js
+OK > 0:6:48.0-c_DeltaBlue.js
+OK > 0:7:42.0-c_Richards.js
+OK > 0:7:45.0-c_Richards.js
+____________________
+Total Processes:36
+Successful:34(94%)
+Failed    :3(6%)
+Minimum Heap Target:399MB

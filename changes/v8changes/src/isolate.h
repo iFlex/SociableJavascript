@@ -1370,7 +1370,7 @@ class Isolate {
     int getIsolateId(){ return ISOLATE_ID;}
     // Built-in Timing for V8 Overlord measurements
     // This will beused to measure execution and gc pause times
-    high_resolution_clock::time_point timePrologue,timeEpilogue;
+    std::chrono::high_resolution_clock::time_point timePrologue,timeEpilogue;
     int gcIndex = 0, sampleLength = 10000;
     int executionTimes[10000], gcTimes[10000];
     double avgExec, avgGC, lastThroughput = 100;//Set to max Throughput
