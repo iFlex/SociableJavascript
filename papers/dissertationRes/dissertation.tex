@@ -12,6 +12,7 @@
 \usepackage{amsmath}
 \usepackage{cleveref}
 \usepackage{dirtree}
+\usepackage{subfigure}
 
 \hypersetup{
   colorlinks   = true, %Colours links instead of ugly boxes
@@ -316,6 +317,16 @@ The popularity of a programming language comes from the size and activity of its
     \includegraphics[height=15em]{Heap.png}
     \caption{Basic Memory System Diagram}
 \end{figure}
+\section{The V8 Engine}
+\hspace*{3em} V8 is an open source, high-performance JavaScript engine developed by Google. It is written in C++ and used in Google Chrome which is the open source browser from Google. It runs on Windows XP or later, Mac OS X 10.5+, and Linux systems that use IA-32, ARM or MIPS processors. V8 can run as a standalone program, or can be embedded into any C++ application.\cite{v8}
+\\\\
+\hspace*{3em} V8 compiles JavaScript to native machine code in an attempt to maximise performance. It uses a generational garbage collector with two generations: \textit{new space} and \textit{old space}. Objects surviving the new space for a certain amount of time are promoted to the old space.
+\\\\
+\hspace*{3em} Multiple JavaScript applications can be run by the same V8 process. In order to preserve security, applications are isolated from each other. This means that an application can not access memory it does not own even though the operating system is not aware that multiple applications are running inside a single V8 process. An \textbf{isolate} is an instance of the V8 execution environment capable of running one JavaScript application. Each isolate has its own heap, garbage collector, compiled code and can not interact with any other isolate. This term will be used to refer a JavaScript application.
+\\\\
+\hspace*{3em} An applications is normally comprised of multiple JavaScript source files. V8 achieves this by using \textbf{contexts}. One context represents a single compiled JavaScript source file. An isolate can have one or more contexts loaded which will share the global scope. 
+\\\\
+\hspace*{3em} V8 has become one of the most popular JavaScript engines and is not part of other open source initiatives that strive to bring this programming language into new filed such as: server side scripting (NodeJS), client side applications(NWJS), mobile phone applications (Titanium Studio).
 \section{Why control resource allocation}
 \hspace*{3em} To better portray the benefit of controlling resource allocation, consider an elastic data centre running JavaScript application to service various client requests as well as administrative tasks. The elastic nature of the environment would require increasing or decreasing the number of active host machines as well as the number of active servicing application depending on the load. 
 \\\\
@@ -381,7 +392,7 @@ CHAPTER DESCRIPTION
 \end{itemize}
 \newpage
 \chapter{Design}
-CHAPTER DESCRIPTION
+\hspace*{3em} This chapter presents the design of the manager framework and the V8 modifications. The framework is described in therms of its constituent components and how they interact while the V8 modifications are classified into modifications and additions.
 \section{Overview}
 
 The overall framework has two main components:
@@ -453,17 +464,18 @@ The \textbf{heap} is divided into a set of spaces:
 \end{itemize}
 Each space is divided into a set of pages. A Page is a contiguous chunk of memory, allocated using operating system calls. Pages are always 1 MB in size and 1 MB aligned, except in large-object-space, where they may be larger. In addition to storing objects, pages also contain a header (with various flags and meta-data) and a marking bitmap (used to indicate which objects are live). Each page also has a slots buffer, allocated in separate memory, which forms a list of objects which may point to objects stored on the page.\cite{v8gctour}
 \\\\
-\textbf{Garbage collection} is comprised of two algorithms:
+\textbf{Garbage collection} is comprised of three algorithms:
 \begin{itemize}
 \item \textbf{Scavenger} - is a copying garbage collection based on Cheney's algorithm. It only operates on the new space and occurs frequently.
-\item \textbf{Mark Compact} - operates on the every other space except new space. It does not perform compaction on the large object space.
+\item \textbf{Mark Sweep} - operates on the every other space except new space. It does not perform compaction on the large object space.
+\item \textbf{Mark Compact} - The same algorithm as Mark Sweep with the addition that it compacts remaining allocated memory in order to improve data locality
 \end{itemize}
 
 New-space is divided into two equal sized semi-spaces: to-space and from-space. Most allocations are made in to-space (with the exception of certain kinds of objects, such as executable Codes which are always allocated in old-space). When to-space becomes full, to-space and from-space are swapped. Then the live objects are copied out of the from-space either back into to-space or to old-space. Copying the objects into to-space also has the effect of compacting the space which improves locality of reference which, in turn, improves performance.%!
 \\\\
 Mark-Sweep \& Compact !!-!!-!!-!!
 \\\\
-\hspace*{3em} The garbage collection process incurs a certain performance cost. While actual memory \textbf{deallocation} can be done in \textbf{parallel} with the execution of JavaScript, the marking, moving and copying of live objects is much harder to parallelise. This is why garbage collection suspends the execution of hosted application. Since the new space is small, the frequent invocation of the Scavenger does greatly impact performance. The Mark-Compact on the other hand requires considerable pauses. To mitigate this, incremental marking has been implemented as well as a form of a deadline for each garbage collection pause. This way, the large pauses are divided into smaller ones causing unused memory to remain allocated for a longer period but improving the user perceived execution delay.
+\hspace*{3em} The garbage collection process incurs a certain performance cost. While actual memory \textbf{deallocation} can be done in \textbf{parallel} with the execution of JavaScript, the marking, moving and copying of live objects is much harder to parallelise. This is why garbage collection suspends the execution of hosted application. Since the new space is small, the frequent invocation of the Scavenger does not greatly impact performance. The Mark-Compact, on the other hand, requires considerable execution pauses. To mitigate this, incremental marking has been implemented as well as a form of collection duration limit for each garbage collection pause. This way, the large pauses are divided into smaller ones causing unused memory to remain allocated for a longer period but improving the user perceived execution delay.
 
 \subsection{Modifications}
 \hspace*{3em} For the purpose of this project, the V8 engine had to be modified in order to communicate and comply with the manager process. This required both changes to existing code and additions of new code. Below is an overall diagram of the changes and additions:\\
@@ -475,8 +487,10 @@ Mark-Sweep \& Compact !!-!!-!!-!!
 \begin{itemize}
 \item \textbf{Heap} modifications allow setting a heap size limit and retrieving information about the memory usage (used memory, available memory and old space size). If the total heap size is larger than the set limit, the garbage collector will try to free as much memory needed to comply with it. Otherwise, when the heap size nears the set limit, garbage collection work intensifies to make sure it stays below the limit.
 \item \textbf{Isolate} modification keep track of all the active isolates within the V8 process, measure execution and garbage collection times and calculate per isolate \textbf{throughput}. When a new isolate is crated, the tracker assigns it an numeric ID and adds it to a list of active isolates. When it finishes execution, its assigned ID is marked as free and the isolate is removed from the list.
-\item A \textbf{Networking} client execution thread has been added to the V8 process for it to communicate with the manager. It is responsible with connecting to the manager, dividing the network data stream received from the manager into request packets, decoding them and performing the required actions and sending a response to the manager.
-\item \textbf{Encoding} is nested, the first form is JSON which gets encoded to Base64. The latter uses a restricted set of characters to represent the payload which allows separating packets using ASCII characters that are not part of Base64. This allows the JSON payload to contain any symbols in its fields (even the packet separator character) without altering packet boundaries which simplifies the decoding process.
+\item A \textbf{networking} client execution thread has been added to the V8 process for it to communicate with the manager. It is responsible with connecting to the manager, dividing the network data stream received from the manager into request packets, decoding them and performing the required actions and sending a response to the manager.
+\item A \textbf{protocol implementation} was added in order to represent the protocol messages in a structured manner and simplify serialisation and deserialisation.
+
+\item \textbf{Encoding} was added to the protocol implementation, the first form is JSON which gets encoded to Base64. The latter uses a restricted set of characters to represent the payload which allows separating packets using ASCII characters that are not part of Base64. This allows the JSON payload to contain any symbols in its fields (even the packet separator character) without altering packet boundaries which simplifies the decoding process.
 \item \textbf{Configuration} is done through a text file placed in the same folder as the V8 binary. This is meant to make the modified V8 more adaptable to other projects such as NodeJS and Chrome. If command line arguments were used in stead, they would have to be mirrored in both NodeJS and Chrome. The configuration file contains the IP address and port of the manager machine.
 \end{itemize}
 \section{Manager}
@@ -485,11 +499,7 @@ Mark-Sweep \& Compact !!-!!-!!-!!
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=1.0\textwidth]{PythonManager.png}
-<<<<<<< HEAD
-	\caption{Manager architecture.}
-=======
   \caption{Manager architecture.}
->>>>>>> 643145c8b818e10beb9efd658802d679c6e97ce5
     \label{overalldesign}
 \end{figure}
 \subsection{Tracking} \label{Design:Tracking}
@@ -536,42 +546,43 @@ In the case portrayed above, there are two V8 processes running on a the same ma
 \\\\
 \hspace*{3em} The \textbf{plotting server} has a function very similar to the registry server discussed in section 4.3.1. It starts plotter processes, when requested by the plotting service, and waits for them to connect in order to mark them as idle(ready to plot). The plotter processes are kept in a stack until they are needed by the plotting service. When a stream ends, the plotting service returns the plotter process to the server's stack in order to wait for a new stream to start.
 \\\\
-\hspace*{3em} The approach of having multiple separate processes handling plotting was chosen over having one process updating multiple windows (or multiple subplots) mainly because the library used is not designed to manage multiple independent plot windows but also to increase flexibility. With this model some plots (or all of them) could be offloaded to a different machine. !!-??  
+\hspace*{3em} The approach of having multiple separate processes handling plotting was chosen over having one process updating multiple windows (or multiple subplots) mainly because the library used is not designed to manage multiple independent plot windows but also to increase flexibility. With this model some plots (or all of them) could be offloaded to a different machine. !!-!!-??  
 \section{Software Engineering}
-Separation of concerns\\
-Extensibility - properties can be added and removed\\
-Modularisation in Folders with closely related code\\
-Pluggability of policy - loose coupling\\
-!!-!!-!!-!!
+\hspace*{3em} The \textbf{separation of concerns} principle was applied at two levels. At the first level, the responsibilities of the modified V8 and the management framework were divided. Because the V8 engine executes JavaScript, any additional changes could potentially slow it down, not only by having more threads to schedule as part of the same process but because some of the added code would run inside the thread executing garbage collection for each individual isolate directly impacting its performance. For this reason the design required the V8 modifications to be a simple and fast as possible shifting the more complex analysis, aggregation and memory limit calculation responsibilities to the manager. V8 only calculates instantaneous metrics for its host applications because the manager framework is better equipped (has global information by being away of the other applications within the system) to decide what transformations, such as calculating the mean, would better reveal the state of an isolate. At the second level, a framework component only implements the functionality required to fulfill its purpose.
+\\\\
+\hspace*{3em} Since components are only concerned with their own functionality, interaction and passing data between them needs to be facilitated. This is achieved by implementing components using classes. Each component that needs to interact with others receives references to the others either in the constructor call or through an accessor method. This way, all of the components are instantiated independently and are then ``wired" together using references. This makes the system \textbf{loosely coupled}, highly \textbf{modular} and facilitates \textbf{extensibility}. For example, if a new plotter service were to be implemented, an instance to the new service class would be passed to the registry component without having to change any code that is not related to the plotter service. In turn, the new component would have to implement an interface describing the methods needed to integrate with the system. In the case of a new plotter service, the \texttt{update()} method would need to have the same signature in order for the registry component to successfully pass data to the new component. 
+\\\\
+\hspace*{3em} The memory management policy is the core component of the system, but because of the exploratory nature of this project it is also subject to frequent change. For this reason, multiple policies have been developed in the form of separate scripts that can be loaded into the framework at run-time. Each policy needs to implement an interface in order to interact with the rest of the framework. This further lowers system coupling and increases extensibility. A third party could easily develop an additional policy and start using it without having to change any of the framework code.
+\\!!-!!-??
 \newpage
 \chapter{Implementation}
-CHAPTER DESCRIPTION
+\hspace*{3em} This chapter describes the implementation details and decisions for both the manager framework and V8 modifications. 
 \section{Overview}
-\hspace*{3em} There are three may areas of the implementation
-\begin{itemize}
+\hspace*{3em} There are three main areas of the implementation
+\begin{enumerate}
 \item Building the manager framework
 \item Changing the V8 engine to allow it to be controlled by the framework
 \item Building a V8 wrapper responsible with running JavaScript applications specified through command line arguments.
-\end{itemize}
-\hspace*{3em} A V8 isolate, by itself, is simply an execution environment, the specific script that needs to run has to be \textbf{compiled} and \textbf{loaded} into the isolate. This is done using the functions provided by said isolate. The \textbf{V8 wrapper} is a C++ application that creates one isolate, takes in a list of scripts, compiles them and runs them inside the isolate. It also takes a size expressed in megabytes and sets it as the maximum heap size of the isolate.
+\end{enumerate}
+\hspace*{3em} A V8 isolate, by itself, is an execution environment, the specific script that needs to run has to be \textbf{compiled} and \textbf{loaded} into the isolate. This is done using the functions provided by said isolate. The \textbf{V8 wrapper} is a C++ application that creates one isolate, takes in a list of scripts, compiles them and runs them inside the isolate. It also takes a size expressed in megabytes and sets it as the maximum heap size of the isolate.
 \\\\
-\hspace*{3em} The \textbf{Google V8} engine is implemented in \textbf{C++}, amounting to 800,000+ lines of code. Changing it requires using the same language which does not allow much freedom of choice. However, the management framework is an independent process and can be implemented in any language. \textbf{Python} was chosen for this task for the following reasons:
+\hspace*{3em} The \textbf{Google V8} engine is implemented in \textbf{C++}, amounting to 800\textbf{kSLOC}. Changing it requires using the same language which does not allow much freedom of choice. However, the management framework is an independent process and can be implemented in any language. \textbf{Python} was chosen for this task for the following reasons:
 \begin{itemize}
 \item It is a high level language with a small code footprint
 \item It is interpreted, which allows loading and executing code at run-time and also eliminates compilation waiting time. (The V8 wrapper, despite its small size, has a compilation delay of around 30 seconds)
 \item It has extended support from its community with plenty of useful libraries available
 \item Has built in support for most of the required constructs to build the management framework including popular data representation protocols such as Base64 and JSON.
 \end{itemize}
-\hspace*{3em} The changes carried out on the V8 engine involve allowing the heap size limit to be set at run-time as well as adding a network client responsible with connecting to the manager framework, applying the limits (or other commands) received from the manager and replying with status updates.
+\hspace*{3em} The changes carried out on the V8 engine involve allowing the heap size limit to be set per-isolate at run-time as well as adding a network client responsible with connecting to the manager framework, applying the limits (or other commands) received from the manager and replying with status updates. This means that the manager can run on a separate node and manage multiple hosts running V8 instances.
 \\\\
-\hspace*{3em} JSON was used for the communication protocol employed by the V8 instances and the management framework because it is human readable and supports nesting well. This is appropriate as the project aims for correctness rather than performance at this stage. Human readability allows for easy debugging while nesting support contributes to a clear representation of the environment topology.
+\hspace*{3em} JSON was used for the communication protocol employed by the V8 instances and the management framework because it is human readable and supports nested data structures. This is appropriate as the project aims for correctness rather than performance at this stage. Human readability allows for easy debugging while nesting support contributes to a clear representation of the environment topology.
 \\\\
-\hspace*{3em} The manager framework implementation uses built in python functions for JSON and Base64 encoding and decoding while the V8 changes use custom built Base64 functions and a third party JSON C++ library.
+\hspace*{3em} The manager framework implementation uses built in python functions for JSON and Base64 encoding and decoding while the V8 modifications use custom built Base64 functions and a third party JSON C++ library.
 \section{V8 Client}
 \hspace*{3em} The main responsibility of V8 is to run scripts as efficiently as possible. Any form of \textbf{computation} not related to executing the scripts would be perceived as \textbf{overhead} by the user. Garbage collection is one example of such additional computation as it is responsible with freeing memory rather than advancing the execution of the hosted scripts. For this reason, collection pauses are kept as short and far apart as possible. The \textbf{changes} added to V8 for the purpose of this project are not related to script execution which would classify them as computational overhead. For this reason, the changes were designed to have a \textbf{minimal performance impact}. This was achieved through a set of implementation decisions detailed below.
 
 \subsection{Enforcing Limits}
-\hspace*{3em} By design, each V8 isolate is configured with memory limits for its old space and new space when the isolate is created.
+\hspace*{3em} By design, each V8 isolate is configured with memory limits for its old space and new space when the isolate is created. In the current production V8 there limits do not change throughout the isolate lifetime.
 \begin{lstlisting}[language=cpp]
 Isolate::CreateParams create_params;
 create_params.constraints.set_max_old_space_size(max_heap);
@@ -581,7 +592,7 @@ Isolate* isolate = Isolate::New(create_params);
 \end{lstlisting}
 \hspace*{3em} The memory spaces constituting the heap are divided into \textbf{1 megabyte pages}. The two functions from the listing above take in values representing a number of megabytes. Since this is an extract from the V8 wrapper, the new space size is set to 16 megabytes, while the old space is set to the value of the first command line argument. This also determines the level of \textbf{granularity} that the manager framework can use to determine memory limits. According to the creators of V8, the maximum amount of memory an isolate can use is \textbf{1 gigabyte}. Any value above that would cause the garbage collector to behave erratically.\cite{v8sizebug} This gives the manager a \textbf{range of 1000} possible memory limit values enforceable by V8.
 \\\\
-\hspace*{3em} When a new isolate is created, the value of the argument passed to set\_max\_old\_space\_size() method is copied into the \textit{max\_old\_generation\_size\_} member variable of the heap class. This class models the heap of a single isolate, it holds pointers to all of the spaces comprising the heap and contains member methods that control garbage collection. The heap is allowed to expand up to the limit set at isolate creation. Normally this limit is larger than the initial heap size. However, if the limit is smaller than the current heap size, the garbage collector will strive to free as much memory as possible in order to comply with it. This enables enforcing heap memory limits at run-time by simply updating the  \textit{max\_old\_generation\_size\_} variable. To do so, a setter method called \textit{setMaxOldGenerationSize(int)} has been added to the heap class.  %CONCURRENCY?
+\hspace*{3em} When a new isolate is created, the value of the argument passed to \texttt{set\_max\_old\_space\_size()} method is copied into the \texttt{max\_old\_generation\_size\_} member variable of the heap class. This class models the heap of a single isolate, it holds pointers to all of the spaces comprising the heap and contains member methods that control garbage collection. The heap is allowed to expand up to the limit set at isolate creation. Normally this limit is larger than the initial heap size. However, if the limit is smaller than the current heap size, the garbage collector will strive to free as much memory as possible in order to comply with it. This enables enforcing heap memory limits at run-time by simply updating the  \texttt{max\_old\_generation\_size\_} variable. To do so, a setter method called \texttt{setMaxOldGenerationSize(int)} has been added to the heap class.  %CONCURRENCY?
 \\\\
 \hspace*{3em} Another way of enforcing memory limits at run-time would be to modify the garbage collector so that it runs until the size of the heap becomes smaller than the limit or until no more memory can be freed. This is not a preferable solution because it would override the optimisations employed by the designers of V8 by performing long garbage collection runs whenever the limit becomes lower than the current heap size, making them much more obvious to the user. This approach also adds additional computation to the garbage collection process when compared to a simple copy operation employed by the setter function mentioned above.
 \subsection{Measuring Throughput}
@@ -591,16 +602,16 @@ throughput = \frac{\textit{Execution interval}}{\textit{Garbage Collection inter
 \end{equation}
 \hspace*{3em} This reflects how much time is spent executing JavaScript code versus the time spent performing garbage collection. Therefore, a throughput of 1 means that V8 spends an equal amount of time executing the application and collecting garbage. A value greater than one means more time is spent executing the application while a value lower than 1 means that more time is spent performing garbage collection. The latter implies that the application is somewhat "struggling" to execute as more work is put into freeing memory rather than execution. Ideally, more time should be spent executing the application than collecting garbage. This is what V8 normally optimises for by keeping garbage collection pauses small and far apart. A high throughput implies reduced jank observed by the user in the browser.
 \\\\
-\hspace*{3em} \textbf{Throughput is calculated} by measuring the length of the \textbf{garbage collection pauses} and the \textbf{intervals between the pauses}. The V8 application programming interface (API) provides callback functionality for the garbage collection start and end on a per isolate basis. V8 defines the start of the garbage collection as the prologue and the end as the epilogue, hence the callback functions are named \textit{gcPrologue()} and \textit{gcEpilogue()}. The two durations, exeuction time and collection time, are obtained by subtracting the timestamps captured by gcPrologue() and gcEpilogue(). These are stored in isolate member variables called \textit{timePrologue} and \textit{timeEpilogue} respectively. 
+\hspace*{3em} \textbf{Throughput is calculated} by measuring the length of the \textbf{garbage collection pauses} and the \textbf{intervals between the pauses}. The V8 application programming interface (API) provides callback functionality for the garbage collection start and end on a per isolate basis. V8 defines the start of the garbage collection as the prologue and the end as the epilogue, hence the callback functions are named \texttt{gcPrologue()} and \texttt{gcEpilogue()}. The two durations, exeuction time and collection time, are obtained by subtracting the timestamps captured by \texttt{gcPrologue()} and \texttt{gcEpilogue()}. These are stored in isolate member variables called \texttt{timePrologue} and \texttt{timeEpilogue} respectively. 
 \begin{equation}
-\textit{ExecutionDuration} = \textit{timePrologue} - \textit{timeEpilogue}
+\texttt{ExecutionDuration} = \texttt{timePrologue} - \texttt{timeEpilogue}
 \end{equation}
 \begin{equation}
-\textit{CollectionDuration} = \textit{timeEpilogue} - \textit{timePrologue}
+\texttt{CollectionDuration} = \texttt{timeEpilogue} - \texttt{timePrologue}
 \end{equation}
-Execution duration is called when gcEpilogue() runs because the value of timeEpilogue was captured when the previous garbage collection pause ended, making it the starting time of the current execution interval. Collection duration is calculated when gcEpilogue() runs because the value of timeEpilogue is updated with the current garbage collection end time, making the difference between the two equivalent to the duration of the collection process. 
+Execution duration is called when \texttt{gcEpilogue()} runs because the value of timeEpilogue was captured when the previous garbage collection pause ended, making it the starting time of the current execution interval. Collection duration is calculated when \texttt{gcEpilogue()} runs because the value of timeEpilogue is updated with the current garbage collection end time, making the difference between the two equivalent to the duration of the collection process. 
 \\\\
-\hspace*{3em} The above calculations are accurate with the exception of the moment when the first gcPrologue() is called. At this point, timeEpilogue is not initialized, making the value of ExecutionDuration invalid. To mend this, timeEpilogue is initialized with the current time-stamp when the isolate is created. Below is a listing of V8 modifications that perform the throughput calculation:
+\hspace*{3em} The above calculations are accurate with the exception of the moment when the first \texttt{gcPrologue()} is called. At this point, timeEpilogue is not initialized, making the value of ExecutionDuration invalid. To mend this, timeEpilogue is initialized with the current time-stamp when the isolate is created. Below is a listing of V8 modifications that perform the throughput calculation:
 \begin{lstlisting}[language=cpp]
 bool Isolate::Init(Deserializer* des) {
   ...
@@ -724,18 +735,14 @@ void Isolate::removeIsolate(Isolate *i){
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=0.80\textwidth]{ProtocolClasses.png}
-<<<<<<< HEAD
-	\caption{Protocol entities grouped into classes.}
-=======
   \caption{Protocol entities grouped into classes.}
->>>>>>> 643145c8b818e10beb9efd658802d679c6e97ce5
 \end{figure}
 \\
 \hspace*{3em} The \textbf{details class} is comprised of public fields representing every possible piece of information that can be put in an action object along with functions used to build the object from a JSON string and to convert it to such a string. Each Action class is comprised of a \textbf{name field}, used to determine what request or response it represents, a \textbf{details object} for the additional information and an \textbf{error object}. The latter is used to represent any kind of error encountered while performing the action. The \textbf{command class} contains an action object representing the \textbf{global action}, array of action objects representing the \textbf{isolate level actions} and an \textbf{error object}. The latter is used to represent errors at a command level. If the array of actions was longer than the array of isolate object pointers, meaning that the manager sent limits for more isolates than are actually active, would qualify as a local error and will be represented in the last action object of the actions array from the command object. If the message received from the network could not be decoded, the global error object of the command will be filled in with information about the error and the execution of the command will be aborted.
 \\\\
-\hspace*{3em} A \textbf{third party library} called \textbf{JsonCpp} was added to V8 in order to handle encoding and decoding JSON. The V8 engine does support JSON, since it stands for Java Script Object Notation, but it is implemented in JavaScript. This means that in order to encode or decode JSON, JavaScript code would have to be run in one of the available isolates or in its own one. This would cause framework related code to compete with hosted application code for execution time. The third party library code will run in the separate thread of the network client and therefore would not directly impact the execution time of the hosted applications. JsonCpp parses JSON strings and produces \textit{Json::Value} objects. These are then passed to the appropriate instances of the protocol classes in order to load the values into the appropriate member variables. Every class comprising the protocol implementation with the exception of the Command class has a \textit{void deserialise(Json::Value obj);} method which loads values from a JSON object. Conversely, a \textit{void serialise(Json::Value \&obj);} method does the opposite operation when the protocol message needs to be encoded in order to be sent to the manager. The Command class is responsible with performing encoding and decoding from and to string, it also has the two aforementioned methods but in the following format: \textit{std::string serialise();} and \textit{void deserialise(std::string);}. This makes the decoding of a JSON string received over the network from the manager as simple as calling one function: \textbf{command.deserialise(string);}.
+\hspace*{3em} A \textbf{third party library} called \textbf{JsonCpp} was added to V8 in order to handle encoding and decoding JSON. The V8 engine does support JSON, since it stands for Java Script Object Notation, but it is implemented in JavaScript. This means that in order to encode or decode JSON, JavaScript code would have to be run in one of the available isolates or in its own one. This would cause framework related code to compete with hosted application code for execution time. The third party library code will run in the separate thread of the network client and therefore would not directly impact the execution time of the hosted applications. JsonCpp parses JSON strings and produces \texttt{Json::Value} objects. These are then passed to the appropriate instances of the protocol classes in order to load the values into the appropriate member variables. Every class comprising the protocol implementation with the exception of the Command class has a \texttt{void deserialise(Json::Value obj);} method which loads values from a JSON object. Conversely, a \texttt{void serialise(Json::Value \&obj);} method does the opposite operation when the protocol message needs to be encoded in order to be sent to the manager. The Command class is responsible with performing encoding and decoding from and to string, it also has the two aforementioned methods but in the following format: \texttt{std::string serialise();} and \texttt{void deserialise(std::string);}. This makes the decoding of a JSON string received over the network from the manager as simple as calling one function: \texttt{command.deserialise(string);}.
 \\\\
-\hspace*{3em} Base64 encoding and decoding procedures were added to the V8 project for the same reason the built in methods were not used to parsing JSON. Handling messages from the manager requires reading data from the network in a string until the separator is read, instantiating a Command object, decoding the string received over the network using Base64 and then passing it to \textit{command.deserialise();}. Similarly, sending a response to the manager requires modifying the command object to reflect the state of the last performed action, calling \textit{command.serialise()}, base64 encoding the resulting string, appending the separator and sending it over the network.
+\hspace*{3em} Base64 encoding and decoding procedures were added to the V8 project for the same reason the built in methods were not used to parsing JSON. Handling messages from the manager requires reading data from the network in a string until the separator is read, instantiating a Command object, decoding the string received over the network using Base64 and then passing it to \texttt{command.deserialise();}. Similarly, sending a response to the manager requires modifying the command object to reflect the state of the last performed action, calling \texttt{command.serialise()}, base64 encoding the resulting string, appending the separator and sending it over the network.
 \section{Manager}
 \hspace*{3em} The role of the manager framework is to keep track of active isolates, control their memory usage by applying a management policy, give feedback on the status of each isolate to the user and allow the user to control the framework. There are three main modules comprising the framework: \textbf{Tracking}, \textbf{Management} and \textbf{Plotting}. These are divided further into more specialised scripts:
 \dirtree{%
@@ -787,18 +794,12 @@ soc,addr = self.soc.accept()
 addr = str(addr[0])
 machineId = self.monitor.getMachine(addr);
 if machineId == 0:
-<<<<<<< HEAD
-	machineId = self.monitor.addMachine(addr); 
-else:
-	machineId = machineId["id"];
-=======
   machineId = self.monitor.addMachine(addr); 
 else:
   machineId = machineId["id"];
->>>>>>> 643145c8b818e10beb9efd658802d679c6e97ce5
 communicator(soc,self.monitor,machineId,self.monitor.update);
 \end{lstlisting}
-\hspace*{3em} \textbf{Communicators} represent a communication channel to a single V8 instance. Hence, they require a reference to the registry in order to add a new V8 record to it. This reference is passed at the constructor call (self.monitor from the above listing). A new communicator creates a separate thread that listens for messages from the remote V8. As soon as a message arrives a method from the registry's interface is called in order to directly update the relevant record. A send function is also part of the communicator interface. This allows other components to send messages to the V8 instances managed by the system. Each registry record of a V8 has a reference to its associated communicator in order for other components to be able to contact the V8 process. Getting a V8's communicator requires calling a registry method and providing a machine id and a V8 id: \textit{getV8Comm(machineId,v8Id)}.
+\hspace*{3em} \textbf{Communicators} represent a communication channel to a single V8 instance. Hence, they require a reference to the registry in order to add a new V8 record to it. This reference is passed at the constructor call (self.monitor from the above listing). A new communicator creates a separate thread that listens for messages from the remote V8. As soon as a message arrives a method from the registry's interface is called in order to directly update the relevant record. A send function is also part of the communicator interface. This allows other components to send messages to the V8 instances managed by the system. Each registry record of a V8 has a reference to its associated communicator in order for other components to be able to contact the V8 process. Getting a V8's communicator requires calling a registry method and providing a machine id and a V8 id: \texttt{getV8Comm(machineId,v8Id)}.
 %requestbuilder?
 
 \subsection{Management}
@@ -816,10 +817,10 @@ class Policy:
 \end{lstlisting}
 \hspace*{3em} Because policy implementations are intended to be modular and interchangeable, in order to allow the system to load policies at run-time, a standard for implementing one has been outlined. A policy script must implement every method below in order to be successfully loaded and used by the framework. 
 \begin{itemize}
-\item \textit{init(context)} - called when the policy is applied for the first time to the isolates of a machine.
-\item \textit{calculate(totalAvailableMemory,isolates,context)} - this method computes the memory limits. It is called at the same frequency as the status polling. The input parameters are a maximum memory limit, a list of isolates with status information and the return value is a list of the memory limits.
-\item \textit{name()} - returns a string containing the name of the policy
-\item \textit{stats()} - if the policy maintains any status information, returns a string with that information.
+\item \texttt{init(context)} - called when the policy is applied for the first time to the isolates of a machine.
+\item \texttt{calculate(totalAvailableMemory,isolates,context)} - this method computes the memory limits. It is called at the same frequency as the status polling. The input parameters are a maximum memory limit, a list of isolates with status information and the return value is a list of the memory limits.
+\item \texttt{name()} - returns a string containing the name of the policy
+\item \texttt{stats()} - if the policy maintains any status information, returns a string with that information.
 \end{itemize}
 \hspace*{3em} The \textbf{command line interface} (cli.py) allows the user to control the framework through the use of text commands. A total of 31 commands are available with functions ranging from simply listing the connected isolates, changing the polling frequency, listing available policy scripts to changing the currently running policy script, manually sending memory limits to isolates, changing the total memory limits on machines and determining whether the status information is plotted live on the screen or simply saved to a file for post execution analysis. A listing of the full list of commands can be found in \cref{allcommands}.Below is listing of the command line showing the connected
 isolates:
@@ -836,7 +837,6 @@ _____________________________________________
 \hspace*{3em} The [] brackets denote the current machine and the \{\} brackets denote the current V8 that the command line is pointing at. Commands regarding isolates go to the V8 highlighted above. The CLI is \textbf{versatile} enough to be used to \textbf{configure the environment}. This is done using text configuration files which contain commands (one per line). These are applied sequentially when the policy executor object initialises. Configuration files are found in the configuration folder. Here's an example of how to start the manager with a configuration file other than default.txt: \textbf{./main.py config=fullFeatures.txt} 
 
 \subsection{Plotting}
-<<<<<<< HEAD
 \hspace*{3em} The main \textbf{feedback} mechanism for the frameworks is \textbf{plotting status information}, such as heap size, throughput, imposed memory limit, received from isolates. This is done using the python matplotlib library \cite{matplotlib}. The framework creates a plot window for each isolate that is being controlled and sends the isolate status fields to the corresponding windows as soon as they arrive from the host V8 instances. This is done through registry code: as soon as an update comes on the network, after the registry has been updated, the information is also set to the plotting facility.
 \\\\
 \hspace*{3em} Plotting involves associating each isolate with a plot window, sending the information concerning an isolate to the correct window and plotting it. To handle this, the plotting module has been split in two sub-modules:
@@ -852,7 +852,7 @@ _____________________________________________
 
 \item \textbf{Skipping Render Steps} - by default, the policy executor asks for status updates at a frequency of 10Hz. Receiving data at high frequency causes the cause the plot library to do a large amount of computation because it has to redraw the whole graph surface. This causes it to fail to show an up-to-date view of the isolate's state, because previous plotting operations have not yet finished before the availability of new data. To mitigate this, the plotter is configured with a target time interval between plot updates. It then measures the time taken to plot updates. If this time is larger than the configured interval then some of the upcoming updates would not be drawn on screen, creating a skip-ahead effect that ensures the plot window does not lag behind.
 \begin{equation}
-	\textit{NumberOfUpdatesToSkip} = floor(\frac{\textit{DrawDuration}}{\textit{ConfiguredInterval}})
+  \textit{NumberOfUpdatesToSkip} = floor\left(\dfrac{\textit{DrawDuration}}{\textit{ConfiguredInterval}}\right)
 \end{equation}
 
 \item \textbf{Post Execution Analysis} - Live updating can be costly even with the above optimisations. Depending on the nature of the experiments being carried out, live plotting can be deactivated in favour of saving the full plot history of one isolate in a CSV file. The data in this file can be plotted after execution has finished. This completely eliminates the overhead of redrawing plot lines as well as creating graphical plot windows. 
@@ -863,91 +863,143 @@ _____________________________________________
 \begin{figure}[!ht]
   \centering
     \includegraphics[width=1.0\textwidth]{DataFlow.png}
-	\caption{Flow of data through the framework.}
+  \caption{Flow of data through the framework.}
     \label{dataflow}
 \end{figure}
 \\\\
 \hspace*{3em} The main priority of the manager is to calculate memory limits and send them to the isolates quickly. This is why status polling and the calculating the memory limit happen on the same thread (policy executor thread). Updates from the network are handled by the execution thread of the receiving communicator. This thread handles updating the registry and also sends the update to the plotting facility if this feature is enabled. Because updates come at a relatively high frequency the amount of computation needed to handle one request needs to be kept relatively small. For this reason, the functionality illustrated in \cref{dataflow} (bottom right) has been put in a separate thread. The communicator thread simply adds the new update to a queue to be processes by the plot facility thread. This ensures the communicator handler only carries out critical operations such as updating the registry. Safe operations is ensured by mutex locks implemented by the registry and the plot facility.
 \\\\
 \hspace*{3em} The manager framework is mean to run for prolonged amounts of time and process high volumes of data. Debugging the application becomes difficult if all error messages are passed to process standard output. \textbf{Logging} has been added to the system in order to keep a record of the framework status and errors encountered. Each module discussed in this chapter should maintain a log of its own, but due to time constraints logging has been added only to the policy executor and plot facility modules. The policy executor log is key to debugging policy scripts as it is the file that stores the errors and warnings for the current policy script. Third party developers could create new such scripts and use the log to check if they exhibit correct behaviour.
-=======
-Plotting configuration - makes pictures of the whole graph history and CSV file with entire history
-\subsection{Data Flow}
-Locks and queues
-Data Flow through framework
-\\Logging + configurability
-Amazing CLI - also enables configuration files applied before framework starts
-Ability to change policy at runtime
->>>>>>> 643145c8b818e10beb9efd658802d679c6e97ce5
 \section{Testing}
 \hspace*{3em} Testing was facilitated by additional scripts that instantiate the components to be tested and call the relevant member functions. If any errors are encountered, this would indicate there is a flaw in the scrutinized component. Trace-backs will indicate where the problem originates, aiding the solving process. %implement an automated check for the registry structure and packet builder
 \\\\
-\hspace*{3em} The most critical part of the system is the registry.
+\hspace*{3em} The most critical part of the system is the registry. This was tested using the \texttt{testRegistry.py} script which automatically creates an empty registry adds and removes machines, v8 instances and isolates to it and checks if the registry methods operate correctly. A set of isolates are meant to remain in the registry after the tests are complete, they are tagged in order to check if the accessor methods retrieve the correct isolates. The request builder is a component that creates dictionaries representing manager requests and requires access to the registry. This is also tested by this script. 
 \\\\
-\hspace*{3em} Packetisation
+\hspace*{3em} The next important aspect that requires testing is message processing. The script called \\ \texttt{testPacketExchange.py} connects to a v8 instance and tests how well the communicator component parses messages. Messages are exchanged continuously for a certain amount of time, if any parsing errors arise this would indicate that the communicator does correctly parse the messages received from the network.
 \\\\
-\hspace*{3em} Policy Testing - specify policy, auto load, manual input, replay collected data, collect results in file through pipe-ing
+\hspace*{3em} Policies are the most important aspect of the framework. Since they are loaded at run-time, there needs to be a way to test before they start being used. The \texttt{simulatePolicy.py} script allows a policy developer to load a policy and test it in two modes. The first mode is to specify how many isolates to test with, what parameters of the isolates will be changed by the tester and how many times to run the policy. At each iteration, the user needs to manually input parameters for each isolate after which the policy output will be printed on the screen. The second mode is an automated simulation where the developers simply specifies a path to a folder containing recorded isolate parameters in CSV format (the output of the plotting facility). This way the simulation will automatically create as many isolates as there are CSV files and will automatically load the parameters specified by the files into the corresponding isolates. The output of the policy can either be viewed on screen or saved in a file.
 \\\\
-\hspace*{3em} After the critical components have been tested, final step was to ensure that the manager framework worked as a whole and did indeed affect the amount of memory an isolate could utilise. To do this, the framework was started along with a V8 isolate running the binary tree benchmark. At different intervals of time memory limits were set, using the command line interface, and the memory utilisation was observed. The graph below shows the evolution of the heap size of an isolate controlled with the manager framework:
+ After the critical components have been tested, the final step was to ensure that the manager framework worked as a whole and did indeed affect the amount of memory an isolate could utilise. To do this, the framework was started along with a V8 isolate running the binary tree benchmark. At different intervals of time memory limits were set, using the command line interface, and the memory utilisation was observed. The graph below shows the evolution of the heap size of an isolate controlled with the manager framework:
 \begin{figure}[!ht]
   \centering
-    \includegraphics[width=1.0\textwidth]{ControlWorks.png}
+    \includegraphics[height=4cm,keepaspectratio]{ControlWorks.png}
+    %\includegraphics[width=0.95\textwidth]{ControlWorks.png}
   \caption{Controlling heap size.}
 \end{figure}
 
 \chapter{Evaluation}
-CHAPTER DESCRIPTION\\
-How isolates are mapped as individuals, what the gini is applied to.
-Throughput, heap, footprint, limit, distance to limit.
-\section{Equal Share Policy}
-\begin{equation}
-\textit{HardHeapLimit}_i = \textit{MaximumMemoryPerMachine} \times \frac{1}{\textit{NumberOfActiveIsolates}}
-\end{equation}
-\section{Inverse Throughput Policy}
-\begin{equation}
-\textit{Total Throughput} = \sum_{i=0}^{N} -\log_2(\frac{t_i}{1000})
-\end{equation}
-\begin{equation}
-\textit{Hard Heap Limit}_i = \textit{MaximumMemoryPerMachine} \times \frac{-\log_2(\frac{t_i}{1000})}{\textit{Total Throughput}}
-\end{equation}
-\section{Robin Hood Policy}
-Definitions: Isolate(h,a,t,L) h is the used heap memory, a is the unused heap memory, L is the maximum allowed heap size, t is the throughput. N is the total number of isolates running on a machine, P is the number of poor isolates, R is the number of rich isolates. 
-\begin{equation}
-\textit{Immediate Budget} = \textit{Total Allowed Memory} - \sum_{i=0}^{N}L_i
-\end{equation}
-\begin{equation}
-Need_i     = Max(0,h_i \frac{-\log_2{t_i}}{2} - L_i)
-\end{equation}
-\begin{equation}
-\textit{Total Need} = \sum_{i=0}^{P}Need_i
-\end{equation}
-\begin{equation}
-\textit{OverflowNeed}     = Max(0,\textit{TotalNeed} - \textit{ImmediateBudget}) 
-\end{equation}
-\begin{equation}
-\textit{AllocatableNeed}     = Max(0,\textit{TotalNeed} - \textit{OverflowNeed}) 
-\end{equation}
-\begin{equation}
-\textit{StealAllowance} = Min(0.5,\frac{\textit{OverflowNeed}}{\sum_{i=0}^{R}L_i}) 
-\end{equation}
-\begin{equation}
-\textit{AllocateAllowance} = \frac{\textit{AllocatableNeed}}{\textit{TotalNeed}} \times Min(1.0,\frac{\textit{AllocatableNeed}}{\textit{ImmediateBudget}}) 
-\end{equation}
-\begin{equation}
-\textit{GiveAllowance} = \frac{\textit{OverflowNeed}}{\textit{TotalNeed}} \times Min(1.0,\frac{\textit{OverflowNeed}}{\textit{TotalStolen}}) 
-\end{equation}
-\begin{equation}
-Steal_i = \textit{StealAllowance} \times L_i 
-\end{equation}
-\begin{equation}
-Give_i = (\textit{GiveAllowance} + \textit{AllocateAllowance}) \times Need_i 
-\end{equation}
+\hspace*{3em} This chapter presents the memory management policies developed for the purpose of this project and analyses their effectiveness in terms of application survival rate. In order to measure this rate, benchmark scripts have been grouped in test batches with a known total minimum heap size and run against each policy.
+\section{Memory Management Policies}
+\hspace*{3em} Each policy models an isolate as an individual who is part of a community. This community has a certain amount of wealth available. Each individual owns a portion of the total community wealth and has a welfare factor. This factor reflects the well-being of the individual. The aim of the manager framework is to maximise the welfare of the whole community by redistributing wealth. Individuals who have more wealth than they need will have to give a portion of this resource to ones that do not have enough. In technical terms, wealth is equivalent to available memory (maximum allowed heap size) and welfare quantifies whether the application is struggling to execute or is performing optimally.
+\\\\
+For each application the welfare coefficient is calculated based on the metrics received at the status updates. Since there are multiple metrics received, this coefficient can be calculated in a multitude of ways. Each policy calculates welfare in a different manner. A single machine represents a community since its memory resources are not transferable to other machines in a cluster. Therefore, a policy is applied to every community in the tracked environment.
+\\\\
+\hspace*{3em} For any given isolate, the policy script receives all its measured metrics. These metrics are then combined in order to calculate the welfare coefficient. This is then used to determine the welfare of the whole community and to decide how to redistribute memory. The reason for making all the metrics available comes from the exploratory nature of this project. Some metrics such as the execution time to garbage collection time ration might seem enough to determine if an isolate is thriving or struggling to execute, but certain scripts thrive while having a low value for this metric. This implies the need for careful experimentation with various metric combinations in order to devise a good welfare function.
+\section{Evaluation Scenarios}
+\hspace*{3em} In order to evaluate the effectiveness of the developed memory management policies, a set of JavaScript benchmarks were used. Each script has a minimum heap size, the amount of memory allocated to each script needs to be above this size in order for it to execute successfully. The minimum heap size of each script was calculated using a binary search approach. The benchmarks were  grouped together in test scenarios, which require the comprising scripts to run in parallel. Knowing the minimum heap size of each script facilitates calculating the minimum amount of memory needed to successfully run the scenario. 
+\\\\
+\hspace*{3em} Knowing the minimum heap size of a test script also provides insight into the impact of limiting the scripts memory utilisation. Some scripts are computation bound and use a constant amount of memory. This means that regardless of how much more memory they have available in addition to their minimum heap size, the performance of such scripts will be constant. Other scripts exhibit behaviour modeled by the economic utility function (based on application throughput) introduced by the "Judgement of Forseti:" paper: "Utility functions are usually increasing (more commodity gives higher utility), but with diminishing returns (the more the consumer has already, the less benefit they get from an additional unit)."\cite{diminishreturns}
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[height=4cm,keepaspectratio]{diminishreturns.png}
+    \caption{Utility function with diminishing returns from Judgement of Forseti paper}
+\end{figure}
+\\
+In the case of this project, economic utility is represented by the execution time to garbage collection time ratio, which in essence reflects how fast the application executes (the less garbage collection, the higher the ratio which implies shorter execution time). The closer the memory limit is to the minimum heap size, the slower it will execute, but because of the diminishing returns effect, increasing the available memory causes execution speed to increase at a slow rate. This gives the management framework leeway to compromise of the execution speeds of managed scripts in favor of a higher multi-programming degree.
+\\\\
+For this reasons all of the various benchmark scripts need to be combined in order to cover as many realistic scenarios as possible. The scripts have been divided into the following categories:
+\begin{enumerate}
+\item \textbf{Constant} memory utilisation - these scripts have the same throughput regardless of how much more memory is available in addition to their minimum heap size
+\item \textbf{Variable} memory utilisation - these scripts exhibit the above mentioned diminishing returns effect. The more memory is available, the higher the execution speed.
+\end{enumerate}
+Using these categories, scripts have been combined in the following types of test scenarios:
+\begin{itemize}
+\item \textbf{All Variable Same Application} (AVSA) - multiple instances of the same application which exhibits diminishing returns with the increase of the heap size
+\item \textbf{All Constant Same Application} (ACSA) - multiple instances of the same application which has constant memory use
+\item \textbf{All Variable Mixed} (AVM) - A mix of applications with different minimum heap sizes, all exhibiting diminishing return with the increase of heap size 
+\item \textbf{All Constant Mixed} (ACM) - A mix of applications with different minimum heap sizes, all having constant memory usage
+\item \textbf{Mixed} (M) - A mix of all available applications
+\end{itemize}
+An additional criteria applied to each type of test scenario is the minimum heap size of its comprising scripts:
+\begin{enumerate}
+\item \textbf{Large minimum heap} - applications with minimum heap sizes above 50MB
+\item \textbf{Small minimum heap} - minimum heap size under 50MB
+\end{enumerate}
+This last criteria gives more failure insight to the test scenarios. Consider the scenario with 3 scripts and a maximum memory limit set to 100MB. The fist script has a minimum heap size of 60MB, the second has 35MB and the third has 5MB, which makes the total minimum heap size needed for this scenario 100MB. The maximum memory limit is equal to the total minimum heap size, which would mean that the scenario could run without any scripts failing. On the one hand, if the 5MB script were to fail, the task of dividing the memory between the two remaining scripts would still be difficult as the policy needs to somehow detect that the first script needs an almost double amount of memory compared to the second one. On the other hand, if the first script were to fail, a simple equal division of the available memory would allocate both scripts enough memory to complete (50MB each). In this case a naive policy would score a relatively high survival rate (66\% survival rate). By taking the heap sizes of the scripts forming a scenario into account, tests can be weighted in order to compensate for the overly optimistic survival rate of scenarios containing scripts with disproportional minimum heap sizes.
+\\\\
+Using the last two sets of criteria, test scenarios have been created in order to provide a fair mix of scripts. For each of the five main types of scenarios (AVSA,ACSA,AVM,ACM,M) three scenarios have been created: one with large minimum heap sizes, one with small ones and one with a mix of both large and small, with certain exceptions where a mix of large and small was not possible.
+\begin{itemize}
+\item \textbf{All Variable Same Application} (AVSA) - 2 scenarios: large, small
+\item \textbf{All Constant Same Application} (ACSA) - 2 scenarios: large, small
+\item \textbf{All Variable Mixed} (AVM) - 3 scenarios: large, mix, small 
+\item \textbf{All Constant Mixed} (ACM) - 2 scenarios: large, small
+\item \textbf{Mixed} (M) - 3 scenarios: large, mix, small
+\end{itemize}
+A scenario is described by a JSON file which lists what scripts to be instantiated and how many times to instantiate them. These files are parsed and applied by a script called \texttt{runscen.py}. After the scenario finishes execution: isolate history, individual program standard output and standard error are collected and stored for post-execution inspection. This facility can be called from the command line interface of the manager as well.
+\section{Evaluation Technique}
 
+\hspace*{3em} Each scenario combines scripts that sum up a total minimum heap size of 400MB. In order to measure policy effectiveness, multiple runs of all the scenarios have been carried out for each policy. The percentage of surviving scripts out of total run scripts for each scenario represents the effectiveness of the policy. The manager framework has been configured with per community(machine) memory limits in order to simulate a memory constrained environment. This kind of environment would better reflect the effectiveness of the policies since it is much harder to redistribute memory without knowing the minimum heap size of each script while the total available memory is only slightly higher than the total minimum heap size.
+\\\\
+The following values have been used for the total available memory for each test run:
+\\\\
+\begin{tabular}{  | l | l | l | }
+\hline  
+  Run & Memory in addition to minimum heap size & Machine Memory Limit \\
+\hline
+  1 & 0\% & 400MB \\
+\hline
+  2 & 5\% & 420MB \\
+\hline  
+  3 & 15\% & 460MB \\
+\hline  
+  4 & 35\% & 540MB \\
+\hline  
+  5 & 50\% & 600MB \\
+\hline  
+  6 & 100\% & 800MB \\
+\hline
+  7 & 110\% & 840MB \\
+\hline
+\end{tabular}
+\\\\
+\\\\
+\hspace*{3em} A time analysis was performed for each scenario in order to evaluate the effectiveness of the framework itself. Limiting the size of a script will cause it to finish execute at a later time than if memory were not constrained. This is because more garbage collection pauses are needed in order to free more memory. Scripts that exhibit the diminishing returns behaviour will be susceptible to execution time increases. The closer the limit is to the minimum heap size, the longer they will take to execute. If this increase in execution time becomes too large, the framework would be unfeasible. The total execution time of each scenario as well as the execution time of each constituent script is measured in order to be compared with execution times where no policy is applied.
+\section{Equal Share Policy}
+This policy was developed mainly for comparison reasons. The approach it takes is the most naive: it gives each isolate an equal share of the total available memory. If new isolates connect, the share becomes smaller and if isolates finish execution or disconnect due to failure, the share becomes larger.
+\begin{equation}
+\textit{HardHeapLimit}_i = \textit{TotalMachineMemory} \times \dfrac{1}{\textit{NumberOfIsolates}}
+\end{equation}
+The above equation defines how the memory limit is calculated for each isolate.
+\\\\
+This policy is optimal if the managed environment is running the same application in every community. This is because every application has exactly the same minimum heap and in order to fit these applications in a certain amount of memory, the best possible approach is to divide the memory equally as long as the share each receives is larger or equal to the minimum heap size. In any other case this policy would not be able to adapt to the different needs of the applications.
+\section{Robin Hood Policy}
+This policy redistributes memory from the wealthiest isolate to the poorest isolate. Wealth is equal to the execution to garbage collection time ratio of each isolate. Isolates are sorted by their wealth coefficient and a certain amount of memory is taken from the wealthiest and given to the poorest.
+\begin{equation}
+\textit{StealBudget} = \dfrac{HardHeapLimit_i}{2}
+\end{equation}
+The amount of memory that can be stolen from the rich isolate is half of its memory allowance. This is meant to prevent very poor isolates from causing rich isolate to suddenly starve for memory and potentially fail by stealing all of its memory.
+\begin{equation}
+\textit{StealAmount} = StealBudget \times \dfrac{log_2\left(t\right)}{log_2\left(0.001\right)}
+\end{equation}
+Where \textbf{t} is the execution to garbage collection time ratio of the poor isolate. The fraction divides the logarithm of t to the logarithm of the lowest observed t (0.001) in order to calculate a percentage representing how much memory the poor isolate needs. A \textbf{t} value of 1 indicates that the isolate is doing an equal amount of execution and garbage collection while a value of 0.001 indicates that is is very likely that the application will fail at the next garbage collection run. This way the lower the t value of the isolate, the more memory it will require from the steal budget.
+\\\\
+The steal amount is then subtracted from the memory allowance of the rich isolate and added to the poor one. By default, this happens ten times per second. After one application of the policy, the t values of the isolates are very likely to change, hence different isolates would exchange memory at the next run unless the poor or rich isolate are still wealthy or poor respectively. In theory, this policy adapts well to applications with different needs because eventually every application in need would be at the end of the sorted array and will receive memory from the wealthiest application. In reality, the fact that only one application is given memory at every policy run leaves other applications unattended for long periods of time which would cause them to fail before they get a chance to received more memory.
+\section{Inverse Throughput Policy}
+This policy considers isolate welfare to be equal to the execution to garbage collection time ratio, every other metric is not taken into account. In order to calculate how much memory each isolate is entitled to, the inverse welfare of the community is calculated using the equation below:  
+\begin{equation}
+\textit{Community Inverse Welfare} = \sum_{i=0}^{N} -\log_2\left(\dfrac{t_i}{1000}\right)
+\end{equation}
+\textbf{N} is the total number of isolates, \textbf{t} is the execution time to garbage collection time ratio of an isolate. The range of t is from 0 to 100, dividing this number by 1000 ensures that every possible value of t/1000 will have a logarithm value with the same sign. The same effect can be achieved by dividing by 101, but it has been heuristically determined that using t/101 tends to generate disproportionately small memory limits for isolates with high t values compared to the ones with small ones. The equation below describes how the memory limit is calculated for each isolate:
+\begin{equation}
+\textit{Hard Heap Limit}_i = \textit{TotalMachineMemory} \times \frac{-\log_2\left(\dfrac{t_i}{1000}\right)}{\textit{Community Inverse Welfare}}
+\end{equation}
+The fraction in this equation is a percentage representing how much of the community inverse welfare is this isolate responsible for. This is then multiplied by the total amount of memory allocated to the community, which equates to how much of the total memory this isolate is entitled to.
+\\\\
+!!-!!-!!-!! - Final remark
 \section{Wealth Redistribution}
 \begin{equation}
 \textit{WelfareIndex}_i = 0.75\times (1 - \frac{max(0,L_i - H_i)}{L_i})+0.20\times (1 - \frac{H_i}{\textit{MaxH}})+0.05\times \frac{t_i}{100}
 \end{equation}
-
 \begin{equation}
 \textit{GivePotential}_i = max(0,L_1 - h_i)
 \end{equation}
@@ -981,13 +1033,107 @@ L_i = L_i - \frac{\textit{GivePotential}_i}{\textit{TotalGivePotential}} \times 
 \end{equation}
 
 \section{Pascal}
+\hspace*{3em} This is an experimental policy that uses an additional feature of the management framework called soft memory limits. The other policies use hard heap limits, these are strictly enforced by the V8 engine. If the heap of a script overflows the hard heap limit and the garbage collector can not free any more memory, the script will fail. In the case of soft heap limits, if the heap overflows the limit, garbage collection will be intensified but the script will not fail execution if more memory can not be freed.
+\\\\
+The Pascal policy sets the soft heap limit of each script to 0, hence the garbage collection is permanently intensified. This will not reduce memory as drastically as a hard heap limit would, but reduction is still considerable when compare with heap utilisation without any memory limits. The main consequence is that the execution time for scripts running with this policy is increased. Below is a comparison between a benchmark script with no limits enforced and the same script run with this policy.
+\begin{figure}
+\subfigure[No Memory Restrictions]{\includegraphics[width=0.5\textwidth]{bintree}}
+\subfigure[Pascal Policy]{\includegraphics[width=0.5\textwidth]{pascalbintree}}
+\caption{No Restrictions vs. Pascal policy}
+\end{figure}
+\newpage
+Without any memory restrictions, the memory usage peaks at approximately 700MB while the pascal managed run peaks at approximately 350MB. The memory utilisation is halved but the execution time is increased. Without any restrictions the run takes approximately 30 seconds to complete while the pascal run takes 1 minute and 30 seconds (3 times slower). For comparison reasons, running the same script with a hard heap limit set to the minimum heap size takes 1 minute (2 times slower). The version that uses soft heap limits is slower because it forces the garbage collection to happen more often than the version using hard heap limits.
+\\\\
+Even though this policy causes the environment to run slower than both an unrestricted one or one that is controlled using hard heap limits, it is a good candidate for comparison as it guarantees that all scripts being managed will execute successfully.
+\section{Findings}
+Here are the raw survival rates for each policy at each run.
+\\
+\begin{tabular}{  | l | l | l | l | l | l | }
+\hline  
+  Run & Machine Memory Limit & Equal Share & Robin Hood & Inverse Throughput & Wealth Redistribution \\
+\hline
+  1 & 400MB & 91\% & 84\% & 93\% & 92\%\\
+\hline
+  2 & 420MB & 93\% & 92\% & 93\% & 93\%\\
+\hline  
+  3 & 460MB & 96\% & 90\% & 94\% & 97\%\\
+\hline  
+  4 & 540MB & 95\% & 92\% & 96\% & 98\%\\
+\hline  
+  5 & 600MB & 97\% & 90\% & 97\% & 98\%\\
+\hline  
+  6 & 800MB & 98\% & 88\% & 99\% & 99\%\\
+\hline
+  7 & 840MB & 98\% & 96\% & 99\% & 99\%\\
+\hline
+\end{tabular}
+\\\\
+Here are the survival rates after applying weights that reflect the type of scenario.
+\\
+\begin{tabular}{  | l | l | l | l | l | l | }
+\hline  
+  Run & Machine Memory Limit & Equal Share & Robin Hood & Inverse Throughput & Wealth Redistribution \\
+\hline
+  1 & 400MB & 91\% & 84\% & 93\% & 92\%\\
+\hline
+  2 & 420MB & 93\% & 92\% & 93\% & 93\%\\
+\hline  
+  3 & 460MB & 96\% & 90\% & 94\% & 97\%\\
+\hline  
+  4 & 540MB & 95\% & 92\% & 96\% & 98\%\\
+\hline  
+  5 & 600MB & 97\% & 90\% & 97\% & 98\%\\
+\hline  
+  6 & 800MB & 98\% & 88\% & 99\% & 99\%\\
+\hline
+  7 & 840MB & 98\% & 96\% & 99\% & 99\%\\
+\hline
+\end{tabular}
+\\\\
+Here are the results for the execution time evaluation:\\
+\begin{tabular}{  | l | l | l | l | l | l | }
+\hline  
+  Scenario & Normal Execution Time & Time with Pascal & Time with Wealth Redistribution \\
+\hline
+  1 & 01:22 & 02:11 & 76.50\% \\
+\hline
+  2 & 02:34 & 04:48 & 82.16\% \\
+\hline  
+  3 & 00:32 & 01:32 &  \\
+\hline  
+  4 & 00:20 & 00:21 &  \\
+\hline  
+  5 & 02:27 & 03:07 &  \\
+\hline  
+  6 & 05:28 & 10:58 &  \\
+\hline
+  7 & 00:03 & 00:03 &  \\
+\hline
+  8 & 02:04 & 02:06 &  \\
+\hline
+  9 & 02:14 & 02:29 &  \\
+\hline
+  10 & 05:24 & 06:25 &  \\
+\hline
+  11 & 04:38 & 07:07 &  \\
+\hline
+  12 & 08:31 & 09:07 &  \\
+\hline
+  TOTAL: & 36:00 & 50:00 & \\
+\hline
+\end{tabular}
 \chapter{Conclusion}
 \section{Future Work}
 Attach the 
 Add security
 Control Semi Space?
 State based policy
-
+More metrics
+More policies
+Experimetn with different frequencies
+Granular locking
+Control heterogeneous environments
+Detect machine memory limits and config the framework
 \begin{appendices}
 \chapter{Benchmark Scripts}
 The contents...
@@ -1987,6 +2133,8 @@ GitHut, Statistics for GitHub \hspace*{1em} \url{http://githut.info/}
 \bibitem{gcpaper}
 Paul R Wilson. Uniprocessor garbage collection techniques. In Memory Management, pages 1–42.
 Springer, 1992.
+\bibitem{diminishreturns}
+Page 3, Microeconomic Theory,\emph{The Judgment of Forseti: Economic Utility for Dynamic Heap Sizing of Multiple Runtimes}, Callum Cameron, Jeremy Singer, David Vengerov
 \bibitem{v8sizebug}
 V8 Maximum Memory Amount Per Isolate
 \url{https://bugs.chromium.org/p/v8/issues/detail?id=847}

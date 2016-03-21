@@ -37,6 +37,7 @@ if len(sys.argv) < 2:
 else:
 	collection_path = sys.argv[1];
 	policy_name = sys.argv[2];
+    collection_path += policy
 	autoCollect = ""
 	
 	if "autoCollect" in sys.argv:
