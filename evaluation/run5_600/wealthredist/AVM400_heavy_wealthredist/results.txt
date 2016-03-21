@@ -1,0 +1,19 @@
+1x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/binarytree.js']2x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/a_KNucleotide.js']2x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/a_BinaryTrees.js']1x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/c_Richards.js']1x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/c_DeltaBlue.js']1x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/a_RegexDNA.js']1x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/n_SpectralNorm.js']2x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/splay.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js']2x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/earley-boyer.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js']All processes finished
+XX > 0:0:3.0-binarytree.js
+OK > 0:0:4.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:4.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:5.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:5.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:46.0-a_BinaryTrees.js
+OK > 0:0:48.0-a_BinaryTrees.js
+OK > 0:0:54.0-a_RegexDNA.js
+OK > 0:1:30.0-n_SpectralNorm.js
+OK > 0:1:33.0-c_DeltaBlue.js
+OK > 0:3:26.0-c_Richards.js
+OK > 0:4:3.0-a_KNucleotide.js
+OK > 0:4:6.0-a_KNucleotide.js
+____________________
+Total Processes:13
+Successful:12(92.3076923077%)
+Failed    :1(7.69230769231%)
+Minimum Heap Target:402MB

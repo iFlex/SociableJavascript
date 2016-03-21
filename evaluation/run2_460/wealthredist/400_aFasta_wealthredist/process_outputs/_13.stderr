@@ -1,6 +1,7 @@
 
 #
-# Fatal error in CALL_AND_RETRY_LAST
+# Fatal error in MarkCompactCollector: semi-space copy, fallback in old gen
+
 # Allocation failed - process out of memory
 #
 

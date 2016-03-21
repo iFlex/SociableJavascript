@@ -22,7 +22,7 @@ for i in range(0,len(sys.argv)):
             confFile = cfg[1];
 
 #Defaults
-pltSvc = PlotService(["heap","footPrint","maxHeapSize","throughput"],15027)
+pltSvc = PlotService(["heap","footPrint","maxHeapSize"],15027)
 pltSvc.doNormalise({"heap":1024*1024.0,"footPrint":1024*1024.0,"maxHeapSize":1024*1024.0,"throughput":1.0});
 
 print "Initialising Registry..."

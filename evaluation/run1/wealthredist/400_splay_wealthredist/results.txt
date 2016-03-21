@@ -1,0 +1,14 @@
+8x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/splay.js', u'/home/airjack/level4/SociableJavascript/benchmarks/v8/run.js']All processes finished
+OK > 0:0:3.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+XX > 0:0:3.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+XX > 0:0:3.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:4.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:4.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:5.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:5.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+OK > 0:0:6.0-/home/airjack/level4/SociableJavascript/benchmarks/v8/base.js
+____________________
+Total Processes:8
+Successful:6(75.0%)
+Failed    :2(25.0%)
+Minimum Heap Target:424MB

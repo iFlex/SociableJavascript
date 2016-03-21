@@ -1,0 +1,339 @@
+./run1
+robinhood
+75 AVM400_Light_robinhoodOK
+100 400_crypto_robinhoodOK
+80 400_all_robinhoodOK
+76 AVM400_Heavy_robinhoodOK
+87 400_splay_robinhoodOK
+70 AVM400_Heavy2_robinhoodOK
+80 400_heavy_robinhoodOK
+94 ACM400_Light_robinhoodOK
+88 ACM400_Heavy_robinhoodOK
+86 400_light_robinhoodOK
+32 400_aFasta_robinhoodOK
+50 400_binarytree_robinhoodOK
+*** AVG
+76.5
+________________________________________________________________________________
+equalshare
+90 400_all_equalshareOK
+76 AVM400_Heavy_equalshareOK
+100 400_aFasta_equalshareOK
+92 400_heavy_equalshareOK
+100 400_binarytree_equalshareOK
+88 ACM400_Heavy_equalshareOK
+88 AVM400_Light_equalshare_INCOMLPETEPLOTDATA
+77 AVM400_Heavy2_equalshareOK
+37 400_splay_equalshareOK
+94 400_light_equalshareOK
+92 ACM400_Light_equalshareOK
+100 400_crypto_equalshareOK
+*** AVG
+86.1666666667
+________________________________________________________________________________
+wealthredist
+91 AVM400_Light_Wealth_Redistribution_0.75_0.2_0.05_RERUN
+100 400_all_Wealth_Redistribution_0.75_0.2_0.05OK
+84 AVM400_Heavy_Wealth_Redistribution_0.75_0.2_0.05OK
+95 400_light_Wealth_Redistribution_0.75_0.2_0.05OK
+95 ACM400_Light_Wealth_Redistribution_0.75_0.2_0.05OK
+50 400_splay_Wealth_Redistribution_0.75_0.2_0.05OK
+88 ACM400_Heavy_Wealth_Redistribution_0.75_0.2_0.05OK
+81 AVM400_Heavy2_Wealth_Redistribution_0.75_0.2_0.05OK
+100 400_crypto_Wealth_Redistribution_0.75_0.2_0.05OK
+100 400_binarytree_Wealth_Redistribution_0.75_0.2_0.05OK
+96 400_heavy_Wealth_Redistribution_0.75_0.2_0.05OK
+78 400_aFasta_Wealth_Redistribution_0.75_0.2_0.05OK
+*** AVG
+88.1666666667
+________________________________________________________________________________
+nopolicy
+100 ACM400_Light_nopolicyOK
+100 400_all_nopolicyOK
+100 400_crypto_nopolicyOK
+100 400_splay_nopolicyOK
+100 400_binarytree_nopolicyOK
+100 AVM400_Light_nopolicyOK
+100 AVM400_Heavy2_nopolicyOK
+100 400_aFasta_nopolicyOK
+100 AVM400_Heavy_nopolicyOK
+100 ACM400_Heavy_nopolicyOK
+100 400_light_nopolicyOK
+100 400_heavy_nopolicyOK
+*** AVG
+100.0
+________________________________________________________________________________
+inversetp
+98 ACM400_Heavy_inversetpOK
+85 AVM400_Heavy2_inversetpOK
+96 400_heavy_inversetpOK
+100 400_crypto_inversetpOK
+88 AVM400_Light_inversetpOK
+100 400_splay_inversetpOK
+64 400_aFasta_inversetpOK
+95 400_all_inversetpOK
+100 ACM400_Light_inversetp1OK
+50 400_binarytree_inversetpOK
+92 AVM400_Heavy_inversetpOK
+94 400_light_inversetpOK
+*** AVG
+88.5
+________________________________________________________________________________
+./run2_420
+robinhood
+100 400_heavy_robinhood
+66 AVM400_heavy2_robinhood
+0 400_binarytree_robinhood
+100 400_all_robinhood
+92 AVM400_heavy_robinhood
+100 AVM400_light_robinhood
+100 ACM400_light_robinhood
+100 ACM400_heavy_robinhood
+100 400_splay_robinhood
+100 400_light_robinhood
+100 400_crypto_robinhood
+28 400_aFasta_robinhood
+*** AVG
+82.1666666667
+________________________________________________________________________________
+equalshare
+93 ACM400_heavy_equalshare
+95 400_light_equalshare
+90 400_all_equalshare
+100 400_binarytree_equalshare
+100 400_aFasta_equalshare
+62 400_splay_equalshare
+88 AVM400_light_equalshare
+95 ACM400_light_equalshare
+76 AVM400_heavy_equalshare
+85 AVM400_heavy2_equalshare
+92 400_heavy_equalshare
+100 400_crypto_equalshare
+*** AVG
+89.6666666667
+________________________________________________________________________________
+wealthredist
+100 400_all_wealthredist
+87 400_splay_wealthredist
+96 AVM400_heavy2_wealthredist
+91 AVM400_light_wealthredist
+87 ACM400_heavy_wealthredist
+100 400_crypto_wealthredist
+100 400_binarytree_wealthredist
+82 400_aFasta_wealthredist
+95 400_light_wealthredist
+96 400_heavy_wealthredist
+97 ACM400_light_wealthredist
+76 AVM400_heavy_wealthredist
+*** AVG
+92.25
+________________________________________________________________________________
+inversetp
+64 400_aFasta_inversetp
+92 AVM400_heavy_inversetp
+95 400_all_inversetp
+96 400_heavy_inversetp
+100 400_binarytree_inversetp
+100 ACM400_light_inversetp
+100 400_crypto_inversetp
+100 400_splay_inversetp
+95 400_light_inversetp
+95 ACM400_heavy_inversetp
+88 AVM400_light_inversetp
+85 AVM400_heavy2_inversetp
+*** AVG
+92.5
+________________________________________________________________________________
+./run2_460
+robinhood
+100 400_heavy_robinhood
+70 AVM400_heavy2_robinhood
+50 400_binarytree_robinhood
+85 400_all_robinhood
+69 AVM400_heavy_robinhood
+88 AVM400_light_robinhood
+97 ACM400_light_robinhood
+92 ACM400_heavy_robinhood
+87 400_splay_robinhood
+100 400_light_robinhood
+100 400_crypto_robinhood
+57 400_aFasta_robinhood
+*** AVG
+82.9166666667
+________________________________________________________________________________
+equalshare
+100 ACM400_heavy_equalshare
+97 400_light_equalshare
+90 400_all_equalshare
+100 400_binarytree_equalshare
+100 400_aFasta_equalshare
+100 400_splay_equalshare
+94 AVM400_light_equalshare
+100 ACM400_light_equalshare
+76 AVM400_heavy_equalshare
+81 AVM400_heavy2_equalshare
+92 400_heavy_equalshare
+100 400_crypto_equalshare
+*** AVG
+94.1666666667
+________________________________________________________________________________
+wealthredist
+95 400_all_wealthredist
+100 400_splay_wealthredist
+96 AVM400_heavy2_wealthredist
+91 AVM400_light_wealthredist
+100 ACM400_heavy_wealthredist
+100 400_crypto_wealthredist
+100 400_binarytree_wealthredist
+92 400_aFasta_wealthredist
+98 400_light_wealthredist
+92 400_heavy_wealthredist
+100 ACM400_light_wealthredist
+100 AVM400_heavy_wealthredist
+*** AVG
+97.0
+________________________________________________________________________________
+inversetp
+57 400_aFasta_inversetp
+92 AVM400_heavy_inversetp
+95 400_all_inversetp
+96 400_heavy_inversetp
+100 400_binarytree_inversetp
+100 ACM400_light_inversetp
+100 400_crypto_inversetp
+100 400_splay_inversetp
+98 400_light_inversetp
+100 ACM400_heavy_inversetp
+91 AVM400_light_inversetp
+81 AVM400_heavy2_inversetp
+*** AVG
+92.5
+________________________________________________________________________________
+./run3_460
+robinhood
+*** AVG
+float division by zero
+________________________________________________________________________________
+equalshare
+*** AVG
+float division by zero
+________________________________________________________________________________
+wealthredist
+*** AVG
+float division by zero
+________________________________________________________________________________
+inversetp
+*** AVG
+float division by zero
+________________________________________________________________________________
+./run4_540
+robinhood
+100 400_heavy_robinhood
+81 AVM400_heavy2_robinhood
+100 400_binarytree_robinhood
+90 400_all_robinhood
+84 AVM400_heavy_robinhood
+75 AVM400_light_robinhood
+95 ACM400_light_robinhood
+93 ACM400_heavy_robinhood
+100 400_splay_robinhood
+100 400_light_robinhood
+100 400_crypto_robinhood
+67 400_aFasta_robinhood
+*** AVG
+90.4166666667
+________________________________________________________________________________
+equalshare
+100 ACM400_heavy_equalshare
+95 400_light_equalshare
+90 400_all_equalshare
+100 400_binarytree_equalshare
+100 400_aFasta_equalshare
+100 400_splay_equalshare
+88 AVM400_light_equalshare
+97 ACM400_light_equalshare
+84 AVM400_heavy_equalshare
+85 AVM400_heavy2_equalshare
+92 400_heavy_equalshare
+100 400_crypto_equalshare
+*** AVG
+94.25
+________________________________________________________________________________
+wealthredist
+95 400_all_wealthredist
+100 400_splay_wealthredist
+100 AVM400_heavy2_wealthredist
+94 AVM400_light_wealthredist
+96 ACM400_heavy_wealthredist
+100 400_crypto_wealthredist
+100 400_binarytree_wealthredist
+100 400_aFasta_wealthredist
+100 400_light_wealthredist
+92 400_heavy_wealthredist
+100 ACM400_light_wealthredist
+100 AVM400_heavy_wealthredist
+*** AVG
+98.0833333333
+________________________________________________________________________________
+inversetp
+67 400_aFasta_inversetp
+92 AVM400_heavy_inversetp
+100 400_all_inversetp
+100 400_heavy_inversetp
+100 400_binarytree_inversetp
+100 ACM400_light_inversetp
+100 400_crypto_inversetp
+100 400_splay_inversetp
+100 400_light_inversetp
+100 ACM400_heavy_inversetp
+91 AVM400_light_inversetp
+88 AVM400_heavy2_inversetp
+*** AVG
+94.8333333333
+________________________________________________________________________________
+./run5_600
+robinhood
+*** AVG
+float division by zero
+________________________________________________________________________________
+equalshare
+*** AVG
+float division by zero
+________________________________________________________________________________
+wealthredist
+95 400_all_wealthredistOK
+100 400_binarytree_wealthredistOK
+100 AVM400_heavy_wealthredistOK
+100 400_splay_wealthredistOK
+91 AVM400_light_wealthredistOK
+100 400_crypto_wealthredistOK
+100 400_aFasta_wealthredistOK
+98 400_light_wealthredistOK
+100 ACM400_light_wealthredistOK
+100 ACM400_heavy_wealthredistOK
+92 400_heavy_wealthredistOK
+96 AVM400_heavy2_wealthredistOK
+*** AVG
+97.6666666667
+________________________________________________________________________________
+inversetp
+*** AVG
+float division by zero
+________________________________________________________________________________
+./run6_800
+wealthredist
+100 400_all_wealthredist
+100 400_splay_wealthredist
+100 AVM400_heavy2_wealthredist
+100 AVM400_light_wealthredist
+100 ACM400_heavy_wealthredist
+100 400_crypto_wealthredist
+100 400_binarytree_wealthredist
+100 400_aFasta_wealthredist
+100 400_light_wealthredist
+92 400_heavy_wealthredist
+100 ACM400_light_wealthredist
+100 AVM400_heavy_wealthredist
+*** AVG
+99.3333333333
+________________________________________________________________________________

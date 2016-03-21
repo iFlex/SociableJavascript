@@ -5,16 +5,16 @@ import math
 #inspect and fix with extra care
 context = {}
 MAX_TP = 100
-DELTA_HEAP_LIMIT    = 0.75
-DELTA_MAX_FOOTPRINT = 0.20
-DELTA_THROUGHPUT    = 0.05
+DELTA_HEAP_LIMIT    = 0.75 #0.75
+DELTA_MAX_FOOTPRINT = 0.20 #0.20
+DELTA_THROUGHPUT    = 0.05 #0.05
 def init(context):
 	if "csvlog" in context:
 		context["csvlog"].commitSchema(["gini","redistribute","available","take","commited2isolates"])
 
 
 def getWelfareIndex(i):
-	hhl = 1 - float(max(0,i["hardHeapLimit"] - i["footPrint"]))/i["hardHeapLimit"]
+	hhl = float(max(0,i["hardHeapLimit"] - i["footPrint"]))/i["hardHeapLimit"]
 	mtp = 1 - float(i["footPrint"])/i["maxFootPrint"]
 	tpt = i["throughput"]/MAX_TP
 
