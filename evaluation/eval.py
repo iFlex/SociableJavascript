@@ -2,6 +2,7 @@ import sys
 from os import listdir
 from os.path import isfile, join
 
+COUNT_FAILED = False
 APPLY_WEIGHTS = False
 scores = {
 	"400_aFasta"    :1,
@@ -43,6 +44,7 @@ def getFiles(path,ext):
 	return allcsvs;
 
 def countErrors(path,withAvg):
+	global COUNT_FAILED
 	try:
 		avg = 0
 		nr = 0
@@ -52,15 +54,19 @@ def countErrors(path,withAvg):
 				errors = 0
 				for e in files:
 					errors += hasError(e)
+				
 				nr += 1
 				valout = int((1 - float(errors)/len(files))*100)
 				avg += valout
-				print str(valout)+" "+str(f)
+				if not COUNT_FAILED:
+					print str(valout)+" "+str(f)
+				else:
+					print str(errors)+"/"+str(len(files))+" "+str(f)
 		
-		if withAvg:
+		if withAvg and not COUNT_FAILED:
 			print "*"*3 + " AVG"
 			print str(float(avg)/nr)
-	
+		
 	except Exception as e:
 		print e
 
@@ -81,6 +87,9 @@ def countErrorsAll(path):
 	for p in paths:
 		print p
 		countErrorsPerRun(p)	
+
+if "count_failed" in sys.argv:
+	COUNT_FAILED = True
 
 if "count_run" in sys.argv: 
 	countErrorsPerRun(sys.argv[1])

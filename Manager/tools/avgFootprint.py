@@ -1,37 +1,83 @@
 import sys
-f = open(sys.argv[1],"r")
+from os import listdir
+from os.path import isfile, join
 
-f.readline()
+def getFileAvgNmax(path):
+	f = open(path,"r")
 
-avg = 0
-lines = 0
-mx = 0
-mn = 999999999
-while True:
-	line = f.readline()
+	f.readline()
 
-	if len(line) == 0:
-		break
+	avg = 0
+	lines = 0
+	mx = 0
+	while True:
+		line = f.readline()
 
-	items = line.split(',')
+		if len(line) == 0:
+			break
 
-	fp = 0
-	for i in items:
-		fp += int(i)
+		items = line.split(',')[:-1]
 
-	avg += fp
+		fp = 0
+		for i in items:
+			if len(i) > 0:
+				fp += float(i)
 
-	if mx < fp:
-		mx = fp
+		avg += fp
 
-	if mn > fp:
-		mn = fp
+		if mx < fp:
+			mx = fp
 
-	lines += 1
+		lines += 1
+		
+	if lines == 0:
+		lines = 1
+	return (int(float(avg)/lines),int(mx))
 
-print "Average Footprint:"
-print str(float(avg)/lines)+"MB"
-print "Max Footprint:"
-print str(mx)+" MB"
-print "Min Footprint:"
-print str(mn)+" MB"
+def getFiles(path,ext):
+	allcsvs = []
+	try:
+		for f in listdir(path):
+			if isfile(join(path, f)) and ext in f:
+				allcsvs.append(join(path,f));
+			else:
+				allcsvs += getFiles(join(path,f),ext)
+	except:
+		pass
+
+	return allcsvs;
+
+def perPolicy(path):
+	avg = 0
+	mx = 0 
+	nr = 0
+	for f in listdir(path):
+		if not isfile(join(path, f)):
+			files = getFiles(join(path,f),".csv")
+			for fpts in files:
+				r = getFileAvgNmax(fpts)
+				if mx < r[1]:
+					mx = r[1];
+				avg += r[0];
+				nr += 1
+				print str(r) + " " + fpts
+	
+	if nr == 0:
+		nr = 1
+	avg = float(avg)/nr
+	return (avg,mx)
+
+def perRun(path):
+	for f in listdir(path):
+		if not isfile(join(path, f)):
+			results = perPolicy(join(path, f))
+			print str(results)+" "+str(f)
+
+def perEval(path):
+	for f in listdir(path):
+		if not isfile(join(path, f)):
+			print f
+			perRun(join(path, f))
+			print "_"*80
+
+perRun(sys.argv[1])
