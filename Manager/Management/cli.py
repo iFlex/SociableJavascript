@@ -70,19 +70,20 @@ class CommandLine:
 			types  = " " * len(key)
 			for i in range(0,len(self.commands[key]["param"])):
 				params += " ["+self.commands[key]["param"][i][1]+"("+self.commands[key]["param"][i][0]+")]"
-			print ">> "+key+params;
+			print key+params;
 			
-			details = ""
+			details = "   "
 			sf = self.getCommandShortForms(key)
 			if len(sf) > 0:
-				details = "   ("+self.listNiceFormat(sf," ")+") "
+				details += "("+self.listNiceFormat(sf," ")+") "
 			
 			if "desc" in self.commands[key]:
 				details += self.commands[key]["desc"]
 			
 			if len(details)>0:
 				print details
-
+			print 
+			
 		print "_"*80
 
 	def printUsage(self,cmd,params):

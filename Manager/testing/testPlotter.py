@@ -33,5 +33,4 @@ duration = (time2-time1)*(1000.0)
 print time2-time1
 print '%s replots %0.3f ms %0.3f ms/redraw - %0.3f FPS' % (str(repeat), duration, duration/repeat, 1000.0/(duration/repeat))
 
-plotter.close();	
-#TODO: checkson files and picture	 
+plotter.close();	 

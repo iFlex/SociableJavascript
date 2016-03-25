@@ -2,6 +2,6 @@ chhz 10
 setPlotterStartupConfig {"makeCSV":true,"makePNG":false,"makeLiveDrawing":false}
 pm ALL
 togglePlotServiceLogging ON 
-loadpolicy pascal2 
+loadpolicy wealthredist 
 nmlim 840
 echo 0

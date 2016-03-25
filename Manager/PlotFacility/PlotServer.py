@@ -48,10 +48,11 @@ class Server:
 		self.isListening = False;
 	
 	def start(self,port):
+		
 		if self.isListening:
-			#self.soc.shutdown(SHUT_RDWR)
 			self.soc = socket(AF_INET,SOCK_STREAM)
 			self.isListening = False
+
 		#bind to port
 		self.port = port;
 		self.keepRunning = True
@@ -73,10 +74,6 @@ class Server:
 
 	def close(self):
 		self.keepRunning = False;
-		#try:
-		#	self.soc.shutdown(SHUT_RDWR);
-		#except Exception as e:
-		#	print "PlotServer socket shutdown error:"+str(e);
 		self.soc.close();
 
 	def getError(self):
@@ -132,7 +129,6 @@ class Server:
 			print "Could not encode to JSON:"+str(e)
 			return 1;
 
-		#data = data + separator*(packet_size - len(data));
 		data += separator
 	
 		try:

@@ -26,7 +26,7 @@ pltSvc = PlotService(["heap","footPrint","maxHeapSize"],15027)
 pltSvc.doNormalise({"heap":1024*1024.0,"footPrint":1024*1024.0,"maxHeapSize":1024*1024.0,"throughput":1.0});
 
 print "Initialising Registry..."
-mon = monitor("ISOLATE",pltSvc);
+mon = monitor("MACHINE",pltSvc);
 srv = server(mon,port);
 
 if srv.start() == False:
@@ -36,6 +36,7 @@ else:
     time.sleep(1);
     
     print "Initialising policy...";
+    #run the policy executor
     policy = Policy(mon,4,confFile);
 
     print "Shutting Down..."

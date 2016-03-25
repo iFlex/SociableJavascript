@@ -14,6 +14,7 @@ index = 0
 for key in testTopo.keys():
 	testTopo[key]["machine"] = m.addMachine(key);
 	testTopo[key]["v8"]      = m.addV8(key,0);
+	
 	#add 3 isolates
 	testTopo[key]["isolates"].append(m.addIsolate(key,testTopo[key]["v8"]))
 	testTopo[key]["isolates"].append(m.addIsolate(key,testTopo[key]["v8"]))
@@ -24,7 +25,6 @@ for key in testTopo.keys():
 		isl["tag"] = "@"+str(index)
 		index += 1
 
-#m.removeV8("127.0.0.1",1)
 def checkRegistryContents(correctNoIsolates):
 	found = 0;
 	tags  = 0;

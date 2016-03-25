@@ -16,17 +16,17 @@ class PlotService:
 		self.maxPlotters = 500
 		self.port = port;
 		self.log = 0;
+		
 		#heavy parallel plotting
 		self.cond = Condition()
 		self.updateQ = [];
 		self.currentPlotData = {};# key = Machine_[MachineId]_V8_[V8Id]_[IsolateId], value = [plotterSocket,array_of_data_to_plot]
 		self.normalise = {}
-		#TODO:
-		self.ignoreList = [];   #list of isolates to ignore 
-		self.interestList = []; #list of isolates to take interest in and ignore the rest
+		
 		#start server
 		self.server = Server();
 		self.reinit(self.port);
+		
 		#start updater thread
 		self.thread = Thread(target = self._update)
 		self.thread.daemon = True

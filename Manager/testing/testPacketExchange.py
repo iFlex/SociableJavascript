@@ -9,6 +9,7 @@ import os
 import subprocess
 
 print "V8 Packet Exchange test. You need to start a V8 instance for this test"
+
 #create a v8 instance
 v8instance = 0
 c = raw_input("Would you to attempt to automatically start one?(y/n)")
@@ -27,8 +28,6 @@ if c == 'y':
 if v8instance == 0:
     raw_input("Press any key after you have started a V8 instance")
 
-#flags
-DEBUG = True
 #Defaults
 address = "127.0.0.1"
 port = 15004

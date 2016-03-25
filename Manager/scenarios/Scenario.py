@@ -225,4 +225,3 @@ class Scenario:
 			self.resultFile.write(r)
 			self.resultFile.close()
 		print "Total Scenario Run Time "+self.prettifyTime(time.time() - start)
-#todo: add prints of stdout and err of each process

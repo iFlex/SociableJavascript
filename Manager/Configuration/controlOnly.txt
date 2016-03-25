@@ -1,5 +1,5 @@
 chhz 10
 pm NONE
 togglePlotServiceLogging OFF 
-loadpolicy inversetp 
+loadpolicy wealthredist 
 echo 0

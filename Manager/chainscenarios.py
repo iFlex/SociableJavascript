@@ -6,6 +6,8 @@ from Plotter.plotter import *
 import subprocess
 import time
 
+#Use this to automatically run all test scenarios for one policy
+
 def prettifyTime(time):
 		seconds = math.floor(time);
 		millis  = int(math.floor(time/1000));
