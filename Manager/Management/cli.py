@@ -287,79 +287,75 @@ class CommandLine:
 		self.commands = {
 							"help":{
 								"param":[],
-								"method":self.help,
+								"method":self.help
 							},
 							"chhz":{
 								"param":[("float","frequency in Hz")],
 								"method":self.chhz,
-								"desc":"Change the machine polling frequency."
+								"desc":"Change the policy executor polling frequency."
 							},
 							"hz":{
 								"param":[],
 								"method":self.hz,
-								"desc":"Get the current polling frequency"
+								"desc":"Get the current policy executor polling frequency"
 							},
 							"stats":{
 								"param":[],
 								"method":self.prettyPrint,
-								"desc":"Status report of all machines, V8 and isolates."
+								"desc":"Status report of all Machines, V8 and Isolates."
 							},"machines":{
 								"param":[],
 								"method":self.printMachines,
-								"desc":"Status report of all machines, V8 and isolates."
+								"desc":"Status report of all Machines."
 							},"v8s":{
 								"param":[],
 								"method":self.printV8s,
-								"desc":"Status report of all machines, V8 and isolates."
-							},
-							"dbg":{
-								"param":[],
-								"method":self.monitor.debug
+								"desc":"Status report of all Machines, V8 instances."
 							},
 							"where":{
 								"param":[],
 								"method":self.where,
-								"desc":"What V8 from what machine the shell is set to at the moment."
+								"desc":"Returns the Machine and V8 that the CLI watching. This helps simplify commands that target a single isolate."
 							},
 							"loadpolicy":{
 								"param":[("str","policy name")],
 								"method":self.p.loadPolicy,
-								"desc":"Load a difference memory management ploicy."
+								"desc":"Load a memory management ploicy."
 							},
 							"chv8":{
 								"param":[("int","V8Id")],
 								"method":self.chv8,
-								"desc":"Change the V8 that the shell is set to."
+								"desc":"Change the V8 that the CLI is watching."
 							},
 							"switch":{
 								"param":[("str","machineId"),("int","V8Id")],
 								"method":self.switch,
-								"desc":"Change the machine and V8 that the shell is set to."
+								"desc":"Change the machine and V8 that the CLI is watching."
 							},
 							"snapshot":{
 								"param":[("int","isolateId")],
 								"method":self.takeSnapshot,
-								"desc":"Take a snapshot of an isolate form the V8 the shell is set to."
+								"desc":"Take a snapshot of an isolate form the V8 the CLI is watching."
 							},
 							"suggest":{
 								"param":[("int","isolateId"),("int","heap size in bytes")],
 								"method":self.suggest,
-								"desc":"Send hard limmit reccomendation to the isolate from the V8 the shell is set to."
+								"desc":"Send a soft limmit reccomendation to the isolate from the V8 the CLI is watching."
 							},
 							"setmax":{
 								"param":[("int","isolateId"),("int","heap size in bytes")],
 								"method":self.setmax,
-								"desc":"Set hard limit reccodendation to the isolate from the V8 the shell is set to."	
+								"desc":"Set hard limit reccodendation to the isolate from the V8 the CLI is watching."	
 							},
 							"run":{
 								"param":[("str","script")],
 								"method":self.runscript,
-								"desc":"Run a JS script on the V8 the shell is set to."
+								"desc":"Run a JS script on the V8 the CLI is watching."
 							},
 							"setMaxPlotters":{
 								"param":[("int","max")],
 								"method":self.monitor.setMaxPlotters,
-								"desc":"Set maximum plotter windows allowed"
+								"desc":"Set maximum plotter windows"
 							},
 							"loadConfig":{
 								"param":[("str","configuration")],
@@ -379,12 +375,12 @@ class CommandLine:
 							"setMachineMemoryLimit":{
 								"param":[("str","machine_id"),("int","memory_limit_in_MB")],
 								"method":self.setMachineMemoryLimit,
-								"desc":"Set the global memory limit for all JS instances per machine"
+								"desc":"Set the machine's memory budget"
 							},
 							"setNewMachineMemoryLimit":{
 								"param":[("int","memory_limit_in_MB")],
 								"method":self.setNewMachineMemoryLimit,
-								"desc":"Set the global memory limit for all JS instances for new machines that connect"
+								"desc":"Set the default memory budget. This is applied to machines connecting after this command is issued."
 							},
 							"setPlotterStartupConfig":{
 								"param":[("str","JSON config")],
@@ -394,12 +390,12 @@ class CommandLine:
 							"policyname":{
 								"param":[],
 								"method":self.policyName,
-								"desc":"Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)"
+								"desc":"Print the name of the current memory management policy."
 							},
 							"policystats":{
 								"param":[],
 								"method":self.policyStats,
-								"desc":"Configure how the plotters behave, using a JSON string. This is applied to plotters created after this command is issued. options: makePNG(boolean) makeCSV(boolean)"
+								"desc":"Print policy status information"
 							},
 							"echo":{
 								"param":[("int","0/1 off/on")],

@@ -53,14 +53,14 @@ def perPolicy(path):
 	nr = 0
 	for f in listdir(path):
 		if not isfile(join(path, f)):
-			files = getFiles(join(path,f),".csv")
+			files = getFiles(join(path,f),"aggregate.csv")
 			for fpts in files:
 				r = getFileAvgNmax(fpts)
 				if mx < r[1]:
 					mx = r[1];
 				avg += r[0];
 				nr += 1
-				print str(r) + " " + fpts
+				#print str(r) + " " + fpts
 	
 	if nr == 0:
 		nr = 1
@@ -80,4 +80,5 @@ def perEval(path):
 			perRun(join(path, f))
 			print "_"*80
 
-perRun(sys.argv[1])
+print perPolicy(sys.argv[1])
+#perRun(sys.argv[1])
