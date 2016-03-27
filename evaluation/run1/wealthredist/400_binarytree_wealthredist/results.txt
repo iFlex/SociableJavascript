@@ -1,8 +1,0 @@
-2x /home/airjack/level4/SociableJavascript/v8runner/v8wrapper.bin -> [u'1024', u'/home/airjack/level4/SociableJavascript/benchmarks/binarytree.js']All processes finished
-OK > 0:0:46.0-binarytree.js
-OK > 0:0:48.0-binarytree.js
-____________________
-Total Processes:2
-Successful:2(100.0%)
-Failed    :0(0.0%)
-Minimum Heap Target:392MB
