@@ -59,10 +59,8 @@ class communicator:
     def handleResponse(self,response):
         try:
             response = b64decode(response);
-            #print "R:"+response;
             message = json.loads(response);
             self.requestCallback(self.mid,self.v8id,message);
-            #self.monitor.update(self.mid,self.v8id,message);
             self.recvd += 1
         except Exception as e:
             print "Error parsing response from V8 instance:"+str(e);

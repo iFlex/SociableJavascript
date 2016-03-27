@@ -81,28 +81,9 @@ DONE >> 36) Pluggability of Ploicy - descriptor file that can be interpreted by 
 DONE >> 37) Improve mock v8 to allow Jeremy to write and test policy, report from existing CSV files rather than random value
 DONE >> 38) Implement Robin Hood Policy
 
-*D* evaluation of the monitor
-*D* talk about testing
+DONE >> *D* evaluation of the monitor
+DONE >> *D* talk about testing
 
-*1Lt) Use the python monitor to control a cluster of V8 instances on a Distributed Raspberry Pi Cluster
-
-* Norm for Garbage Collection aware OS norm
-* Keep security in mind
-* Mention implementation trick to improve rendering of graphs
-
-*D*
-Dissertation - >
- * Tech overview of V8
- * Mem management
- * controlling heap size
- * Unit Testing...
+NO TIME >> *1Lt) Use the python monitor to control a cluster of V8 instances on a Distributed Raspberry Pi Cluster
 
 find -name "*.cc" -or -name "*.cpp" -or -name "*.h" | xargs wc -l
-
-List of tricks:
-Use the max_old_space_size to forge GC to do all the deallocation work. Space expands by itself anyway
-Skip Rendering Phases to Preserve Frame Rate
-Pluggable policy so anyone can write one
-Component oriented testing
-TCP/IP for distributed use
-Multi Processing for better live plotting

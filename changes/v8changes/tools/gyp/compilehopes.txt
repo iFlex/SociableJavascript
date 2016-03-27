@@ -1,1 +1,0 @@
-CXX = $(abspath /Users/MLF/Dev/google/v8/third_party/llvm-build/Release+Asserts/bin/clang++) -stdlib=libc++ -std=gnu++11
