@@ -8,6 +8,7 @@ import json
 import time
 import sys
 import random
+import math
 
 address = 0
 port = 0 
@@ -57,8 +58,9 @@ IDs = [address,0,0];
 comm = 0;
 r = RequestBuilder(m);
 
+INDEX = 0.0
 def fakeAnswer(mid,vid,msg):
-    global comm,r,IDs,csv,labels,terminate,HEAP,AVAILABLE,THROUGHPUT
+    global comm,r,IDs,csv,labels,terminate,HEAP,AVAILABLE,THROUGHPUT,INDEX
     if(msg["global"]["action"] == "status"):
         request = r.statusReport(IDs[0],IDs[1]);
         if csv != 0:
@@ -78,13 +80,19 @@ def fakeAnswer(mid,vid,msg):
         else:
             for i in request["isolates"]:
                 request["isolates"][str(IDs[2])]["heap"]       = HEAP;
-                request["isolates"][str(IDs[2])]["footPrint"]  = HEAP+10;
+                request["isolates"][str(IDs[2])]["footPrint"]  = HEAP+2;
                 request["isolates"][str(IDs[2])]["throughput"] = THROUGHPUT;
                 request["isolates"][str(IDs[2])]["available"]  = AVAILABLE;
                 request["isolates"][str(IDs[2])]["action"]     = "update";
 
+                ampl = 50
+                HEAP = abs(ampl*math.sin(INDEX))*1024*1024
+                AVAILABLE = abs(ampl*0.6*math.sin(INDEX))*1024*1024
+                INDEX += 0.1
+
         request["global"]["action"] = "update";
         comm.send(request);
+        print "FAKE ANSWERED"
     else:
         print msg;
         
